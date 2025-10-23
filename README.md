@@ -10,7 +10,7 @@ SPDX-License-Identifier: Apache-2.0
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/downloads/)
 [![Tests](https://github.com/KR-Labs/krl-model-zoo/workflows/tests/badge.svg)](https://github.com/KR-Labs/krl-model-zoo/actions)
-[![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://docs.krlabs.dev/model-zoo)
+[![Documentation](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://krlabs.dev/model-zoo)
 
 **Production-ready models for causal inference, forecasting, and policy evaluation.**
 
@@ -232,7 +232,7 @@ This project is licensed under the **Apache License 2.0** - see [LICENSE](LICENS
 
 ## Support
 
-- **Documentation**: https://docs.krlabs.dev/model-zoo
+- **Documentation**: https://krlabs.dev/model-zoo
 - **Issue Tracker**: https://github.com/KR-Labs/krl-model-zoo/issues
 - **Discussions**: https://github.com/KR-Labs/krl-model-zoo/discussions
 
