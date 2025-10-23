@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "krl-model-zoo"
+version = "0.1.0"
+description = "Production-ready models for causal inference and forecasting"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "Apache-2.0"}
+authors = [{name = "KR-Labs Foundation", email = "dev@krlabs.dev"}]
+
+dependencies = [
+    "krl-core>=0.1.0",
+    "krl-data-connectors>=0.1.0",
+    "pandas>=1.5.0",
+    "numpy>=1.23.0",
+    "scipy>=1.10.0",
+    "statsmodels>=0.14.0",
+    "scikit-learn>=1.2.0",
+]
+
+[project.optional-dependencies]
+dev = ["black>=23.0.0", "isort>=5.12.0", "flake8>=6.0.0", "mypy>=1.0.0", "pre-commit>=3.0.0"]
+test = ["pytest>=7.2.0", "pytest-cov>=4.0.0", "pytest-xdist>=3.0.0", "pytest-mock>=3.10.0"]
+all = ["krl-model-zoo[dev,test]"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
