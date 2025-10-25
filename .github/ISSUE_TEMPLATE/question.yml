@@ -1,0 +1,30 @@
+---
+name: Question
+about: sk a question about usage, documentation, or best practices
+title: '[QUSTION] '
+labels: ['question']
+assignees: []
+---
+
+## Question
+<!-- Your question here -->
+
+## ontext
+<!-- What are you trying to achieve? -->
+
+## What I've Tried
+<!-- What have you already attempted? -->
+
+## Relevant ode (Optional)
+```python
+# Your code here
+```
+
+## dditional Information
+- **Model/omain**: [e.g., RIM, GRH, Regional]
+- **ocumentation**: [Have you checked the docs? Which page?]
+
+## hecklist
+- [ ] I have searched existing issues and discussions
+- [ ] I have reviewed the documentation
+- [ ] I have provided enough context for others to understand my question

@@ -1,0 +1,40 @@
+---
+name: ug Report
+about: Report a bug or unexpected behavior
+title: '[UG] '
+labels: ['bug']
+assignees: []
+---
+
+## escription
+<!--  clear and concise description of the bug -->
+
+## Steps to Reproduce
+. 
+2. 
+3. 
+
+## xpected ehavior
+<!-- What you expected to happen -->
+
+## ctual ehavior
+<!-- What actually happened -->
+
+## ode xample
+```python
+# Minimal reproducible example
+```
+
+## nvironment
+- **OS**: [e.g., Ubuntu 22.4, macOS 3, Windows ]
+- **Python version**: [e.g., 3..]
+- **krl-model-zoo version**: [e.g., ..]
+- **Installation method**: [pip, conda, source]
+
+## dditional ontext
+<!-- dd any other context, screenshots, or error messages -->
+
+## hecklist
+- [ ] I have searched existing issues to ensure this is not a duplicate
+- [ ] I have provided a minimal reproducible example
+- [ ] I have included my environment details

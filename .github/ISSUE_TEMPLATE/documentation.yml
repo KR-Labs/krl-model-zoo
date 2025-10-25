@@ -1,0 +1,19 @@
+---
+name: ocumentation Issue
+about: Report issues with documentation (typos, unclear explanations, missing info)
+title: '[OS] '
+labels: ['documentation']
+assignees: []
+---
+
+## Location
+<!-- Which documentation page/section has the issue? Provide a link if possible -->
+
+## Issue escription
+<!-- What is wrong, unclear, or missing? -->
+
+## Suggested Improvement
+<!-- How could this be improved? -->
+
+## dditional ontext
+<!-- ny other context or examples -->

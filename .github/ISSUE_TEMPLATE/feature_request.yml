@@ -1,0 +1,32 @@
+---
+name: eature Request
+about: Suggest a new feature or enhancement
+title: '[TUR] '
+labels: ['enhancement']
+assignees: []
+---
+
+## Problem Statement
+<!-- Is your feature request related to a problem? Please describe. -->
+
+## Proposed Solution
+<!-- escribe the solution you'd like -->
+
+## lternative Solutions
+<!-- escribe any alternative solutions or features you've considered -->
+
+## Use ase
+<!-- escribe how this feature would be used and who would benefit -->
+
+## xample ode (Optional)
+```python
+# How you envision using this feature
+```
+
+## dditional ontext
+<!-- dd any other context, mockups, or references -->
+
+## hecklist
+- [ ] I have searched existing issues to ensure this is not a duplicate
+- [ ] This feature aligns with the project's scope (economic/regional modeling)
+- [ ] I have considered backward compatibility

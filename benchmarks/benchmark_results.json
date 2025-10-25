@@ -1,0 +1,615 @@
+{
+  "metadata": {
+    "timestamp": "2025-10-24T21:53:04.086097",
+    "dataset_sizes": [
+      100,
+      500,
+      1000,
+      2500,
+      5000
+    ],
+    "n_runs": 5
+  },
+  "results": {
+    "garch": [
+      {
+        "model": "garch",
+        "n_obs": 100,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      },
+      {
+        "model": "garch",
+        "n_obs": 500,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      },
+      {
+        "model": "garch",
+        "n_obs": 1000,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      },
+      {
+        "model": "garch",
+        "n_obs": 2500,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      },
+      {
+        "model": "garch",
+        "n_obs": 5000,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      }
+    ],
+    "egarch": [
+      {
+        "model": "egarch",
+        "n_obs": 100,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      },
+      {
+        "model": "egarch",
+        "n_obs": 500,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      },
+      {
+        "model": "egarch",
+        "n_obs": 1000,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      },
+      {
+        "model": "egarch",
+        "n_obs": 2500,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      },
+      {
+        "model": "egarch",
+        "n_obs": 5000,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      }
+    ],
+    "gjr_garch": [
+      {
+        "model": "gjr_garch",
+        "n_obs": 100,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      },
+      {
+        "model": "gjr_garch",
+        "n_obs": 500,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      },
+      {
+        "model": "gjr_garch",
+        "n_obs": 1000,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      },
+      {
+        "model": "gjr_garch",
+        "n_obs": 2500,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      },
+      {
+        "model": "gjr_garch",
+        "n_obs": 5000,
+        "fit_times": [],
+        "predict_times": [],
+        "memory_peak_mb": [],
+        "converged": [],
+        "fit_time_mean": NaN,
+        "fit_time_std": NaN,
+        "predict_time_mean": NaN,
+        "predict_time_std": NaN,
+        "memory_mean_mb": NaN,
+        "convergence_rate": 0.0
+      }
+    ],
+    "kalman_filter": [
+      {
+        "model": "kalman_filter",
+        "n_obs": 100,
+        "fit_times": [
+          0.014899458008585498,
+          0.013833833989338018,
+          0.013607708999188617,
+          0.013648374995682389,
+          0.014280167000833899
+        ],
+        "predict_times": [
+          0.00023258400324266404,
+          0.000250459008384496,
+          0.0002012089971685782,
+          0.00019495798915158957,
+          0.00019700000120792538
+        ],
+        "memory_peak_mb": [
+          0.1602497100830078,
+          0.15725231170654297,
+          0.1550436019897461,
+          0.1550130844116211,
+          0.15511226654052734
+        ],
+        "converged": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "fit_time_mean": 0.014053908598725684,
+        "fit_time_std": 0.00048541345027930405,
+        "predict_time_mean": 0.00021524199983105063,
+        "predict_time_std": 2.228057243662023e-05,
+        "memory_mean_mb": 0.15653419494628906,
+        "convergence_rate": 1.0
+      },
+      {
+        "model": "kalman_filter",
+        "n_obs": 500,
+        "fit_times": [
+          0.07058995799161494,
+          0.06914783299725968,
+          0.06926274999568705,
+          0.06894529100100044,
+          0.06883816600020509
+        ],
+        "predict_times": [
+          0.00021129200467839837,
+          0.00023591599892824888,
+          0.00020366700482554734,
+          0.00020808300178032368,
+          0.00020095800573471934
+        ],
+        "memory_peak_mb": [
+          0.7686786651611328,
+          0.7683515548706055,
+          0.7683515548706055,
+          0.7683515548706055,
+          0.7683515548706055
+        ],
+        "converged": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "fit_time_mean": 0.06935679959715343,
+        "fit_time_std": 0.0006342731471265983,
+        "predict_time_mean": 0.00021198320318944753,
+        "predict_time_std": 1.2483446418614354e-05,
+        "memory_mean_mb": 0.7684169769287109,
+        "convergence_rate": 1.0
+      },
+      {
+        "model": "kalman_filter",
+        "n_obs": 1000,
+        "fit_times": [
+          0.14462391700362787,
+          0.1618319999979576,
+          0.15205445799801964,
+          0.14102745900163427,
+          0.1410933340084739
+        ],
+        "predict_times": [
+          0.00021541700698435307,
+          0.0002693330025067553,
+          0.00023120800324250013,
+          0.000213916995562613,
+          0.00021666601242031902
+        ],
+        "memory_peak_mb": [
+          1.5372333526611328,
+          1.537348747253418,
+          1.5375490188598633,
+          1.5369815826416016,
+          1.5369367599487305
+        ],
+        "converged": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "fit_time_mean": 0.14812623360194266,
+        "fit_time_std": 0.007942285294305348,
+        "predict_time_mean": 0.00022930820414330811,
+        "predict_time_std": 2.095363162936741e-05,
+        "memory_mean_mb": 1.5372098922729491,
+        "convergence_rate": 1.0
+      },
+      {
+        "model": "kalman_filter",
+        "n_obs": 2500,
+        "fit_times": [
+          0.3623091659974307,
+          0.36081454099621624,
+          0.3612137089949101,
+          0.3594525000080466,
+          0.35615087499900255
+        ],
+        "predict_times": [
+          0.00022449999232776463,
+          0.00023854199389461428,
+          0.00022841600002720952,
+          0.00025829199876170605,
+          0.0002663750055944547
+        ],
+        "memory_peak_mb": [
+          3.836763381958008,
+          3.8362836837768555,
+          3.8362836837768555,
+          3.8362836837768555,
+          3.8362836837768555
+        ],
+        "converged": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "fit_time_mean": 0.3599881581991212,
+        "fit_time_std": 0.0021252591623510293,
+        "predict_time_mean": 0.00024322499812114983,
+        "predict_time_std": 1.6460863582515836e-05,
+        "memory_mean_mb": 3.836379623413086,
+        "convergence_rate": 1.0
+      },
+      {
+        "model": "kalman_filter",
+        "n_obs": 5000,
+        "fit_times": [
+          0.7311350000090897,
+          0.7634877079981379,
+          0.7864364999986719,
+          0.7312066670128843,
+          0.7311074169992935
+        ],
+        "predict_times": [
+          0.00023170899657998234,
+          0.00028704099531751126,
+          0.0002349580026930198,
+          0.0002295419981237501,
+          0.00023483399127144367
+        ],
+        "memory_peak_mb": [
+          7.674379348754883,
+          7.674128532409668,
+          7.67437744140625,
+          7.673944473266602,
+          7.673944473266602
+        ],
+        "converged": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "fit_time_mean": 0.7486746584036155,
+        "fit_time_std": 0.0226572788715722,
+        "predict_time_mean": 0.00024361679679714144,
+        "predict_time_std": 2.1806737807771988e-05,
+        "memory_mean_mb": 7.6741548538208,
+        "convergence_rate": 1.0
+      }
+    ],
+    "local_level": [
+      {
+        "model": "local_level",
+        "n_obs": 100,
+        "fit_times": [
+          0.5368397499987623,
+          0.5418983330018818,
+          0.5443030419992283,
+          0.5312182079942431,
+          0.529588874996989
+        ],
+        "predict_times": [
+          0.0002119999990100041,
+          0.0002128329942934215,
+          0.00025691698829177767,
+          0.00020287500228732824,
+          0.00020304200006648898
+        ],
+        "memory_peak_mb": [
+          0.18894290924072266,
+          0.155517578125,
+          0.15280437469482422,
+          0.15254783630371094,
+          0.15258121490478516
+        ],
+        "converged": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "fit_time_mean": 0.5367696415982209,
+        "fit_time_std": 0.005752257580193209,
+        "predict_time_mean": 0.0002175333967898041,
+        "predict_time_std": 2.014273398818811e-05,
+        "memory_mean_mb": 0.1604787826538086,
+        "convergence_rate": 1.0
+      },
+      {
+        "model": "local_level",
+        "n_obs": 500,
+        "fit_times": [
+          3.1218754579895176,
+          3.106366167005035,
+          3.2095474999950966,
+          3.0935082910000347,
+          3.087164500000654
+        ],
+        "predict_times": [
+          0.00020395900355651975,
+          0.00021474999084603041,
+          0.00021216699678916484,
+          0.00022804200125392526,
+          0.00020970900368411094
+        ],
+        "memory_peak_mb": [
+          0.7287797927856445,
+          0.7325420379638672,
+          0.7302141189575195,
+          0.7284517288208008,
+          0.7282133102416992
+        ],
+        "converged": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "fit_time_mean": 3.1236923831980676,
+        "fit_time_std": 0.04454203798147525,
+        "predict_time_mean": 0.00021372539922595024,
+        "predict_time_std": 7.999467698424854e-06,
+        "memory_mean_mb": 0.7296401977539062,
+        "convergence_rate": 1.0
+      },
+      {
+        "model": "local_level",
+        "n_obs": 1000,
+        "fit_times": [
+          7.169728624998243,
+          6.234123624992208,
+          6.208847457994125,
+          6.234763250002288,
+          6.255298375006532
+        ],
+        "predict_times": [
+          0.00023058299848344177,
+          0.00022175000049173832,
+          0.0002082090068142861,
+          0.00021283300884533674,
+          0.0002116249961545691
+        ],
+        "memory_peak_mb": [
+          1.4551267623901367,
+          1.4525585174560547,
+          1.4512872695922852,
+          1.4514389038085938,
+          1.4511232376098633
+        ],
+        "converged": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "fit_time_mean": 6.420552266598679,
+        "fit_time_std": 0.3748776301025601,
+        "predict_time_mean": 0.0002170000021578744,
+        "predict_time_std": 8.13137620929421e-06,
+        "memory_mean_mb": 1.4523069381713867,
+        "convergence_rate": 1.0
+      },
+      {
+        "model": "local_level",
+        "n_obs": 2500,
+        "fit_times": [
+          19.724725708001642,
+          20.109674874998746,
+          20.714007375005167,
+          19.943877875004546,
+          20.15120933399885
+        ],
+        "predict_times": [
+          0.0002237919979961589,
+          0.00023616699036210775,
+          0.00024220799969043583,
+          0.0002284579968545586,
+          0.00022895900474395603
+        ],
+        "memory_peak_mb": [
+          3.6131362915039062,
+          3.6137466430664062,
+          3.61773681640625,
+          3.615886688232422,
+          3.6142263412475586
+        ],
+        "converged": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "fit_time_mean": 20.12869903340179,
+        "fit_time_std": 0.32887924690152226,
+        "predict_time_mean": 0.00023191679792944342,
+        "predict_time_std": 6.491489640441101e-06,
+        "memory_mean_mb": 3.6149465560913088,
+        "convergence_rate": 1.0
+      },
+      {
+        "model": "local_level",
+        "n_obs": 5000,
+        "fit_times": [
+          47.17164349999803,
+          46.54776379199757,
+          47.48128925000492,
+          46.28829129200312,
+          45.821040291004465
+        ],
+        "predict_times": [
+          0.0013376249989960343,
+          0.0002511669881641865,
+          0.00025875000574160367,
+          0.00024516700068488717,
+          0.0002819159999489784
+        ],
+        "memory_peak_mb": [
+          7.226395606994629,
+          7.229497909545898,
+          7.228989601135254,
+          7.228459358215332,
+          7.230690002441406
+        ],
+        "converged": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "fit_time_mean": 46.66200562500162,
+        "fit_time_std": 0.59848019414363,
+        "predict_time_mean": 0.000474924998707138,
+        "predict_time_std": 0.0004315302484464026,
+        "memory_mean_mb": 7.228806495666504,
+        "convergence_rate": 1.0
+      }
+    ]
+  }
+}

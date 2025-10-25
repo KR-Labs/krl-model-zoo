@@ -27,11 +27,11 @@ KRL Model Zoo provides battle-tested implementations of econometric and machine 
 
 ### Key Features
 
-✨ **Unified API** - Consistent interface across all models  
+ **Unified API** - Consistent interface across all models  
 ⚡ **Production-Ready** - Comprehensive validation and error handling  
 🔒 **Type-Safe** - Full type hints and pydantic validation  
-📊 **Rich Output** - Automatic plots, tables, and diagnostics  
-🚀 **Performant** - Optimized implementations with caching  
+ **Rich Output** - Automatic plots, tables, and diagnostics  
+ **Performant** - Optimized implementations with caching  
 🧪 **Well-Tested** - >90% test coverage  
 📚 **Well-Documented** - Extensive examples and tutorials  
 
@@ -255,4 +255,4 @@ This project is licensed under the **Apache License 2.0** - see [LICENSE](LICENS
 
 ---
 
-**Built with ❤️ by [KR-Labs Foundation](https://krlabs.dev)**
+**Built with ❤ by [KR-Labs Foundation](https://krlabs.dev)**

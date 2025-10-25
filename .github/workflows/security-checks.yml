@@ -81,17 +81,17 @@ jobs:
           
           # Check if license is detected
           if licensee detect . | grep -q "License: None"; then
-            echo "❌ No license detected!"
+            echo " No license detected!"
             exit 1
           fi
           
           # Check for GPL licenses (not allowed in our stack)
           if licensee detect . | grep -qi "gpl"; then
-            echo "❌ GPL license detected - not compatible with our licensing strategy!"
+            echo " GPL license detected - not compatible with our licensing strategy!"
             exit 1
           fi
           
-          echo "✅ License compliance check passed"
+          echo " License compliance check passed"
       
       - name: Upload Licensee report
         uses: actions/upload-artifact@v4

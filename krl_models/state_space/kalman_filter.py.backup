@@ -1,0 +1,637 @@
+"""
+Kalman Filter Implementation for State Space Models
+
+This module implements the Kalman Filter algorithm for linear Gaussian state space models,
+providing filtering, smoothing, and parameter estimation capabilities.
+
+State Space Representation:
+    State Equation:     x_t = F_t * x_{t-1} + B_t * u_t + w_t,  w_t ~ N(0, Q_t)
+    Observation Equation: y_t = H_t * x_t + D_t * u_t + v_t,  v_t ~ N(0, R_t)
+
+Where:
+    x_t: State vector at time t (n_states,)
+    y_t: Observation vector at time t (n_obs,)
+    u_t: Control/exogenous input vector (optional)
+    F_t: State transition matrix (n_states, n_states)
+    H_t: Observation matrix (n_obs, n_states)
+    B_t: Control input matrix (optional)
+    D_t: Observation control matrix (optional)
+    Q_t: Process noise covariance (n_states, n_states)
+    R_t: Observation noise covariance (n_obs, n_obs)
+
+The Kalman Filter provides:
+    - Filtering: Estimate current state given observations up to current time
+    - Prediction: Forecast future states
+    - Smoothing: Estimate all states given all observations (backward pass)
+    - Log-likelihood: For parameter estimation via Maximum Likelihood
+
+Author: KR Labs
+Date: October 2024
+"""
+
+from typing import Dict, List, Optional, Tuple, Any
+import numpy as np
+import pandas as pd
+from dataclasses import dataclass
+
+from krl_core.base_model import BaseModel, ModelMeta
+from krl_core.results import ForecastResult
+
+
+@dataclass
+class KalmanFilterState:
+    """
+    Container for Kalman Filter state estimates and covariances.
+    
+    Attributes:
+        x: State estimate (n_states,)
+        P: State covariance matrix (n_states, n_states)
+        x_pred: Predicted state (before update)
+        P_pred: Predicted covariance (before update)
+        innovation: Measurement innovation (y - H*x_pred)
+        innovation_cov: Innovation covariance (H*P_pred*H' + R)
+        K: Kalman gain matrix
+    """
+    x: np.ndarray  # State estimate
+    P: np.ndarray  # State covariance
+    x_pred: Optional[np.ndarray] = None  # Predicted state
+    P_pred: Optional[np.ndarray] = None  # Predicted covariance
+    innovation: Optional[np.ndarray] = None  # y - H*x_pred
+    innovation_cov: Optional[np.ndarray] = None  # S = H*P_pred*H' + R
+    K: Optional[np.ndarray] = None  # Kalman gain
+
+
+class KalmanFilter(BaseModel):
+    """
+    Kalman Filter for Linear Gaussian State Space Models.
+    
+    Implements the complete Kalman Filter algorithm including:
+    - Forward filtering (estimate states given observations up to t)
+    - Prediction (forecast future states)
+    - Backward smoothing (optimal state estimates given all data)
+    - Log-likelihood computation (for MLE parameter estimation)
+    
+    The filter assumes time-invariant system matrices by default, but supports
+    time-varying matrices if provided as lists/arrays.
+    
+    Example:
+        >>> # Create Kalman Filter for local level model
+        >>> kf = KalmanFilter(
+        ...     n_states=1,
+        ...     n_obs=1,
+        ...     F=np.array([[1.0]]),  # Random walk
+        ...     H=np.array([[1.0]]),  # Direct observation
+        ...     Q=np.array([[0.1]]),  # Process noise
+        ...     R=np.array([[0.5]]),  # Observation noise
+        ...     x0=np.array([0.0]),
+        ...     P0=np.array([[1.0]])
+        ... )
+        >>> result = kf.fit(data)
+        >>> forecast = kf.predict(steps=10)
+    """
+    
+    def __init__(
+        self,
+        n_states: int,
+        n_obs: int,
+        F: np.ndarray,
+        H: np.ndarray,
+        Q: np.ndarray,
+        R: np.ndarray,
+        x0: np.ndarray,
+        P0: np.ndarray,
+        B: Optional[np.ndarray] = None,
+        D: Optional[np.ndarray] = None,
+        name: str = "KalmanFilter",
+        version: str = "1.0.0",
+    ):
+        """
+        Initialize Kalman Filter with system matrices.
+        
+        Args:
+            n_states: Number of state variables
+            n_obs: Number of observation variables
+            F: State transition matrix (n_states, n_states)
+            H: Observation matrix (n_obs, n_states)
+            Q: Process noise covariance (n_states, n_states)
+            R: Observation noise covariance (n_obs, n_obs)
+            x0: Initial state estimate (n_states,)
+            P0: Initial state covariance (n_states, n_states)
+            B: Control input matrix (optional)
+            D: Observation control matrix (optional)
+            name: Model name
+            version: Model version
+        
+        Raises:
+            ValueError: If matrix dimensions are inconsistent
+        """
+        super().__init__()
+        
+        # Validate dimensions
+        self._validate_dimensions(n_states, n_obs, F, H, Q, R, x0, P0, B, D)
+        
+        # Store dimensions
+        self._n_states = n_states
+        self._n_obs = n_obs
+        
+        # Store system matrices
+        self._F = F.copy()  # State transition
+        self._H = H.copy()  # Observation
+        self._Q = Q.copy()  # Process noise
+        self._R = R.copy()  # Observation noise
+        self._x0 = x0.copy()  # Initial state
+        self._P0 = P0.copy()  # Initial covariance
+        
+        # Optional control matrices
+        self._B = B.copy() if B is not None else None
+        self._D = D.copy() if D is not None else None
+        
+        # Storage for filtering/smoothing results
+        self._filtered_states: List[KalmanFilterState] = []
+        self._smoothed_states: List[KalmanFilterState] = []
+        self._observations: Optional[np.ndarray] = None
+        self._log_likelihood: Optional[float] = None
+        
+        # Model metadata
+        self.meta = ModelMeta(
+            name=name,
+            version=version,
+            description=f"Kalman Filter with {n_states} states and {n_obs} observations",
+        )
+        
+        self._is_fitted = False
+    
+    def _validate_dimensions(
+        self,
+        n_states: int,
+        n_obs: int,
+        F: np.ndarray,
+        H: np.ndarray,
+        Q: np.ndarray,
+        R: np.ndarray,
+        x0: np.ndarray,
+        P0: np.ndarray,
+        B: Optional[np.ndarray],
+        D: Optional[np.ndarray],
+    ) -> None:
+        """Validate that all matrix dimensions are consistent."""
+        # Check F (state transition)
+        if F.shape != (n_states, n_states):
+            raise ValueError(f"F must be ({n_states}, {n_states}), got {F.shape}")
+        
+        # Check H (observation)
+        if H.shape != (n_obs, n_states):
+            raise ValueError(f"H must be ({n_obs}, {n_states}), got {H.shape}")
+        
+        # Check Q (process noise)
+        if Q.shape != (n_states, n_states):
+            raise ValueError(f"Q must be ({n_states}, {n_states}), got {Q.shape}")
+        
+        # Check R (observation noise)
+        if R.shape != (n_obs, n_obs):
+            raise ValueError(f"R must be ({n_obs}, {n_obs}), got {R.shape}")
+        
+        # Check x0 (initial state)
+        if x0.shape != (n_states,):
+            raise ValueError(f"x0 must be ({n_states},), got {x0.shape}")
+        
+        # Check P0 (initial covariance)
+        if P0.shape != (n_states, n_states):
+            raise ValueError(f"P0 must be ({n_states}, {n_states}), got {P0.shape}")
+        
+        # Check B (control input) if provided
+        if B is not None:
+            if len(B.shape) != 2 or B.shape[0] != n_states:
+                raise ValueError(f"B must be ({n_states}, n_controls), got {B.shape}")
+        
+        # Check D (observation control) if provided
+        if D is not None:
+            if len(D.shape) != 2 or D.shape[0] != n_obs:
+                raise ValueError(f"D must be ({n_obs}, n_controls), got {D.shape}")
+        
+        # Check positive definiteness
+        if not self._is_positive_definite(Q):
+            raise ValueError("Q (process noise) must be positive semi-definite")
+        
+        if not self._is_positive_definite(R):
+            raise ValueError("R (observation noise) must be positive definite")
+        
+        if not self._is_positive_definite(P0):
+            raise ValueError("P0 (initial covariance) must be positive definite")
+    
+    @staticmethod
+    def _is_positive_definite(M: np.ndarray, tol: float = 1e-8) -> bool:
+        """Check if matrix is positive (semi-)definite via eigenvalues."""
+        try:
+            eigenvalues = np.linalg.eigvalsh(M)
+            return np.all(eigenvalues >= -tol)
+        except np.linalg.LinAlgError:
+            return False
+    
+    def fit(
+        self,
+        data: pd.DataFrame,
+        controls: Optional[np.ndarray] = None,
+        smoothing: bool = True,
+    ) -> ForecastResult:
+        """
+        Run Kalman Filter on observations.
+        
+        Performs forward filtering pass to estimate states at each time point.
+        Optionally performs backward smoothing pass for optimal state estimates.
+        Computes log-likelihood for the observed data.
+        
+        Args:
+            data: DataFrame with observations (T, n_obs)
+            controls: Optional control inputs (T, n_controls)
+            smoothing: If True, perform backward smoothing after filtering
+        
+        Returns:
+            ForecastResult with filtered (and smoothed) state estimates
+        
+        Raises:
+            ValueError: If data has wrong dimensions
+        """
+        # Process data
+        y = self._process_data(data)
+        T = len(y)
+        
+        if y.shape[1] != self._n_obs:
+            raise ValueError(f"Data must have {self._n_obs} columns, got {y.shape[1]}")
+        
+        # Validate controls if provided
+        if controls is not None:
+            if controls.shape[0] != T:
+                raise ValueError(f"Controls must have {T} rows, got {controls.shape[0]}")
+        
+        # Store observations
+        self._observations = y
+        
+        # Forward filtering pass
+        self._filtered_states = self._filter(y, controls)
+        
+        # Compute log-likelihood
+        self._log_likelihood = self._compute_log_likelihood()
+        
+        # Backward smoothing pass (optional)
+        if smoothing:
+            self._smoothed_states = self._smooth()
+        
+        self._is_fitted = True
+        
+        # Extract filtered and smoothed state estimates
+        filtered_x = np.array([state.x for state in self._filtered_states])
+        smoothed_x = np.array([state.x for state in self._smoothed_states]) if smoothing else None
+        
+        # Build payload
+        payload = {
+            'filtered_states': filtered_x,
+            'smoothed_states': smoothed_x,
+            'log_likelihood': self._log_likelihood,
+            'n_observations': T,
+            'state_labels': [f'state_{i}' for i in range(self._n_states)],
+        }
+        
+        # Build metadata
+        metadata = {
+            'model_name': self.meta.name,
+            'version': self.meta.version,
+            'n_states': self._n_states,
+            'n_obs': self._n_obs,
+            'smoothing_applied': smoothing,
+            'aic': 2 * self._count_parameters() - 2 * self._log_likelihood,
+            'bic': np.log(T) * self._count_parameters() - 2 * self._log_likelihood,
+        }
+        
+        return ForecastResult(
+            payload=payload,
+            metadata=metadata,
+            forecast_index=data.index,
+            forecast_values=filtered_x[:, 0] if self._n_states == 1 else filtered_x,
+            ci_lower=[],
+            ci_upper=[],
+        )
+    
+    def _filter(
+        self,
+        y: np.ndarray,
+        controls: Optional[np.ndarray] = None,
+    ) -> List[KalmanFilterState]:
+        """
+        Forward filtering pass (Kalman Filter).
+        
+        For each time step:
+            1. Predict: x_{t|t-1} = F * x_{t-1|t-1}
+            2. Update: x_{t|t} = x_{t|t-1} + K * (y_t - H * x_{t|t-1})
+        
+        Args:
+            y: Observations (T, n_obs)
+            controls: Optional control inputs (T, n_controls)
+        
+        Returns:
+            List of KalmanFilterState objects for each time step
+        """
+        T = len(y)
+        states = []
+        
+        # Initialize with prior
+        x = self._x0.copy()
+        P = self._P0.copy()
+        
+        for t in range(T):
+            # Get control input for this time step
+            u_t = controls[t] if controls is not None else None
+            
+            # === PREDICT STEP ===
+            # Predicted state: x_{t|t-1} = F * x_{t-1|t-1} + B * u_t
+            x_pred = self._F @ x
+            if self._B is not None and u_t is not None:
+                x_pred += self._B @ u_t
+            
+            # Predicted covariance: P_{t|t-1} = F * P_{t-1|t-1} * F' + Q
+            P_pred = self._F @ P @ self._F.T + self._Q
+            
+            # === UPDATE STEP ===
+            # Innovation (measurement residual): v_t = y_t - H * x_{t|t-1} - D * u_t
+            y_pred = self._H @ x_pred
+            if self._D is not None and u_t is not None:
+                y_pred += self._D @ u_t
+            
+            innovation = y[t] - y_pred
+            
+            # Innovation covariance: S_t = H * P_{t|t-1} * H' + R
+            S = self._H @ P_pred @ self._H.T + self._R
+            
+            # Kalman gain: K_t = P_{t|t-1} * H' * S_t^{-1}
+            try:
+                K = P_pred @ self._H.T @ np.linalg.inv(S)
+            except np.linalg.LinAlgError:
+                # Use pseudo-inverse if S is singular
+                K = P_pred @ self._H.T @ np.linalg.pinv(S)
+            
+            # Updated state: x_{t|t} = x_{t|t-1} + K_t * v_t
+            x = x_pred + K @ innovation
+            
+            # Updated covariance: P_{t|t} = (I - K_t * H) * P_{t|t-1}
+            # Use Joseph form for numerical stability
+            I_KH = np.eye(self._n_states) - K @ self._H
+            P = I_KH @ P_pred @ I_KH.T + K @ self._R @ K.T
+            
+            # Store state
+            states.append(KalmanFilterState(
+                x=x.copy(),
+                P=P.copy(),
+                x_pred=x_pred.copy(),
+                P_pred=P_pred.copy(),
+                innovation=innovation.copy(),
+                innovation_cov=S.copy(),
+                K=K.copy(),
+            ))
+        
+        return states
+    
+    def _smooth(self) -> List[KalmanFilterState]:
+        """
+        Backward smoothing pass (Rauch-Tung-Striebel smoother).
+        
+        Computes optimal state estimates x_{t|T} given all observations.
+        Uses backward recursion:
+            x_{t|T} = x_{t|t} + J_t * (x_{t+1|T} - x_{t+1|t})
+            P_{t|T} = P_{t|t} + J_t * (P_{t+1|T} - P_{t+1|t}) * J_t'
+        
+        Where J_t = P_{t|t} * F' * P_{t+1|t}^{-1} is the smoother gain.
+        
+        Returns:
+            List of smoothed KalmanFilterState objects
+        """
+        if not self._filtered_states:
+            raise RuntimeError("Must run filter() before smooth()")
+        
+        T = len(self._filtered_states)
+        smoothed = [None] * T
+        
+        # Initialize with last filtered state
+        smoothed[-1] = KalmanFilterState(
+            x=self._filtered_states[-1].x.copy(),
+            P=self._filtered_states[-1].P.copy(),
+        )
+        
+        # Backward pass
+        for t in range(T - 2, -1, -1):
+            # Get filtered estimates at t and t+1
+            x_filt = self._filtered_states[t].x
+            P_filt = self._filtered_states[t].P
+            x_pred_next = self._filtered_states[t + 1].x_pred
+            P_pred_next = self._filtered_states[t + 1].P_pred
+            
+            # Smoother gain: J_t = P_{t|t} * F' * P_{t+1|t}^{-1}
+            try:
+                J = P_filt @ self._F.T @ np.linalg.inv(P_pred_next)
+            except np.linalg.LinAlgError:
+                J = P_filt @ self._F.T @ np.linalg.pinv(P_pred_next)
+            
+            # Smoothed state: x_{t|T} = x_{t|t} + J_t * (x_{t+1|T} - x_{t+1|t})
+            x_smooth = x_filt + J @ (smoothed[t + 1].x - x_pred_next)
+            
+            # Smoothed covariance: P_{t|T} = P_{t|t} + J_t * (P_{t+1|T} - P_{t+1|t}) * J_t'
+            P_smooth = P_filt + J @ (smoothed[t + 1].P - P_pred_next) @ J.T
+            
+            smoothed[t] = KalmanFilterState(x=x_smooth, P=P_smooth)
+        
+        return smoothed
+    
+    def predict(
+        self,
+        steps: int = 10,
+        controls: Optional[np.ndarray] = None,
+    ) -> ForecastResult:
+        """
+        Forecast future states.
+        
+        Args:
+            steps: Number of steps ahead to forecast
+            controls: Optional future control inputs (steps, n_controls)
+        
+        Returns:
+            ForecastResult with predicted states and covariances
+        
+        Raises:
+            RuntimeError: If model not fitted
+        """
+        if not self._is_fitted:
+            raise RuntimeError("Model must be fitted before prediction. Call fit() first.")
+        
+        # Start from last filtered state
+        x = self._filtered_states[-1].x.copy()
+        P = self._filtered_states[-1].P.copy()
+        
+        # Forecast
+        forecasts = []
+        covariances = []
+        
+        for i in range(steps):
+            # Get control input if provided
+            u_t = controls[i] if controls is not None else None
+            
+            # Predict next state: x_{t+1} = F * x_t + B * u_t
+            x = self._F @ x
+            if self._B is not None and u_t is not None:
+                x += self._B @ u_t
+            
+            # Predict covariance: P_{t+1} = F * P_t * F' + Q
+            P = self._F @ P @ self._F.T + self._Q
+            
+            forecasts.append(x.copy())
+            covariances.append(P.copy())
+        
+        forecasts = np.array(forecasts)
+        covariances = np.array(covariances)
+        
+        # Generate forecast index
+        if self._observations is not None:
+            last_idx = len(self._observations) - 1
+            forecast_index = pd.RangeIndex(start=last_idx + 1, stop=last_idx + 1 + steps)
+        else:
+            forecast_index = pd.RangeIndex(steps)
+        
+        # Compute confidence intervals (95%)
+        z_score = 1.96
+        std_devs = np.sqrt([P.diagonal() for P in covariances])
+        ci_lower = forecasts - z_score * std_devs
+        ci_upper = forecasts + z_score * std_devs
+        
+        # Build payload
+        payload = {
+            'forecasts': forecasts,
+            'covariances': covariances,
+            'std_devs': std_devs,
+        }
+        
+        # Build metadata
+        metadata = {
+            'model_name': self.meta.name,
+            'version': self.meta.version,
+            'forecast_steps': steps,
+            'n_states': self._n_states,
+        }
+        
+        return ForecastResult(
+            payload=payload,
+            metadata=metadata,
+            forecast_index=forecast_index,
+            forecast_values=forecasts[:, 0] if self._n_states == 1 else forecasts,
+            ci_lower=ci_lower.tolist(),
+            ci_upper=ci_upper.tolist(),
+        )
+    
+    def _compute_log_likelihood(self) -> float:
+        """
+        Compute log-likelihood of observed data.
+        
+        Uses innovations and their covariances from filtering:
+            log L = -0.5 * Σ [log|S_t| + v_t' * S_t^{-1} * v_t + n*log(2π)]
+        
+        Returns:
+            Log-likelihood value
+        """
+        if not self._filtered_states:
+            raise RuntimeError("Must run filter() before computing log-likelihood")
+        
+        T = len(self._filtered_states)
+        log_lik = 0.0
+        
+        for state in self._filtered_states:
+            v = state.innovation  # Innovation
+            S = state.innovation_cov  # Innovation covariance
+            
+            # Log determinant of S
+            sign, logdet = np.linalg.slogdet(S)
+            if sign <= 0:
+                # Handle non-positive determinant
+                logdet = 0.0
+            
+            # Mahalanobis distance: v' * S^{-1} * v
+            try:
+                S_inv = np.linalg.inv(S)
+            except np.linalg.LinAlgError:
+                S_inv = np.linalg.pinv(S)
+            
+            mahalanobis = v @ S_inv @ v
+            
+            # Add to log-likelihood (negative for maximization)
+            log_lik += -0.5 * (logdet + mahalanobis + self._n_obs * np.log(2 * np.pi))
+        
+        return log_lik
+    
+    def _count_parameters(self) -> int:
+        """
+        Count number of free parameters in the model.
+        
+        For standard Kalman Filter:
+            - F: n_states^2 parameters
+            - Q: n_states * (n_states + 1) / 2 (symmetric)
+            - H: n_obs * n_states parameters
+            - R: n_obs * (n_obs + 1) / 2 (symmetric)
+        
+        Returns:
+            Number of parameters
+        """
+        n_params = 0
+        
+        # State transition F
+        n_params += self._n_states ** 2
+        
+        # Process noise Q (symmetric)
+        n_params += self._n_states * (self._n_states + 1) // 2
+        
+        # Observation H
+        n_params += self._n_obs * self._n_states
+        
+        # Observation noise R (symmetric)
+        n_params += self._n_obs * (self._n_obs + 1) // 2
+        
+        return n_params
+    
+    def get_filtered_states(self) -> Optional[np.ndarray]:
+        """
+        Get filtered state estimates.
+        
+        Returns:
+            Array of filtered states (T, n_states) or None if not fitted
+        """
+        if not self._filtered_states:
+            return None
+        return np.array([state.x for state in self._filtered_states])
+    
+    def get_smoothed_states(self) -> Optional[np.ndarray]:
+        """
+        Get smoothed state estimates.
+        
+        Returns:
+            Array of smoothed states (T, n_states) or None if not smoothed
+        """
+        if not self._smoothed_states:
+            return None
+        return np.array([state.x for state in self._smoothed_states])
+    
+    def get_filtered_covariances(self) -> Optional[np.ndarray]:
+        """
+        Get filtered state covariances.
+        
+        Returns:
+            Array of filtered covariances (T, n_states, n_states) or None
+        """
+        if not self._filtered_states:
+            return None
+        return np.array([state.P for state in self._filtered_states])
+    
+    def get_innovations(self) -> Optional[np.ndarray]:
+        """
+        Get measurement innovations (one-step-ahead forecast errors).
+        
+        Returns:
+            Array of innovations (T, n_obs) or None if not fitted
+        """
+        if not self._filtered_states:
+            return None
+        return np.array([state.innovation for state in self._filtered_states])
