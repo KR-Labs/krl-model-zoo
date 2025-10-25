@@ -1,371 +1,307 @@
-# KRAnalytics
+---
 
-**Open-Source Socioeconomic Data Science Framework**
+# KR-Labs Model Zoo  
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org/)
-[![Package](https://img.shields.io/badge/Package-v1.0.0-blue)](#installation)
+**Open-Source Socioeconomic Intelligence for a Better Future**  
+
+KR-Labs Model Zoo™ is an open, collaborative repository of socioeconomic models, tools, and tutorials designed to help researchers, policymakers, and organizations understand and respond to real-world challenges through data.  
+
+This initiative bridges machine learning, public data, and human insight—turning complex social and economic signals into practical tools for equitable decision-making.  
 
 ---
 
-## Overview
+## Purpose  
 
-KRAnalytics is an open-source analytics framework for socioeconomic data science, designed to make advanced analytics accessible to researchers, policymakers, and data scientists.
-
-### What Can You Do With KRAnalytics?
-
-- ** Analyze Socioeconomic Data** - Income inequality, employment trends, housing markets, health outcomes, and more
-- ** Build Predictive Models** - Use state-of-the-art machine learning for forecasting and pattern detection
-- ** Create Interactive Visualizations** - Generate publication-quality charts with our ML-driven visualization engine
-- ** Manage API Keys Securely** - Built-in secure credential management for government data APIs
-- ** Ensure Reproducibility** - Complete provenance tracking and execution logging
-
-### Key Capabilities
-
-- **Multi-Domain Analytics** - Ready-to-use workflows for income, employment, education, health, housing, and inequality analysis
-- **Advanced ML Algorithms** - XGBoost, Random Forest, Neural Networks, Time Series Forecasting, Clustering, and more
-- **Real API Integration** - Direct connections to Census, BLS, FRED, BEA, and other government data sources
-- **Interactive Dashboards** - Plotly-powered visualizations with automatic chart selection
-- **Academic Standards** - Proper citations, reproducibility packages, and provenance tracking
+The Model Zoo exists to make **responsible, reproducible, and actionable analytics** accessible to everyone working toward economic resilience and social progress.  
+We believe data science should empower—not obscure—public good.  
 
 ---
 
-## Quick Start
+## What You Can Do  
 
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/KR-Labs/KRAnalytics.git
-cd KRAnalytics
-
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install the package
-make install-dev
-# Or: pip install -e ".[dev,ml,viz]"
-
-# Verify installation
-python -c "from kranalytics import __version__; print(f' KRAnalytics v{__version__} installed')"
-```
-
-### Your First Analysis
-
-```python
-from kranalytics.utils.plotly_visualization_engine import PlotlyVisualizationEngine
-from kranalytics.utils.api_key_manager import load_api_key
-import pandas as pd
-
-# Load API key securely (no hardcoding!)
-census_key = load_api_key('CENSUS_API_KEY')
-
-# Your analysis code here...
-# (See examples/ folder for complete workflows)
-
-# Create visualizations automatically
-viz_engine = PlotlyVisualizationEngine()
-charts = viz_engine.generate_tier_visualizations(
-    data=your_dataframe,
-    tier_type="tier_2",
-    analysis_focus="income_analysis"
-)
-
-# Display charts
-for chart in charts:
-    chart.show()
-```
+- **Explore Real-World Use Cases:** Analyze housing affordability, labor markets, income trends, or health disparities.  
+- **Build Insightful Models:** Use pre-built, transparent ML frameworks for forecasting, clustering, or causal inference.  
+- **Visualize with Purpose:** Create interactive dashboards and visual narratives that communicate data with clarity.  
+- **Collaborate and Contribute:** Share new models, tutorials, or datasets with a growing global community of analysts and researchers.  
 
 ---
 
-## Features
+## Why It Matters  
 
-###  Secure API Management
+The KR-Labs Model Zoo is not just code—it’s a living ecosystem of public-interest intelligence.  
+By combining open data with ethical AI, it enables:  
 
-Never hardcode credentials again. KRAnalytics provides secure API key management:
-
-```python
-from kranalytics.utils.api_key_manager import load_api_key
-
-# Loads from environment variables or secure config file
-api_key = load_api_key('YOUR_API_NAME')
-```
-
-###  ML-Driven Visualizations
-
-Automatic chart generation based on your data characteristics:
-
-```python
-from kranalytics.utils.plotly_visualization_engine import PlotlyVisualizationEngine
-
-viz_engine = PlotlyVisualizationEngine()
-charts = viz_engine.generate_tier_visualizations(
-    data=df,
-    tier_type="tier_1",  # descriptive, predictive, clustering, etc.
-    analysis_focus="employment",
-    domain="Labor Markets"
-)
-```
-
-###  Advanced Machine Learning
-
-Pre-configured pipelines for common socioeconomic analyses:
-
-- **Predictive Modeling** - Income prediction, employment forecasting, health outcome estimation
-- **Time Series Analysis** - ARIMA, Prophet, exponential smoothing for trend forecasting
-- **Clustering Analysis** - k-means, DBSCAN, hierarchical clustering for pattern discovery
-- **Causal Inference** - Difference-in-differences, propensity score matching for policy evaluation
-- **Ensemble Methods** - XGBoost, Random Forest, Gradient Boosting for robust predictions
-
-###  Example Notebooks
-
-Learn by example with our tutorial notebooks:
-
-```
-notebooks/
- examples/           # Getting started tutorials
-    01_basic_income_analysis.ipynb
-    02_employment_forecasting.ipynb
-    03_housing_market_clustering.ipynb
-    04_health_disparity_analysis.ipynb
- templates/          # Customizable templates
-     predictive_model_template.ipynb
-     time_series_template.ipynb
-     clustering_template.ipynb
-```
+- **Evidence-based policy decisions** grounded in real data.  
+- **Community research collaboration** across academia, government, and nonprofit sectors.  
+- **Education and upskilling** in applied machine learning and responsible analytics.  
 
 ---
 
-## Supported Data Sources
+## Getting Started  
 
-### Government APIs (Free Registration Required)
+1. **Clone the Repository:**  
+   ```bash
+   git clone https://github.com/KR-Labs/krl-model-zoo.git
+   cd krl-model-zoo
+   ```  
 
-- ** U.S. Census Bureau** - Demographics, income, poverty, housing
-- ** Bureau of Labor Statistics** - Employment, wages, unemployment
-- ** Federal Reserve (FRED)** - Macroeconomic indicators, interest rates
-- ** Bureau of Economic Analysis** - GDP, trade, national accounts
+2. **Install Dependencies:**  
+   ```bash
+   make install-dev
+   ```  
 
-### Optional Enhanced Data Sources
+3. **Launch Tutorials:**  
+   Open the `examples/notebooks/` folder to explore real-world, guided workflows in income, housing, employment, and health analytics.  
 
-- ** National Center for Education Statistics** - Education outcomes
-- ** FBI Crime Data API** - Crime statistics
-- ** NOAA Climate API** - Weather and climate data
-- ** HUD Fair Market Rent** - Housing affordability data
-
-**Getting API Keys:**
-- [Census API Key](https://api.census.gov/data/key_signup.html) (Free)
-- [BLS API Key](https://www.bls.gov/developers/home.htm) (Free)
-- [FRED API Key](https://fred.stlouisfed.org/docs/api/api_key.html) (Free)
-- [BEA API Key](https://apps.bea.gov/api/signup/) (Free)
+4. **Engage with the Community:**  
+   - Join [GitHub Discussions](https://github.com/KR-Labs/krl-model-zoo/discussions)  
+   - Share insights, tutorials, and improvements  
 
 ---
 
-## Documentation
+## Model Domains  
 
-###  Quick References
+- **Labor & Employment** – Track and forecast workforce trends  
+- **Income & Inequality** – Analyze income distribution and equity dynamics  
+- **Housing & Urban Development** – Model affordability, displacement, and growth  
+- **Health & Well-being** – Explore determinants of health outcomes  
+- **Education & Opportunity** – Study access, attainment, and mobility  
 
-- **[Quick Start Guide](./docs/quick-references/QUICK_START_GUIDE.md)** - Get up and running in 5 minutes
-- **[API Setup Guide](./docs/api-documentation/)** - Configure your data sources
-- **[Visualization Guide](./docs/quick-references/ANALYTICS_ENGINE_QUICK_GUIDE.md)** - Create publication-quality charts
-
-###  Architecture
-
-- **[Platform Overview](./docs/architecture/PLATFORM_OVERVIEW.md)** - System architecture and design
-- **[Package Structure](./docs/)** - Understanding the codebase organization
-
-###  Tutorials
-
-- **[Example Notebooks](./notebooks/examples/)** - Learn by doing
-- **[Templates](./notebooks/templates/)** - Customize for your analysis
+Each model aligns with public data from trusted sources like the U.S. Census Bureau, Bureau of Labor Statistics, and Federal Reserve.  
 
 ---
 
-## Use Cases
+## Community Engagement  
 
-###  Academic Research
+KR-Labs thrives on open collaboration. Contributing is simple:  
 
-- Analyze socioeconomic disparities across regions
-- Study employment trends and labor market dynamics
-- Investigate health outcome determinants
-- Examine housing affordability and displacement patterns
+- Fork the repository  
+- Improve tutorials or models  
+- Add new data integrations  
+- Submit pull requests  
 
-###  Policy Analysis
+See our [Contributing Guide](./CONTRIBUTING.md) for full details.  
 
-- Evaluate policy impacts with causal inference methods
-- Forecast economic indicators for planning
-- Identify underserved communities for resource allocation
-- Monitor inequality trends over time
-
-###  Data Science Education
-
-- Learn ML techniques with real-world socioeconomic data
-- Practice API integration and data pipelines
-- Develop interactive visualization skills
-- Build end-to-end analytics projects
-
-###  Nonprofit & Community Organizations
-
-- Demonstrate community needs with data
-- Support grant applications with evidence
-- Track program outcomes over time
-- Advocate for policy changes with analysis
+Community standards emphasize **integrity, transparency, and inclusivity** in all contributions.  
 
 ---
 
-## Contributing
+## Learning Resources  
 
-We welcome contributions! See [CONTRIBUTING.md](./docs/CONTRIBUTING.md) for guidelines on:
-
-- Setting up your development environment
-- Code quality standards
-- Testing requirements
-- Pull request process
-- Community standards
+- **User Guide:** [docs/USER_GUIDE.md](./docs/USER_GUIDE.md)  
+- **API Reference:** [docs/API_REFERENCE.md](./docs/API_REFERENCE.md)  
+- **Architecture Overview:** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)  
+- **Mathematical Formulations:** [docs/MATHEMATICAL_FORMULATIONS.md](./docs/MATHEMATICAL_FORMULATIONS.md)  
 
 ---
 
-## Development Tools
+## Ethical Foundation  
 
-### Makefile Commands
-
-```bash
-make install         # Install package
-make install-dev     # Install with development dependencies
-make test            # Run test suite
-make format          # Auto-format code (black, isort)
-make lint            # Run linting (flake8, mypy)
-make clean           # Clean build artifacts
-```
-
-### Pre-commit Hooks
-
-We use automated code quality checks:
-
-```bash
-# Install hooks
-pre-commit install
-
-# Run manually
-pre-commit run --all-files
-```
+KR-Labs operates under the principle that **data should serve humanity**.  
+We design with transparency, interpretability, and reproducibility at the core.  
+All models and tutorials adhere to open licensing standards and academic citation practices.  
 
 ---
 
-## Project Structure
+## Licensing  
 
-```
-KRAnalytics/
- src/kranalytics/              # Main package
-    utils/                    # Utility modules
-       plotly_visualization_engine.py
-       api_key_manager.py
-       kaggle_dataset_manager.py
-    ...
- notebooks/
-    examples/                 # Tutorial notebooks
-    templates/                # Customizable templates
- tests/                        # Test suite
- docs/                         # Documentation
- pyproject.toml                # Package configuration
- Makefile                      # Development automation
- README.md                     # This file
-```
+- **Code:** MIT License — open for reuse and extension.  
+- **Content:** CC-BY-SA-4.0 — free to share, adapt, and teach with attribution.  
+
+See [LICENSE](LICENSE) for details.  
 
 ---
 
-## Requirements
+## Citation  
 
-- **Python:** 3.9 or higher
-- **Dependencies:** See `pyproject.toml` for complete list
-- **Key Packages:**
-  - pandas, numpy - Data manipulation
-  - scikit-learn - Machine learning
-  - xgboost, lightgbm - Gradient boosting
-  - plotly - Interactive visualizations
-  - statsmodels - Statistical models
-  - requests - API integration
-
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
-
----
-
-## Acknowledgments
-
-### Data Sources
-
-- **U.S. Census Bureau** - Demographic and economic data
-- **Bureau of Labor Statistics** - Employment statistics
-- **Federal Reserve Economic Data** - Macroeconomic indicators
-- **Bureau of Economic Analysis** - National accounts
-
-### Open Source Libraries
-
-This project builds on excellent open-source tools:
-- **Scikit-learn, XGBoost, LightGBM** - Machine learning frameworks
-- **Plotly** - Interactive visualization library
-- **Pandas, NumPy** - Data manipulation tools
-- **Statsmodels** - Statistical modeling
-- **Requests** - HTTP library for API integration
-
----
-
-## Citation
-
-If you use KRAnalytics in your research, please cite:
+If you use the KR-Labs Model Zoo in your research or projects, please cite:  
 
 ```bibtex
-@software{kranalytics2025,
+@software{krmodelzoo2025,
   author = {Deloatch, Brandon},
-  title = {KRAnalytics: Open-Source Socioeconomic Data Science Framework},
+  title = {KR-Labs Model Zoo: Open Socioeconomic Analytics Framework},
   year = {2025},
   publisher = {KR-Labs},
-  url = {https://github.com/KR-Labs/KRAnalytics}
+  url = {https://github.com/KR-Labs/krl-model-zoo}
 }
 ```
 
 ---
 
-## Support & Community
+## Connect  
 
-- ** Documentation:** [docs/](./docs/)
-- ** Report Issues:** [GitHub Issues](https://github.com/KR-Labs/KRAnalytics/issues)
-- ** Discussions:** [GitHub Discussions](https://github.com/KR-Labs/KRAnalytics/discussions)
-- ** Email:** info@krlabs.dev
+- **Website:** [krlabs.dev](https://krlabs.dev)  
+- **Discussions:** [GitHub Discussions](https://github.com/KR-Labs/krl-model-zoo/discussions)  
+- **Email:** info@krlabs.dev  
 
----
-
-## Roadmap
-
-### Current Features (v1.0.0)
--  Core analytics framework
--  API integration modules
--  Visualization engine
--  Example notebooks
--  Comprehensive documentation
-
-### Planned Features
--  Additional example notebooks for more domains
--  Interactive web dashboard
--  Plugin system for custom data sources
--  Cloud deployment templates
--  Automated report generation
-
-See [docs/roadmaps/](./docs/roadmaps/) for detailed plans.
+Collaborate, learn, and build with us.  
+Together, we turn data into progress.  
 
 ---
 
-## Related Projects
-
-- **[Quipu Analytics Suite](https://github.com/QuipuAnalytics)** - Enterprise analytics platform
-- **[Analytics Model Matrix](./docs/)** - Comprehensive analytics framework documentation
+**KR-Labs™ | Open Intelligence for Public Good**  
+**Version:** 1.0.0 | **Last Updated:** October 2025 | **Status:** Production Ready  
 
 ---
 
-**Made with  by KR-Labs**
+---
 
-**Version:** 1.0.0 | **Last Updated:** October 2025 | **Status:** Production Ready
+# KRL Model Zoo  
+**Open Models. Trusted Intelligence. Shared Progress.**
+
+KRL Model Zoo™ is a modular, open-source framework for socioeconomic modeling—integrating econometric, machine learning, Bayesian, causal inference, and network analysis under one reproducible architecture.  
+Developed by **KR-Labs**, the platform standardizes model creation, validation, and deployment for public-interest analytics.
+
+---
+
+## Mission  
+
+We believe open intelligence should serve human progress.  
+The Model Zoo provides the foundations for responsible, transparent, and reproducible modeling—used by data scientists, policymakers, and institutions to explore trends, test interventions, and forecast outcomes with confidence.  
+
+---
+
+## Core Capabilities  
+
+- **Unified Architecture:** A common interface (`BaseModel`, `Result`, `Registry`) across all model families.  
+- **Reproducibility:** Deterministic hashing, provenance tracking, and transparent metadata ensure identical reruns.  
+- **Scalability:** Modular federation across econometric, causal, ML, Bayesian, and agent-based domains.  
+- **Visualization:** Native Plotly adapters for standardized, interactive outputs.  
+- **Community Collaboration:** Shared examples, curated datasets, and open contribution pathways.  
+
+---
+
+## Model Families  
+
+- **Econometric Models:** ARIMA, VAR, Cointegration  
+- **Causal Models:** DiD, IV, RCT, Synthetic Control  
+- **Machine Learning:** Random Forest, XGBoost, Neural Networks  
+- **Bayesian Models:** PyMC-based hierarchical systems  
+- **Network & Agent-Based Models:** System-level simulations of social and economic dynamics  
+
+Each model is built for **lineage, interpretability, and trust**—balancing academic rigor with practical application.  
+
+---
+
+## Why It Matters  
+
+The KRL Model Zoo transforms modeling into public infrastructure.  
+
+- **For Research:** Enables reproducible workflows across statistical and machine learning paradigms.  
+- **For Policy:** Empowers transparent, data-driven evaluations of social and economic interventions.  
+- **For Education:** Serves as a professional learning resource for quantitative and civic analysis.  
+
+By uniting diverse model types under one standard, KRL Model Zoo turns complexity into clarity and collaboration into progress.  
+
+---
+
+## Getting Started  
+
+1. **Clone the Repository**  
+   ```bash
+   git clone https://github.com/KR-Labs/krl-model-zoo.git
+   cd krl-model-zoo
+   make install-dev
+   ```
+2. **Explore Reference Notebooks**  
+   Visit `examples/notebooks/` for guided workflows—ARIMA, GARCH, Kalman Filter, and more.  
+3. **Engage with the Community**  
+   Join [GitHub Discussions](https://github.com/KR-Labs/krl-model-zoo/discussions) to share insights or propose models.  
+
+---
+
+## Governance Framework  
+
+The Model Zoo evolves through the **KR-Labs Gate Framework**, a structured release process ensuring transparency and scalability:  
+
+| Gate | Name | Description | Status |
+|------|------|--------------|---------|
+| **Gate 1** | Foundation | Core abstractions and architecture | Current |
+| **Gate 2** | Domain Models | Econometric, causal, and ML modules | In Development |
+| **Gate 3** | Ensembles | Meta-modeling and hybrid systems | Planned |
+| **Gate 4** | Research Extensions | Network, ABM, and advanced causal models | Planned |
+
+Each Gate represents a maturity milestone, balancing openness with production discipline.  
+
+---
+
+## Community & Collaboration  
+
+KRL-Labs thrives on shared intelligence.  
+Contributors from research, policy, and industry are invited to:  
+
+- Add new model classes or domain packages  
+- Extend validation pipelines and visualization adapters  
+- Submit documentation or educational tutorials  
+
+See the [Contributing Guide](./CONTRIBUTING.md) for participation details.  
+Community standards emphasize **integrity, transparency, and inclusivity** in every contribution.  
+
+---
+
+## Licensing  
+
+- **Core (Gate 1 – Foundation):** Apache 2.0 License (Open Source)  
+- **Future Gates (Domain Models):** Dual-licensed for research and enterprise use  
+
+See [LICENSE](LICENSE) for complete terms.  
+
+---
+
+## Citation  
+
+If you use the KRL Model Zoo in your research or professional work, please cite:  
+
+```bibtex
+@software{krmodelzoo2025,
+  author = {Deloatch, Brandon},
+  title = {KRL Model Zoo: Open Socioeconomic Modeling Framework},
+  year = {2025},
+  publisher = {KR-Labs},
+  url = {https://github.com/KR-Labs/krl-model-zoo}
+}
+```
+
+---
+
+## Contact  
+
+- **Website:** [krlabs.dev](https://krlabs.dev)  
+- **Documentation:** [docs.krlabs.dev/model-zoo](https://docs.krlabs.dev/model-zoo)  
+- **Discussions:** [GitHub Discussions](https://github.com/KR-Labs/krl-model-zoo/discussions)  
+- **Email:** support@krlabs.dev  
+
+Collaborate, learn, and build with us.  
+Together, we turn data into decisions—and decisions into progress.  
+
+---
+
+**KRL Model Zoo™ | Open Intelligence for Public Good**  
+**Version:** 1.0.0 *(Gate 1 – Foundation)*  
+**Status:** Production Ready  
+
+---
+
+<div align="center">
+
+### 📬 Connect With Us
+
+**Website:** [krlabs.dev](https://krlabs.dev) | **Email:** [info@krlabs.dev](mailto:info@krlabs.dev)  
+**GitHub:** [@KR-Labs](https://github.com/KR-Labs) | **Discussions:** [Join the conversation](https://github.com/KR-Labs/krl-model-zoo/discussions)
+
+---
+
+### 📄 Legal
+
+© 2025 KR-Labs. All rights reserved.  
+**KR-Labs™** and **KRL Model Zoo™** are trademarks of Quipu Research Labs, LLC,  
+a subsidiary of Sudiata Giddasira, Inc.
+
+Licensed under [Apache 2.0](./LICENSE) for open source use.  
+Content licensed under [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/) for documentation.
+
+**Made with ❤️ for researchers, policymakers, and communities building a better future through data.**
+
+</div>
+
+---
