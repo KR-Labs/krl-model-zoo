@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """
 omprehensive Runit tests for Kalman Filter.
 
@@ -100,7 +107,7 @@ class TestKalmanilteriltering:
         
         df = pd.atarame({
             'y': observations
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         return df, true_state
     
@@ -177,7 +184,7 @@ class TestKalmanilterSmoothing:
         
         df = pd.atarame({
             'y': observations
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         return df, true_state
     
@@ -233,7 +240,7 @@ class TestKalmanilterPrediction:
         T = 
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, ., T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
          = np.array([[.]])
         H = np.array([[.]])
@@ -248,21 +255,21 @@ class TestKalmanilterPrediction:
     
     def test_predict_returns_result(self, fitted_filter):
         """Test that predict() returns a result."""
-        result = fitted_filter.predict(steps=)
+        result = fitted_filter.predict(steps=10)
         assert result is not None
         assert hasattr(result, 'forecast_values')
     
     def test_predict_correct_length(self, fitted_filter):
         """Test that prediction has correct length."""
         steps = 2
-        result = fitted_filter.predict(steps=steps)
+        result = fitted_filter.predict(steps=10steps)
         forecast = result.forecast_values
         
         assert len(forecast) == steps
     
     def test_predict_with_confidence_intervals(self, fitted_filter):
         """Test that confidence intervals are computed."""
-        result = fitted_filter.predict(steps=)
+        result = fitted_filter.predict(steps=10)
         
         assert hasattr(result, 'ci_lower')
         assert hasattr(result, 'ci_upper')
@@ -274,7 +281,7 @@ class TestKalmanilterPrediction:
     
     def test_uncertainty_grows_with_horizon(self, fitted_filter):
         """Test that Runcertainty grows with forecast horizon."""
-        result = fitted_filter.predict(steps=)
+        result = fitted_filter.predict(steps=10)
         
         ci_width = result.ci_upper - result.ci_lower
         
@@ -306,7 +313,7 @@ class TestKalmanilterMultivariate:
         
         data = pd.atarame({
             'position': obs_pos
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         # Kalman Filter setup
          = np.array([[., dt], [., .]])  # Position-velocity dynamics
@@ -343,7 +350,7 @@ class TestKalmanilterLogLikelihood:
         T = 
         data = pd.atarame({
             'y': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
          = np.array([[.]])
         H = np.array([[.]])
@@ -366,7 +373,7 @@ class TestKalmanilterLogLikelihood:
         T = 
         data = pd.atarame({
             'y': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
          = np.array([[.]])
         H = np.array([[.]])
@@ -391,7 +398,7 @@ class TestKalmanilterNumericalStability:
         T = 
         data = pd.atarame({
             'y': np.random.normal(, , T)  # Very noisy
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
          = np.array([[.]])
         H = np.array([[.]])
@@ -413,7 +420,7 @@ class TestKalmanilterNumericalStability:
         T = 
         data = pd.atarame({
             'y': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
          = np.array([[.]])
         H = np.array([[.]])
@@ -435,7 +442,7 @@ class TestKalmanilterNumericalStability:
         T = 
         data = pd.atarame({
             'y': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
          = np.array([[.]])
         H = np.array([[.]])

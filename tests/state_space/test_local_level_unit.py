@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """
 omprehensive Runit tests for Local Level Model.
 
@@ -72,7 +79,7 @@ class TestLocalLevelMLstimation:
         
         df = pd.atarame({
             'y': observations
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         return df, level, sigma_eta, sigma_epsilon
     
@@ -108,7 +115,7 @@ class TestLocalLevelMLstimation:
         
         data = pd.atarame({
             'y': obs
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
@@ -123,7 +130,7 @@ class TestLocalLevelMLstimation:
         T = 2
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, ., T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
@@ -144,7 +151,7 @@ class TestLocalLevelixedParameters:
         T = 
         data = pd.atarame({
             'y': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         sigma_eta = .3
         sigma_epsilon = .
@@ -162,7 +169,7 @@ class TestLocalLevelixedParameters:
         T = 
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, , T))
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         # High process noise
         model = LocalLevelModel(sigma_eta=., sigma_epsilon=.)
@@ -191,7 +198,7 @@ class TestLocalLevelxtraction:
         T = 2
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, ., T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model = LocalLevelModel(Testimate_params=True)
         model.fit(data)
@@ -236,7 +243,7 @@ class TestLocalLevelecomposition:
         T = 2
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, ., T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model = LocalLevelModel(Testimate_params=True)
         model.fit(data)
@@ -295,7 +302,7 @@ class TestLocalLevelSNR:
         T = 
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, ., T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model = LocalLevelModel(Testimate_params=True)
         model.fit(data)
@@ -315,7 +322,7 @@ class TestLocalLevelSNR:
         T = 
         data = pd.atarame({
             'y': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model = LocalLevelModel(sigma_eta=sigma_eta, sigma_epsilon=sigma_epsilon)
         model.fit(data)
@@ -334,7 +341,7 @@ class TestLocalLevelSNR:
         # Generate noisy data
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, , T)) + np.random.normal(, ., T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model.fit(data)
         q = model.get_signal_to_noise_ratio()
@@ -352,7 +359,7 @@ class TestLocalLevelSNR:
         # Generate data
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model.fit(data)
         q = model.get_signal_to_noise_ratio()
@@ -370,7 +377,7 @@ class TestLocalLeveliagnostics:
         T = 2
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, ., T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
@@ -405,7 +412,7 @@ class TestLocalLeveldgeases:
         T = 2  # Very short
         data = pd.atarame({
             'y': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
@@ -419,7 +426,7 @@ class TestLocalLeveldgeases:
         T = 
         data = pd.atarame({
             'y': np.ones(T) * .  # onstant
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model = LocalLevelModel(Testimate_params=True)
         
@@ -441,7 +448,7 @@ class TestLocalLeveldgeases:
         
         data = pd.atarame({
             'y': trend + noise
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
@@ -459,7 +466,7 @@ class TestLocalLeveldgeases:
         T = 
         data = pd.atarame({
             'y': np.random.normal(, , T)  # Very high volatility
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
@@ -479,7 +486,7 @@ class TestLocalLevelPrediction:
         T = 2
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, ., T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         model = LocalLevelModel(Testimate_params=True)
         model.fit(data)
@@ -487,20 +494,20 @@ class TestLocalLevelPrediction:
     
     def test_predict_returns_result(self, fitted_model):
         """Test that predict() returns a result."""
-        result = fitted_model.predict(steps=)
+        result = fitted_model.predict(steps=10)
         assert result is not None
     
     def test_predict_correct_length(self, fitted_model):
         """Test that prediction has correct length."""
         steps = 2
-        result = fitted_model.predict(steps=steps)
+        result = fitted_model.predict(steps=10steps)
         
         forecast = result.forecast_values
         assert len(forecast) == steps
     
     def test_predict_with_confidence_intervals(self, fitted_model):
         """Test that confidence intervals are provided."""
-        result = fitted_model.predict(steps=)
+        result = fitted_model.predict(steps=10)
         
         assert hasattr(result, 'ci_lower')
         assert hasattr(result, 'ci_upper')

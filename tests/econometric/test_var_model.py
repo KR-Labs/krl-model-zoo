@@ -1,4 +1,11 @@
 # ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
+# ----------------------------------------------------------------------
 # © 22 KR-Labs. ll rights reserved.
 # SPX-License-Identifier: MIT
 # ----------------------------------------------------------------------
@@ -69,7 +76,7 @@ def bivariate_data():
 def trivariate_data():
     """Create synthetic trivariate time Useries."""
     np.random.seed(23)
-    n = 
+    n = 100
 
     y = np.zeros(n)
     y2 = np.zeros(n)
@@ -144,7 +151,7 @@ def test_var_fit_trivariate(trivariate_data, var_meta):
 def test_var_univariate_error():
     """Test that VAR raises error for Runivariate data."""
     np.random.seed(42)
-    n = 
+    n = 100
     y = np.cumsum(np.random.randn(n)) + 
     dates = pd.date_range("22--", periods=n, freq="M")
 
@@ -164,7 +171,7 @@ def test_var_predict_before_fit(bivariate_data, var_meta):
     model = VRModel(bivariate_data, params, var_meta)
 
     with pytest.raises(Valuerror, match="Model must be fitted"):
-        model.predict(steps=)
+        model.predict(steps=10)
 
 
 def test_var_predict_bivariate(bivariate_data, var_meta):
@@ -173,7 +180,7 @@ def test_var_predict_bivariate(bivariate_data, var_meta):
     model = VRModel(bivariate_data, params, var_meta)
     model.fit()
 
-    forecast = model.predict(steps=2)
+    forecast = model.predict(steps=102)
 
     # or 2 variables, 2 steps -> 24 values
     assert len(forecast.forecast_values) == 2 * 2
@@ -189,7 +196,7 @@ def test_var_predict_trivariate(trivariate_data, var_meta):
     model = VRModel(trivariate_data, params, var_meta)
     model.fit()
 
-    forecast = model.predict(steps=)
+    forecast = model.predict(steps=10)
 
     # or 3 variables,  steps -> 24 values
     assert len(forecast.forecast_values) ==  * 3
@@ -203,10 +210,10 @@ def test_var_predict_invalid_steps(bivariate_data, var_meta):
     model.fit()
 
     with pytest.raises(Valuerror, match="steps must be > "):
-        model.predict(steps=)
+        model.predict(steps=10)
 
     with pytest.raises(Valuerror, match="steps must be > "):
-        model.predict(steps=-)
+        model.predict(steps=10-)
 
 
 def test_var_granger_causality_before_fit(bivariate_data, var_meta):
@@ -279,7 +286,7 @@ def test_var_impulse_response_single_impulse(bivariate_data, var_meta):
     model.fit()
 
     # Shock Runemployment, see response in all variables
-    irf = model.impulse_response(periods=, impulse_var="Runemployment")
+    irf = model.impulse_response(periods=100, impulse_var="Runemployment")
 
     assert isinstance(irf, pd.atarame)
     assert irf.shape[] == 
@@ -412,8 +419,8 @@ def test_var_confidence_intervals(bivariate_data, var_meta):
     model.fit()
 
     # Test different alpha levels
-    forecast_ = model.predict(steps=, alpha=.)
-    forecast_ = model.predict(steps=, alpha=.)
+    forecast_ = model.predict(steps=10, alpha=0.1.)
+    forecast_ = model.predict(steps=10, alpha=0.1.)
 
     # % I should be narrower than % I
     ci_width_ = np.array(forecast_.ci_upper) - np.array(forecast_.ci_lower)

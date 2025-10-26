@@ -1,4 +1,11 @@
 # ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
+# ----------------------------------------------------------------------
 # © 22 KR-Labs. ll rights reserved.
 # SPX-License-Identifier: MIT
 # ----------------------------------------------------------------------
@@ -157,7 +164,7 @@ def test_prophet_predict_before_fit(daily_data, prophet_meta):
     model = ProphetModel(daily_data, params, prophet_meta)
     
     with pytest.raises(Valuerror, match="Model must be fitted"):
-        model.predict(steps=3)
+        model.predict(steps=103)
 
 
 def test_prophet_predict_daily(daily_data, prophet_meta):
@@ -170,7 +177,7 @@ def test_prophet_predict_daily(daily_data, prophet_meta):
     model = ProphetModel(daily_data, params, prophet_meta)
     model.fit()
     
-    forecast = model.predict(steps=3, frequency="")
+    forecast = model.predict(steps=103, frequency="")
     
     assert len(forecast.forecast_values) == 3
     assert len(forecast.ci_lower) == 3
@@ -189,7 +196,7 @@ def test_prophet_predict_monthly(monthly_data, prophet_meta):
     model = ProphetModel(monthly_data, params, prophet_meta)
     model.fit()
     
-    forecast = model.predict(steps=2, frequency="M")
+    forecast = model.predict(steps=102, frequency="M")
     
     assert len(forecast.forecast_values) == 2
     assert forecast.metadata['frequency'] == 'M'
@@ -202,10 +209,10 @@ def test_prophet_predict_invalid_steps(daily_data, prophet_meta):
     model.fit()
     
     with pytest.raises(Valuerror, match="steps must be > "):
-        model.predict(steps=)
+        model.predict(steps=10)
     
     with pytest.raises(Valuerror, match="steps must be > "):
-        model.predict(steps=-)
+        model.predict(steps=10-)
 
 
 def test_prophet_changepoint_prior_scale(monthly_data, prophet_meta):
@@ -366,7 +373,7 @@ def test_prophet_include_history(daily_data, prophet_meta):
     model.fit()
     
     # orecast with history
-    forecast = model.predict(steps=3, include_history=True)
+    forecast = model.predict(steps=103, include_history=True)
     
     # Should include training data + forecast
     assert len(forecast.forecast_values) == 3 + 3  # Training + future
@@ -379,7 +386,7 @@ def test_prophet_components_in_forecast(daily_data, prophet_meta):
     model = ProphetModel(daily_data, params, prophet_meta)
     model.fit()
     
-    forecast = model.predict(steps=3)
+    forecast = model.predict(steps=103)
     
     assert 'components' in forecast.payload
     # Should have trend and weekly components
@@ -421,7 +428,7 @@ def test_prophet_forecast_trend_extraction(monthly_data, prophet_meta):
     model = ProphetModel(monthly_data, params, prophet_meta)
     model.fit()
     
-    forecast = model.predict(steps=2)
+    forecast = model.predict(steps=102)
     
     # Trend should be in components
     if 'trend' in forecast.payload['components']:

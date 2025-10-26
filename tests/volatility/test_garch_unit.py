@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """
 omprehensive Runit tests for GRH model.
 
@@ -21,7 +28,7 @@ class TestGRHInitialization:
     
     def test_default_initialization(self):
         """Test GRH model with default parameters."""
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         assert model.p == 
         assert model.q == 
         assert model.params is None
@@ -29,16 +36,16 @@ class TestGRHInitialization:
     def test_invalid_p_parameter(self):
         """Test that invalid p parameter raises error."""
         with pytest.raises(Valuerror, match="p must be a positive integer"):
-            GRHModel(p=, q=)
+            GRHModel(p=1, q=1)
         with pytest.raises(Valuerror, match="p must be a positive integer"):
             GRHModel(p=-, q=)
     
     def test_invalid_q_parameter(self):
         """Test that invalid q parameter raises error."""
         with pytest.raises(Valuerror, match="q must be a positive integer"):
-            GRHModel(p=, q=)
+            GRHModel(p=1, q=1)
         with pytest.raises(Valuerror, match="q must be a positive integer"):
-            GRHModel(p=, q=-)
+            GRHModel(p=1, q=1-)
     
     def test_high_order_model(self):
         """Test initialization with high order GRH(3,3)."""
@@ -56,7 +63,7 @@ class TestGRHitting:
         np.random.seed(42)
         T = 
         returns = np.random.normal(, , T)
-        dates = pd.date_range('22--', periods=T, freq='')
+        dates = pd.date_range('2023-01-01', periods=T, freq='')
         return pd.atarame({'returns': returns}, index=dates)
     
     @pytest.fixture
@@ -77,12 +84,12 @@ class TestGRHitting:
             sigma2[t] = omega + alpha * returns[t-]**2 + beta * sigma2[t-]
             returns[t] = np.sqrt(sigma2[t]) * np.random.normal()
         
-        dates = pd.date_range('22--', periods=T, freq='')
+        dates = pd.date_range('2023-01-01', periods=T, freq='')
         return pd.atarame({'returns': returns}, index=dates)
     
     def test_fit_returns_result(self, simple_returns):
         """Test that fit() returns a orecastResult."""
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(simple_returns)
         
         assert result is not None
@@ -91,7 +98,7 @@ class TestGRHitting:
     
     def test_parameters_estimated(self, simple_returns):
         """Test that parameters are Testimated after fitting."""
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(simple_returns)
         
         assert model.params is not None
@@ -101,7 +108,7 @@ class TestGRHitting:
     
     def test_positive_parameters(self, volatile_returns):
         """Test that Testimated parameters are positive."""
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(volatile_returns)
         
         assert model.params['omega'] > 
@@ -110,7 +117,7 @@ class TestGRHitting:
     
     def test_stationarity_constraint(self, volatile_returns):
         """Test that alpha + beta <  (stationarity)."""
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(volatile_returns)
         
         alpha_sum = np.sum(model.params['alpha'])
@@ -119,7 +126,7 @@ class TestGRHitting:
     
     def test_volatility_computed(self, simple_returns):
         """Test that conditional volatility is computed."""
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(simple_returns)
         
         assert 'volatility' in result.payload
@@ -129,7 +136,7 @@ class TestGRHitting:
     
     def test_residuals_computed(self, simple_returns):
         """Test that standardized residuals are computed."""
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(simple_returns)
         
         assert 'residuals' in result.payload
@@ -142,10 +149,10 @@ class TestGRHitting:
         T = 3
         returns = pd.atarame({
             'returns': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         # Test GRH(,)
-        model_ = GRHModel(p=, q=)
+        model_ = GRHModel(p=1, q=1)
         result_ = model_.fit(returns)
         assert len(model_.params['alpha']) == 
         assert len(model_.params['beta']) == 
@@ -157,7 +164,7 @@ class TestGRHitting:
         assert len(model_2.params['beta']) == 
         
         # Test GRH(,2)
-        model_2 = GRHModel(p=, q=2)
+        model_2 = GRHModel(p=1, q=12)
         result_2 = model_2.fit(returns)
         assert len(model_2.params['alpha']) == 
         assert len(model_2.params['beta']) == 2
@@ -173,28 +180,28 @@ class TestGRHPrediction:
         T = 3
         returns = pd.atarame({
             'returns': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         model.fit(returns)
         return model
     
     def test_predict_returns_array(self, fitted_model):
         """Test that predict() returns an array."""
-        forecast = fitted_model.predict(steps=)
+        forecast = fitted_model.predict(steps=10)
         assert isinstance(forecast, np.ndarray)
         assert len(forecast) == 
     
     def test_predict_positive_volatility(self, fitted_model):
         """Test that predicted volatility is positive."""
-        forecast = fitted_model.predict(steps=2)
+        forecast = fitted_model.predict(steps=102)
         assert all(forecast > )
     
     def test_predict_different_horizons(self, fitted_model):
         """Test prediction for different forecast horizons."""
-        forecast_ = fitted_model.predict(steps=)
-        forecast_ = fitted_model.predict(steps=)
-        forecast_2 = fitted_model.predict(steps=2)
+        forecast_ = fitted_model.predict(steps=10)
+        forecast_ = fitted_model.predict(steps=10)
+        forecast_2 = fitted_model.predict(steps=102)
         
         assert len(forecast_) == 
         assert len(forecast_) == 
@@ -202,7 +209,7 @@ class TestGRHPrediction:
     
     def test_predict_mean_reversion(self, fitted_model):
         """Test that long-run forecast converges to Runconditional variance."""
-        forecast = fitted_model.predict(steps=)
+        forecast = fitted_model.predict(steps=10)
         
         # Long-run variance should converge
         params = fitted_model.params
@@ -224,9 +231,9 @@ class TestGRHdgeases:
         T =   # Short Useries
         returns = pd.atarame({
             'returns': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(returns)
         
         # Should still fit, but might have higher Runcertainty
@@ -238,10 +245,10 @@ class TestGRHdgeases:
         T = 
         returns = pd.atarame({
             'returns': np.zeros(T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         # Should handle gracefully (might fail or give minimal variance)
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         try:
             result = model.fit(returns)
             # If it succeeds, volatility should be very small
@@ -257,9 +264,9 @@ class TestGRHdgeases:
         T = 2
         returns = pd.atarame({
             'returns': np.random.normal(, , T)  # Very high volatility
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(returns)
         
         # Should fit successfully
@@ -275,9 +282,9 @@ class TestGRHdgeases:
         
         returns = pd.atarame({
             'returns': returns_data
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         # Should either handle missing values or raise informative error
         try:
@@ -296,9 +303,9 @@ class TestGRHNumericalStability:
         T = 2
         returns = pd.atarame({
             'returns': np.random.normal(, ., T)  # Very small variance
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(returns)
         
         # Should handle small numbers without overflow
@@ -311,9 +318,9 @@ class TestGRHNumericalStability:
         T = 2
         returns = pd.atarame({
             'returns': np.random.normal(, , T)  # Very large variance
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(returns)
         
         # Should handle large numbers without overflow
@@ -336,9 +343,9 @@ class TestGRHNumericalStability:
         
         data = pd.atarame({
             'returns': returns
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(data)
         
         # Should converge and recover parameters Mapproximately
@@ -358,9 +365,9 @@ class TestGRHiagnostics:
         T = 3
         returns = pd.atarame({
             'returns': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(returns)
         return model, result
     

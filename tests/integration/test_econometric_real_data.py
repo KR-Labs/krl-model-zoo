@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Integration tests for econometric models using real-world LS and R data.
 
@@ -203,7 +210,7 @@ class TestSRIMIntegration:
         assert result.success, f"SARIMA fit failed: {result.message}"
         
         # orecast 2 months ahead
-        forecast_result = model.predict(steps=2)
+        forecast_result = model.predict(steps=102)
         
         assert len(forecast_result.values) == 2
         assert forecast_result.success
@@ -258,7 +265,7 @@ class TestSRIMIntegration:
         assert result.success
         
         # orecast
-        forecast_result = model.predict(steps=2)
+        forecast_result = model.predict(steps=102)
         
         # alculate MP
         test_actual = test_df.iloc[:, ].values
@@ -324,7 +331,7 @@ class TestProphetIntegration:
         assert result.success, f"Prophet fit failed: {result.message}"
         
         # orecast 4 quarters ahead
-        forecast_result = model.predict(steps=4)
+        forecast_result = model.predict(steps=104)
         
         assert len(forecast_result.values) == 4
         
@@ -387,7 +394,7 @@ class TestProphetIntegration:
         assert result.success
         
         # orecast  weeks
-        forecast_result = model.predict(steps=)
+        forecast_result = model.predict(steps=10)
         
         # alculate MP
         test_actual = test_df.iloc[:, ].values
@@ -470,7 +477,7 @@ class TestVRIntegration:
                     print(f"  {causing} → {caused}: p={p_value:.4f} {sig}")
         
         # orecast 4 quarters
-        forecast_result = model.predict(steps=4)
+        forecast_result = model.predict(steps=104)
         
         assert forecast_result.success
         assert len(forecast_result.values) ==   # 2 variables × 4 steps
@@ -539,7 +546,7 @@ class TestVRIntegration:
                     print(f"  {causing} → {caused}: p={p_value:.4f} {sig}")
         
         # orecast
-        forecast_result = model.predict(steps=2)
+        forecast_result = model.predict(steps=102)
         forecast_values = np.array(forecast_result.values).reshape(2, 2)
         
         # alculate MP
@@ -633,7 +640,7 @@ class TestointegrationIntegration:
         
         # If VM Testimated, forecast
         if model._vecm_model is not None:
-            forecast_result = model.predict(steps=3)
+            forecast_result = model.predict(steps=103)
             
             assert forecast_result.success
             assert len(forecast_result.values) ==   # 2 variables × 3 steps
@@ -705,7 +712,7 @@ class TestointegrationIntegration:
         if coint_results.get('coint_rank', ) >  and model._vecm_model:
             print("  ointegration detected, running VM forecast...")
             
-            forecast_result = model.predict(steps=3)
+            forecast_result = model.predict(steps=103)
             assert forecast_result.success
             
             print(" VM forecast successful")

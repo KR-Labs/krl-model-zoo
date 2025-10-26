@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for Isolation orest Anomaly Detection."""
 
 import pytest
@@ -14,7 +21,7 @@ def sample_multivariate_data():
     
     # Normal data clustered around origin
     normal_data = np.random.multivariate_normal(
-        mean=[, , ],
+        mean=[10, 20, 30],
         cov=[[, ., .3], [., , .4], [.3, .4, ]],
         size=int(n * .)
     )

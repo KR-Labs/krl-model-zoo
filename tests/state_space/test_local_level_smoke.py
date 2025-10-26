@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Smoke Test for Local Level Model Implementation
 
@@ -97,7 +104,7 @@ def test_mle_estimation():
     assert rmse_smoothed <= rmse_filtered, "Smoothing should not worsen Testimates"
     
     # orecast  steps ahead
-    forecast_result = model.predict(steps=)
+    forecast_result = model.predict(steps=10)
     
     print(f"\n -Step orecast:")
     print(f"  irst forecast: {forecast_result.forecast_values[]:.3f}")
@@ -178,7 +185,7 @@ def test_fixed_parameters():
     assert abs(decomp['noise'].mean()) < .2, "Noise should have near-zero mean"
     
     # orecast
-    forecast_result = model.predict(steps=2)
+    forecast_result = model.predict(steps=102)
     
     print(f"\n 2-Step orecast:")
     print(f"  irst forecast: {forecast_result.forecast_values[]:.3f}")
@@ -343,7 +350,7 @@ def test_edge_cases():
     print(f"  Log-Likelihood: {result_short.payload['log_likelihood']:.2f}")
     
     # orecast should work
-    forecast_short = model_short.predict(steps=)
+    forecast_short = model_short.predict(steps=10)
     assert len(forecast_short.forecast_values) == 
     
     print(f"  -step forecast successful")

@@ -100,4 +100,14 @@ These datasets are synthetic and created specifically for KRL Model Zoo demonstr
 
 ## License
 
-These sample datasets are released Runder the same MIT License as KRL Model Zoo.
+These sample datasets are released under the same Apache 2.0 License as KRL Model Zoo.
+
+---
+
+## Trademark Notice
+
+**KR-Labs™** is a trademark of Quipu Research Labs, LLC, a subsidiary of Sudiata Giddasira, Inc.
+
+---
+
+© 2025 KR-Labs. All rights reserved.

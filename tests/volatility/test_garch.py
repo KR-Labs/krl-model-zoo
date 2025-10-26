@@ -257,7 +257,7 @@ class TestGRHPredict:
         model.fit()
         
         # orecast  steps ahead
-        result = model.predict(steps=)
+        result = model.predict(steps=10)
         
         # heck result structure
         assert len(result.forecast_values) == 
@@ -285,7 +285,7 @@ class TestGRHPredict:
         model = GRHModel(input_schema, params, model_meta)
         
         with pytest.raises(Valuerror, match="Model must be fitted"):
-            model.predict(steps=)
+            model.predict(steps=10)
     
     def test_predict_invalid_steps(self, sample_returns, model_meta):
         """Test prediction with invalid steps."""
@@ -300,7 +300,7 @@ class TestGRHPredict:
         model.fit()
         
         with pytest.raises(Valuerror, match="steps must be positive"):
-            model.predict(steps=)
+            model.predict(steps=10)
 
 
 class TestGRHRiskMetrics:

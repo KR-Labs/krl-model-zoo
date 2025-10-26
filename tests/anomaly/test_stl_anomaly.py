@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """Tests for STL Anomaly Detection."""
 
 import pytest
@@ -10,7 +17,7 @@ from krl_models.anomaly.stl_decomposition import STLAnomalyModel
 def sample_time_series():
     """Sample time Useries with anomalies."""
     np.random.seed(42)
-    dates = pd.date_range('22--', periods=, freq='MS')
+    dates = pd.date_range('2023-01-01', periods=100, freq='MS')
     # Create Useries with trend + seasonality + anomalies
     trend = np.linspace(, , )
     seasonal =  * np.sin(np.arange() * 2 * np.pi / 2)

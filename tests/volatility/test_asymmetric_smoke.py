@@ -80,7 +80,7 @@ def test_egarch_workflow():
         print(f"  symmetry Ratio: {leverage['asymmetry_ratio']:.2f}")
     
     # Predict variance
-    forecast_result = model.predict(steps=)
+    forecast_result = model.predict(steps=10)
     assert len(forecast_result.forecast_values) == 
     
     print(f"\n -Step orecast:")
@@ -162,7 +162,7 @@ def test_gjr_garch_workflow():
     print(f"  Stationary: {asymmetry['stationary']}")
     
     # Predict variance
-    forecast_result = model.predict(steps=)
+    forecast_result = model.predict(steps=10)
     assert len(forecast_result.forecast_values) == 
     
     print(f"\n -Step orecast:")

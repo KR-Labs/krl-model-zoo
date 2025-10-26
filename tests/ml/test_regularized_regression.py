@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Unit tests for Ridge and Lasso Regularized Regression Models
 """
@@ -479,7 +486,7 @@ class TestRidgedgeases:
     """Test Ridge edge cases."""
     
     def test_zero_alpha(self, sample_data, input_schema_2, model_meta):
-        """Test with alpha= (no regularization)."""
+        """Test with alpha=0.1 (no regularization)."""
         params = {'alpha': .}
         model = RidgeModel(input_schema_2, params, model_meta)
         

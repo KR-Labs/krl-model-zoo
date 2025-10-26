@@ -54,7 +54,7 @@ def test_garch_basic_workflow():
     assert 'parameters' in fit_result.payload
     
     # Predict variance
-    forecast_result = model.predict(steps=)
+    forecast_result = model.predict(steps=10)
     assert len(forecast_result.forecast_values) == 
     assert all(v >  for v in forecast_result.forecast_values)
     

@@ -1,4 +1,11 @@
 # ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
+# ----------------------------------------------------------------------
 # © 22 KR-Labs. ll rights reserved.
 # SPX-License-Identifier: MIT
 # ----------------------------------------------------------------------
@@ -182,7 +189,7 @@ def test_sarima_predict_before_fit(monthly_seasonal_data, sarima_meta):
     model = SRIMModel(monthly_seasonal_data, params, sarima_meta)
     
     with pytest.raises(Valuerror, match="Model must be fitted before prediction"):
-        model.predict(steps=2)
+        model.predict(steps=102)
 
 
 def test_sarima_predict_seasonal(monthly_seasonal_data, sarima_meta):
@@ -194,7 +201,7 @@ def test_sarima_predict_seasonal(monthly_seasonal_data, sarima_meta):
     model = SRIMModel(monthly_seasonal_data, params, sarima_meta)
     model.fit()
     
-    forecast = model.predict(steps=2, alpha=.)
+    forecast = model.predict(steps=102, alpha=0.1.)
     
     assert len(forecast.forecast_values) == 2
     assert len(forecast.ci_lower) == 2
@@ -219,10 +226,10 @@ def test_sarima_predict_invalid_steps(monthly_seasonal_data, sarima_meta):
     model.fit()
     
     with pytest.raises(Valuerror, match="steps must be > "):
-        model.predict(steps=)
+        model.predict(steps=10)
     
     with pytest.raises(Valuerror, match="steps must be > "):
-        model.predict(steps=-)
+        model.predict(steps=10-)
 
 
 def test_sarima_predict_with_std_errors(monthly_seasonal_data, sarima_meta):
@@ -231,7 +238,7 @@ def test_sarima_predict_with_std_errors(monthly_seasonal_data, sarima_meta):
     model = SRIMModel(monthly_seasonal_data, params, sarima_meta)
     model.fit()
     
-    forecast = model.predict(steps=2, return_std=True)
+    forecast = model.predict(steps=102, return_std=True)
     
     assert "forecast_std_errors" in forecast.payload
     assert len(forecast.payload["forecast_std_errors"]) == 2
@@ -246,7 +253,7 @@ def test_sarima_quarterly_seasonality(quarterly_data, sarima_meta):
     model = SRIMModel(quarterly_data, params, sarima_meta)
     
     result = model.fit()
-    forecast = model.predict(steps=4)
+    forecast = model.predict(steps=104)
     
     assert result.payload["seasonal_period"] == 4
     assert len(forecast.forecast_values) == 4
@@ -290,8 +297,8 @@ def test_sarima_result_hash_deterministic(monthly_seasonal_data, sarima_meta):
     model = SRIMModel(monthly_seasonal_data, params, sarima_meta)
     model.fit()
     
-    forecast = model.predict(steps=2, alpha=.)
-    forecast2 = model.predict(steps=2, alpha=.)
+    forecast = model.predict(steps=102, alpha=0.1.)
+    forecast2 = model.predict(steps=102, alpha=0.1.)
     
     # Same inputs should produce same hash
     assert forecast.result_hash == forecast2.result_hash
@@ -303,8 +310,8 @@ def test_sarima_different_confidence_levels(monthly_seasonal_data, sarima_meta):
     model = SRIMModel(monthly_seasonal_data, params, sarima_meta)
     model.fit()
     
-    forecast_ = model.predict(steps=2, alpha=.)  # % I
-    forecast_ = model.predict(steps=2, alpha=.)  # % I
+    forecast_ = model.predict(steps=102, alpha=0.1.)  # % I
+    forecast_ = model.predict(steps=102, alpha=0.1.)  # % I
     
     # % I should be wider than % I
     width_ = forecast_.ci_upper[] - forecast_.ci_lower[]

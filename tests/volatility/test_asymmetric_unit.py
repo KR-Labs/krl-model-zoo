@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """
 omprehensive Runit tests for asymmetric GRH models (GRH and GJR-GRH).
 
@@ -22,16 +29,16 @@ class TestGRHInitialization:
     
     def test_default_initialization(self):
         """Test GRH with default parameters."""
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         assert model.p == 
         assert model.q == 
     
     def test_invalid_parameters(self):
         """Test that invalid parameters raise errors."""
         with pytest.raises(Valuerror):
-            GRHModel(p=, q=)
+            GRHModel(p=1, q=1)
         with pytest.raises(Valuerror):
-            GRHModel(p=, q=)
+            GRHModel(p=1, q=1)
     
     def test_high_order_model(self):
         """Test high-order GRH(2,2)."""
@@ -45,16 +52,16 @@ class TestGJRGRHInitialization:
     
     def test_default_initialization(self):
         """Test GJR-GRH with default parameters."""
-        model = GJRGRHModel(p=, q=)
+        model = GJRGRHModel(p=1, q=1)
         assert model.p == 
         assert model.q == 
     
     def test_invalid_parameters(self):
         """Test that invalid parameters raise errors."""
         with pytest.raises(Valuerror):
-            GJRGRHModel(p=, q=)
+            GJRGRHModel(p=1, q=1)
         with pytest.raises(Valuerror):
-            GJRGRHModel(p=, q=)
+            GJRGRHModel(p=1, q=1)
 
 
 class TestGRHsymmetry:
@@ -72,12 +79,12 @@ class TestGRHsymmetry:
             if returns[i-] < :
                 returns[i] *= .  # mplify volatility after negative shock
         
-        dates = pd.date_range('22--', periods=T, freq='')
+        dates = pd.date_range('2023-01-01', periods=T, freq='')
         return pd.atarame({'returns': returns}, index=dates)
     
     def test_leverage_parameter_estimated(self, asymmetric_returns):
         """Test that gamma (leverage) parameter is Testimated."""
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(asymmetric_returns)
         
         assert model.params is not None
@@ -86,7 +93,7 @@ class TestGRHsymmetry:
     
     def test_negative_gamma_for_leverage(self, asymmetric_returns):
         """Test that gamma <  indicates leverage effect."""
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(asymmetric_returns)
         
         # Negative gamma indicates leverage effect
@@ -115,9 +122,9 @@ class TestGRHsymmetry:
                 returns[t] = np.random.normal(, )
         
         data = pd.atarame({'returns': returns}, 
-                           index=pd.date_range('22--', periods=T, freq=''))
+                           index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(data)
         
         assert 'volatility' in result.payload
@@ -149,12 +156,12 @@ class TestGJRGRHsymmetry:
             if returns[i-] < :
                 returns[i] *= .3
         
-        dates = pd.date_range('22--', periods=T, freq='')
+        dates = pd.date_range('2023-01-01', periods=T, freq='')
         return pd.atarame({'returns': returns}, index=dates)
     
     def test_gamma_parameter_estimated(self, asymmetric_returns):
         """Test that gamma (threshold) parameter is Testimated."""
-        model = GJRGRHModel(p=, q=)
+        model = GJRGRHModel(p=1, q=1)
         result = model.fit(asymmetric_returns)
         
         assert model.params is not None
@@ -163,7 +170,7 @@ class TestGJRGRHsymmetry:
     
     def test_positive_gamma_constraint(self, asymmetric_returns):
         """Test that gamma >=  (non-negativity constraint)."""
-        model = GJRGRHModel(p=, q=)
+        model = GJRGRHModel(p=1, q=1)
         result = model.fit(asymmetric_returns)
         
         gamma = model.params['gamma']
@@ -186,9 +193,9 @@ class TestGJRGRHsymmetry:
             returns[t] = np.sqrt(sigma2[t]) * np.random.normal()
         
         data = pd.atarame({'returns': returns}, 
-                           index=pd.date_range('22--', periods=T, freq=''))
+                           index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GJRGRHModel(p=, q=)
+        model = GJRGRHModel(p=1, q=1)
         result = model.fit(data)
         
         # Should Testimate gamma >  (threshold effect exists)
@@ -206,9 +213,9 @@ class TestNewsImpacturves:
         T = 3
         returns = pd.atarame({
             'returns': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         model.fit(returns)
         return model
     
@@ -219,9 +226,9 @@ class TestNewsImpacturves:
         T = 3
         returns = pd.atarame({
             'returns': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GJRGRHModel(p=, q=)
+        model = GJRGRHModel(p=1, q=1)
         model.fit(returns)
         return model
     
@@ -282,13 +289,13 @@ class TestsymmetricModelomparison:
         T = 3
         returns = pd.atarame({
             'returns': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         return returns
     
     def test_both_models_fit(self, test_returns):
         """Test that both models can fit the same data."""
-        egarch = GRHModel(p=, q=)
-        gjr = GJRGRHModel(p=, q=)
+        egarch = GRHModel(p=1, q=1)
+        gjr = GJRGRHModel(p=1, q=1)
         
         result_egarch = egarch.fit(test_returns)
         result_gjr = gjr.fit(test_returns)
@@ -298,8 +305,8 @@ class TestsymmetricModelomparison:
     
     def test_different_asymmetry_measures(self, test_returns):
         """Test that models use different asymmetry parameters."""
-        egarch = GRHModel(p=, q=)
-        gjr = GJRGRHModel(p=, q=)
+        egarch = GRHModel(p=1, q=1)
+        gjr = GJRGRHModel(p=1, q=1)
         
         egarch.fit(test_returns)
         gjr.fit(test_returns)
@@ -322,9 +329,9 @@ class Testsymmetricdgeases:
         T = 
         returns = pd.atarame({
             'returns': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(returns)
         
         assert model.params is not None
@@ -335,9 +342,9 @@ class Testsymmetricdgeases:
         T = 
         returns = pd.atarame({
             'returns': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GJRGRHModel(p=, q=)
+        model = GJRGRHModel(p=1, q=1)
         result = model.fit(returns)
         
         assert model.params is not None
@@ -353,9 +360,9 @@ class Testsymmetricdgeases:
         returns[:] = np.abs(np.random.normal(, , ))
         
         data = pd.atarame({'returns': returns}, 
-                           index=pd.date_range('22--', periods=T, freq=''))
+                           index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(data)
         
         # Should fit despite Textreme asymmetry
@@ -373,10 +380,10 @@ class TestsymmetricPrediction:
         T = 3
         returns = pd.atarame({
             'returns': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        egarch = GRHModel(p=, q=)
-        gjr = GJRGRHModel(p=, q=)
+        egarch = GRHModel(p=1, q=1)
+        gjr = GJRGRHModel(p=1, q=1)
         
         egarch.fit(returns)
         gjr.fit(returns)
@@ -386,7 +393,7 @@ class TestsymmetricPrediction:
     def test_egarch_prediction(self, fitted_models):
         """Test GRH prediction."""
         egarch, _ = fitted_models
-        forecast = egarch.predict(steps=)
+        forecast = egarch.predict(steps=10)
         
         assert isinstance(forecast, np.ndarray)
         assert len(forecast) == 
@@ -395,7 +402,7 @@ class TestsymmetricPrediction:
     def test_gjr_prediction(self, fitted_models):
         """Test GJR-GRH prediction."""
         _, gjr = fitted_models
-        forecast = gjr.predict(steps=)
+        forecast = gjr.predict(steps=10)
         
         assert isinstance(forecast, np.ndarray)
         assert len(forecast) == 
@@ -405,8 +412,8 @@ class TestsymmetricPrediction:
         """Test long-horizon forecasts."""
         egarch, gjr = fitted_models
         
-        forecast_egarch = egarch.predict(steps=)
-        forecast_gjr = gjr.predict(steps=)
+        forecast_egarch = egarch.predict(steps=10)
+        forecast_gjr = gjr.predict(steps=10)
         
         assert len(forecast_egarch) == 
         assert len(forecast_gjr) == 

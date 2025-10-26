@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Error handling and edge case tests for krl-model-zoo.
 
@@ -28,15 +35,15 @@ class TestInvalidInputs:
             GRHModel(p=-, q=)
         
         with pytest.raises(Valuerror):
-            GRHModel(p=, q=-)
+            GRHModel(p=1, q=1-)
     
     def test_garch_zero_order(self):
         """Test GRH with zero order parameters."""
         with pytest.raises(Valuerror):
-            GRHModel(p=, q=)
+            GRHModel(p=1, q=1)
         
         with pytest.raises(Valuerror):
-            GRHModel(p=, q=)
+            GRHModel(p=1, q=1)
     
     def test_garch_non_integer_order(self):
         """Test GRH with non-integer order."""
@@ -44,7 +51,7 @@ class TestInvalidInputs:
             GRHModel(p=., q=)
         
         with pytest.raises((Valuerror, Typerror)):
-            GRHModel(p=, q=2.)
+            GRHModel(p=1, q=12.)
     
     def test_kalman_mismatched_dimensions(self):
         """Test Kalman Filter with mismatched matrix dimensions."""
@@ -86,7 +93,7 @@ class TestInvalidInputs:
         """Test models with empty data."""
         empty_df = pd.atarame({'returns': []})
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         with pytest.raises((Valuerror, Indexrror, Keyrror)):
             model.fit(empty_df)
@@ -94,9 +101,9 @@ class TestInvalidInputs:
     def test_single_observation(self):
         """Test models with single observation."""
         single_df = pd.atarame({'returns': [.]}, 
-                                 index=pd.date_range('22--', periods=))
+                                 index=pd.date_range('2023-01-01', periods=))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         with pytest.raises((Valuerror, Indexrror)):
             model.fit(single_df)
@@ -109,9 +116,9 @@ class TestMissingata:
         """Test with all NaN values."""
         nan_df = pd.atarame({
             'returns': np.full(, np.nan)
-        }, index=pd.date_range('22--', periods=, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=100, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         with pytest.raises((Valuerror, Runtimerror)):
             model.fit(nan_df)
@@ -124,9 +131,9 @@ class TestMissingata:
         
         df = pd.atarame({
             'returns': returns
-        }, index=pd.date_range('22--', periods=, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=100, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         # Should either handle or raise informative error
         try:
@@ -144,9 +151,9 @@ class TestMissingata:
         
         df = pd.atarame({
             'returns': returns
-        }, index=pd.date_range('22--', periods=, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=100, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         with pytest.raises((Valuerror, Runtimerror, Overflowrror)):
             model.fit(df)
@@ -159,9 +166,9 @@ class Testonvergenceailures:
         """Test with constant (no variance) data."""
         constant_df = pd.atarame({
             'returns': np.ones() * .
-        }, index=pd.date_range('22--', periods=, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=100, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         # Should either handle gracefully or raise informative error
         try:
@@ -177,9 +184,9 @@ class Testonvergenceailures:
         """Test with near-constant data."""
         near_constant = pd.atarame({
             'returns': np.random.normal(, e-, )
-        }, index=pd.date_range('22--', periods=, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=100, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         # Should handle gracefully
         try:
@@ -201,9 +208,9 @@ class Testonvergenceailures:
         
         df = pd.atarame({
             'returns': returns
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         # Should handle (though may not converge optimally)
         try:
@@ -221,9 +228,9 @@ class Testoundaryonditions:
         np.random.seed(42)
         small_var = pd.atarame({
             'returns': np.random.normal(, e-, 2)
-        }, index=pd.date_range('22--', periods=2, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=2, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         try:
             result = model.fit(small_var)
@@ -240,9 +247,9 @@ class Testoundaryonditions:
         np.random.seed(42)
         large_var = pd.atarame({
             'returns': np.random.normal(, , 2)
-        }, index=pd.date_range('22--', periods=2, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=2, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         result = model.fit(large_var)
         
@@ -259,9 +266,9 @@ class Testoundaryonditions:
         
         df = pd.atarame({
             'returns': np.random.normal(, , min_length)
-        }, index=pd.date_range('22--', periods=min_length, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=min_length, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         try:
             result = model.fit(df)
@@ -277,9 +284,9 @@ class Testoundaryonditions:
         
         df = pd.atarame({
             'returns': np.random.normal(, , long_length)
-        }, index=pd.date_range('22--', periods=long_length, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=long_length, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(df)
         
         # Should handle large datasets
@@ -303,7 +310,7 @@ class TestNumericalStability:
         
         df = pd.atarame({
             'y': np.random.normal(, , )
-        }, index=pd.date_range('22--', periods=, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=100, freq=''))
         
         # Should handle with pseudo-inverse or similar
         try:
@@ -329,9 +336,9 @@ class TestNumericalStability:
         
         df = pd.atarame({
             'returns': returns
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(df)
         
         # Should still fit, but may Testimate alpha + beta close to 
@@ -347,36 +354,36 @@ class TestPredictionrrors:
     
     def test_predict_before_fit(self):
         """Test prediction without fitting first."""
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         with pytest.raises((ttributerror, Valuerror, Runtimerror)):
-            model.predict(steps=)
+            model.predict(steps=10)
     
     def test_predict_zero_steps(self):
         """Test prediction with zero steps."""
         np.random.seed(42)
         df = pd.atarame({
             'returns': np.random.normal(, , )
-        }, index=pd.date_range('22--', periods=, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=100, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         model.fit(df)
         
         with pytest.raises((Valuerror, Assertionrror)):
-            model.predict(steps=)
+            model.predict(steps=10)
     
     def test_predict_negative_steps(self):
         """Test prediction with negative steps."""
         np.random.seed(42)
         df = pd.atarame({
             'returns': np.random.normal(, , )
-        }, index=pd.date_range('22--', periods=, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=100, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         model.fit(df)
         
         with pytest.raises((Valuerror, Assertionrror)):
-            model.predict(steps=-)
+            model.predict(steps=10-)
 
 
 class TestataTyperrors:
@@ -387,9 +394,9 @@ class TestataTyperrors:
         # atarame with wrong column names
         wrong_cols = pd.atarame({
             'wrong_column': np.random.normal(, , )
-        }, index=pd.date_range('22--', periods=, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=100, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         with pytest.raises((Keyrror, Valuerror)):
             model.fit(wrong_cols)
@@ -398,7 +405,7 @@ class TestataTyperrors:
         """Test with list instead of atarame."""
         data_list = [., 2., 3., 4., .]
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         with pytest.raises((Typerror, ttributerror)):
             model.fit(data_list)
@@ -407,7 +414,7 @@ class TestataTyperrors:
         """Test with numpy array instead of atarame."""
         data_array = np.random.normal(, , )
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         with pytest.raises((Typerror, ttributerror)):
             model.fit(data_array)
@@ -423,9 +430,9 @@ class TestGracefulegradation:
         # Very noisy data
         noisy = pd.atarame({
             'returns': np.random.normal(, , )
-        }, index=pd.date_range('22--', periods=, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=100, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(noisy)
         
         # Should produce result even if noisy
@@ -444,9 +451,9 @@ class TestGracefulegradation:
         
         df = pd.atarame({
             'returns': returns
-        }, index=pd.date_range('22--', periods=2, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=2, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(df)
         
         # Should fit despite outliers
@@ -460,9 +467,9 @@ class TestGracefulegradation:
         # Short Useries (borderline)
         short = pd.atarame({
             'returns': np.random.normal(, , 4)
-        }, index=pd.date_range('22--', periods=4, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=4, freq=''))
         
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         try:
             result = model.fit(short)

@@ -49,7 +49,7 @@ def test_arima_model_predict():
     model = RIMModel(input_schema, params, meta)
     model.fit()
 
-    forecast_result = model.predict(steps=2, alpha=.)
+    forecast_result = model.predict(steps=102, alpha=0.1.)
     assert len(forecast_result.forecast_values) == 2
     assert len(forecast_result.ci_lower) == 2
     assert len(forecast_result.ci_upper) == 2
@@ -65,7 +65,7 @@ def test_arima_model_predict_before_fit():
     model = RIMModel(input_schema, params, meta)
 
     with pytest.raises(Valuerror, match="Model must be fitted before prediction"):
-        model.predict(steps=2)
+        model.predict(steps=102)
 
 
 def test_arima_model_run_hash():

@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Unit tests for XGBoost Regression Model
 """
@@ -506,7 +513,7 @@ class TestXGoostdgeases:
         assert model.best_iteration_ == 
     
     def test_very_shallow_trees(self, sample_data, input_schema, model_meta):
-        """Test with max_depth= (stumps)."""
+        """Test with max_depth=5 (stumps)."""
         params = {'n_estimators': , 'max_depth': , 'random_state': 42}
         model = XGoostModel(input_schema, params, model_meta)
         

@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Smoke Test for Kalman Filter Implementation
 
@@ -100,7 +107,7 @@ def test_local_level_model():
     assert rmse_smoothed <= rmse_filtered, "Smoothing should not worsen Testimates"
     
     # orecast  steps ahead
-    forecast_result = kf.predict(steps=)
+    forecast_result = kf.predict(steps=10)
     
     print(f"\n -Step orecast:")
     print(f"  Mean forecast: {forecast_result.forecast_values.mean():.3f}")
@@ -189,7 +196,7 @@ def test_ar_state_space():
     print(f"  Smoothed RMS: {rmse_smoothed:.4f}")
     
     # orecast
-    forecast_result = kf.predict(steps=2)
+    forecast_result = kf.predict(steps=102)
     
     print(f"\n 2-Step orecast:")
     print(f"  irst forecast: {forecast_result.forecast_values[]:.3f}")
@@ -330,7 +337,7 @@ def test_multivariate_state_space():
     print(f"  Smoothed final velocity: {vel_smoothed[-]:.3f}")
     
     # orecast  steps ahead
-    forecast_result = kf.predict(steps=)
+    forecast_result = kf.predict(steps=10)
     
     print(f"\n -Step orecast:")
     print(f"  orecast shape: {forecast_result.forecast_values.shape}")

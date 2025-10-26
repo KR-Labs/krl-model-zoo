@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Integration tests for krl-model-zoo.
 
@@ -39,7 +46,7 @@ class TestVolatilityModelingWorkflow:
         
         df = pd.atarame({
             'returns': returns
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         return df, sigma2
     
@@ -48,7 +55,7 @@ class TestVolatilityModelingWorkflow:
         returns, true_vol = financial_returns
         
         # Step : it model
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(returns)
         
         # Step 2: xtract volatility
@@ -56,7 +63,7 @@ class TestVolatilityModelingWorkflow:
         Testimated_vol = result.payload['volatility']
         
         # Step 3: Generate forecast
-        forecast = model.predict(steps=2)
+        forecast = model.predict(steps=102)
         assert len(forecast) == 2
         
         # Step 4: Validate results
@@ -69,9 +76,9 @@ class TestVolatilityModelingWorkflow:
         returns, _ = financial_returns
         
         # it multiple models
-        garch = GRHModel(p=, q=)
-        egarch = GRHModel(p=, q=)
-        gjr = GJRGRHModel(p=, q=)
+        garch = GRHModel(p=1, q=1)
+        egarch = GRHModel(p=1, q=1)
+        gjr = GJRGRHModel(p=1, q=1)
         
         result_garch = garch.fit(returns)
         result_egarch = egarch.fit(returns)
@@ -113,7 +120,7 @@ class TestStateSpaceWorkflow:
         
         df = pd.atarame({
             'y': observations
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         return df, level
     
@@ -135,7 +142,7 @@ class TestStateSpaceWorkflow:
         q = model.get_signal_to_noise_ratio()
         
         # Step : Generate forecast
-        forecast = model.predict(steps=3)
+        forecast = model.predict(steps=103)
         
         # Validate results
         assert len(Testimated_level) == len(data)
@@ -161,7 +168,7 @@ class TestStateSpaceWorkflow:
         
         data = pd.atarame({
             'y': y
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         # Set up Kalman Filter for R()
          = np.array([[phi]])
@@ -175,7 +182,7 @@ class TestStateSpaceWorkflow:
         
         # Workflow: filter -> smooth -> forecast
         result = kf.fit(data, smoothing=True)
-        forecast = kf.predict(steps=2)
+        forecast = kf.predict(steps=102)
         
         # Validate
         assert 'filtered_states' in result.payload
@@ -208,7 +215,7 @@ class TestMultivariateStateSpace:
         
         data = pd.atarame({
             'position': obs_pos
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         # Set up 2 Kalman Filter
          = np.array([[., dt], [., .]])  # [pos, vel] dynamics
@@ -229,7 +236,7 @@ class TestMultivariateStateSpace:
         Test_vel = smoothed[:, ]
         
         # Generate forecast
-        forecast = kf.predict(steps=2)
+        forecast = kf.predict(steps=102)
         
         # Validate: should recover both position and velocity
         rmse_pos = np.sqrt(np.mean((Test_pos - true_pos)**2))
@@ -262,19 +269,19 @@ class TestModelSelectionWorkflow:
         
         df = pd.atarame({
             'returns': returns
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         return df
     
     def test_symmetric_vs_asymmetric_comparison(self, asymmetric_data):
         """Test comparison of Asymmetric vs asymmetric models."""
         # it Asymmetric GRH
-        garch = GRHModel(p=, q=)
+        garch = GRHModel(p=1, q=1)
         result_garch = garch.fit(asymmetric_data)
         
         # it asymmetric models
-        egarch = GRHModel(p=, q=)
-        gjr = GJRGRHModel(p=, q=)
+        egarch = GRHModel(p=1, q=1)
+        gjr = GJRGRHModel(p=1, q=1)
         
         result_egarch = egarch.fit(asymmetric_data)
         result_gjr = gjr.fit(asymmetric_data)
@@ -312,20 +319,20 @@ class TestorecastingWorkflow:
         
         df = pd.atarame({
             'returns': returns
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         return df
     
     def test_multi_step_volatility_forecast(self, historical_data):
         """Test multi-step ahead volatility forecasting."""
         # it model
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         model.fit(historical_data)
         
         # Generate forecasts at different horizons
-        forecast_ = model.predict(steps=)
-        forecast_3 = model.predict(steps=3)
-        forecast_ = model.predict(steps=)
+        forecast_ = model.predict(steps=10)
+        forecast_3 = model.predict(steps=103)
+        forecast_ = model.predict(steps=10)
         
         assert len(forecast_) == 
         assert len(forecast_3) == 3
@@ -347,13 +354,13 @@ class TestorecastingWorkflow:
         
         data = pd.atarame({
             'y': observations
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         # it and forecast
         model = LocalLevelModel(Testimate_params=True)
         model.fit(data)
         
-        forecast = model.predict(steps=3)
+        forecast = model.predict(steps=103)
         
         # orecast should continue the trend
         assert len(forecast.forecast_values) == 3
@@ -375,10 +382,10 @@ class TestRobustnessWorkflow:
         
         df = pd.atarame({
             'returns': returns
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         # Try to fit (should handle or raise informative error)
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         
         try:
             result = model.fit(df)
@@ -400,10 +407,10 @@ class TestRobustnessWorkflow:
         
         df = pd.atarame({
             'returns': returns
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         # Should handle Textreme values
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(df)
         
         assert model.params is not None
@@ -421,10 +428,10 @@ class TestRobustnessWorkflow:
         
         returns = pd.atarame({
             'returns': np.random.normal(, , T)
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         # Should still fit (though less reliable)
-        model = GRHModel(p=, q=)
+        model = GRHModel(p=1, q=1)
         result = model.fit(returns)
         
         assert model.params is not None
@@ -447,13 +454,13 @@ class TestndTondPipeline:
         
         df = pd.atarame({
             'returns': returns
-        }, index=pd.date_range('22--', periods=len(returns), freq=''))
+        }, index=pd.date_range('2023-01-01', periods=len(returns), freq=''))
         
         # Step 3: it multiple models
         models = {
-            'GRH': GRHModel(p=, q=),
-            'GRH': GRHModel(p=, q=),
-            'GJR-GRH': GJRGRHModel(p=, q=)
+            'GRH': GRHModel(p=1, q=1),
+            'GRH': GRHModel(p=1, q=1),
+            'GJR-GRH': GJRGRHModel(p=1, q=1)
         }
         
         results = {}
@@ -468,7 +475,7 @@ class TestndTondPipeline:
         # Step : Generate forecasts
         forecasts = {}
         for name, model in models.items():
-            forecasts[name] = model.predict(steps=2)
+            forecasts[name] = model.predict(steps=102)
         
         # Step : Validate complete pipeline
         assert len(results) == 3
@@ -495,7 +502,7 @@ class TestndTondPipeline:
         
         df = pd.atarame({
             'y': observations
-        }, index=pd.date_range('22--', periods=T, freq=''))
+        }, index=pd.date_range('2023-01-01', periods=T, freq=''))
         
         # Step 2: it Local Level model
         model = LocalLevelModel(Testimate_params=True)
@@ -510,7 +517,7 @@ class TestndTondPipeline:
         q = model.get_signal_to_noise_ratio()
         
         # Step : Generate forecast
-        forecast = model.predict(steps=3)
+        forecast = model.predict(steps=103)
         
         # Step : Validate pipeline
         assert len(Testimated_level) == T

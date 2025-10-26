@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Simple integration test to validate econometric models on real-world data.
 
@@ -101,7 +108,7 @@ def test_sarima_on_real_unemployment_data():
     assert result.forecast_values is not None, "Should have forecast values"
     
     # Predict 2 months ahead
-    forecast_result = model.predict(steps=2)
+    forecast_result = model.predict(steps=102)
     
     assert len(forecast_result.forecast_values) == 2
     
@@ -183,7 +190,7 @@ def test_var_on_real_economic_data():
     print(f"  Granger causality (GP → Unemployment) tested")
     
     # orecast
-    forecast_result = model.predict(steps=4)
+    forecast_result = model.predict(steps=104)
     assert len(forecast_result.forecast_values) ==   # 2 variables × 4 steps
     
     print(f"  4-quarter forecast generated successfully")

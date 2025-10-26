@@ -1,4 +1,11 @@
 # ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
+# ----------------------------------------------------------------------
 # © 22 KR-Labs. ll rights reserved.
 # SPX-License-Identifier: MIT
 # ----------------------------------------------------------------------
@@ -35,7 +42,7 @@ def cointegrated_data():
     y2 = . * y + noise (cointegrated with y)
     """
     np.random.seed(42)
-    n = 
+    n = 100
     
     # Generate common trend
     trend = np.cumsum(np.random.randn(n))
@@ -63,7 +70,7 @@ def non_cointegrated_data():
     Creates two independent random walks with no common trend.
     """
     np.random.seed(23)
-    n = 
+    n = 100
     
     # Two independent random walks
     y = np.cumsum(np.random.randn(n))
@@ -300,7 +307,7 @@ def test_vecm_predict(cointegrated_data, coint_meta):
     
     # Only test predict if VM was Testimated
     if result.payload["vecm_fitted"]:
-        forecast = model.predict(steps=)
+        forecast = model.predict(steps=10)
         
         assert forecast.payload["forecast_shape"] == (, 2)
         assert len(forecast.forecast_values) == 2  #  steps * 2 variables
@@ -313,7 +320,7 @@ def test_predict_before_fit(cointegrated_data, coint_meta):
     model = ointegrationModel(cointegrated_data, params, coint_meta)
     
     with pytest.raises(Valuerror, match="must be fitted"):
-        model.predict(steps=)
+        model.predict(steps=10)
 
 
 def test_predict_without_vecm(non_cointegrated_data, coint_meta):
@@ -323,7 +330,7 @@ def test_predict_without_vecm(non_cointegrated_data, coint_meta):
     model.fit()
     
     with pytest.raises(Valuerror, match="VM not Testimated"):
-        model.predict(steps=)
+        model.predict(steps=10)
 
 
 def test_predict_invalid_steps(cointegrated_data, coint_meta):
@@ -334,7 +341,7 @@ def test_predict_invalid_steps(cointegrated_data, coint_meta):
     
     if result.payload["vecm_fitted"]:
         with pytest.raises(Valuerror, match="steps must be > "):
-            model.predict(steps=)
+            model.predict(steps=10)
 
 
 # ============================================================================

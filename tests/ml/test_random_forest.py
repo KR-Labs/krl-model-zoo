@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Unit tests for Random orest Regression Model
 """
@@ -522,7 +529,7 @@ class TestRandomorestdgeases:
         assert model._fitted is True
     
     def test_max_depth_one(self, sample_data, input_schema, model_meta):
-        """Test with max_depth= (stumps)."""
+        """Test with max_depth=5 (stumps)."""
         params = {'n_estimators': , 'max_depth': , 'random_state': 42}
         model = RandomorestModel(input_schema, params, model_meta)
         
