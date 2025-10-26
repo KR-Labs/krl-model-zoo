@@ -1,255 +1,342 @@
-# ----------------------------------------------------------------------
-# © 2025 KR-Labs. All rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
-# a subsidiary of Sudiata Giddasira, Inc.
-# ----------------------------------------------------------------------
-# SPDX-License-Identifier: Apache-2.0
+"""
+Base Model Abstract Class for KRL Model Zoo
+============================================
 
-"""Base model abstraction for all KRL models."""
+Apache 2.0 License - Gate 1 Foundation
+Author: KR Labs
 
-from __future__ import annotations
+This module defines the abstract base class that all KRL models inherit from.
+Provides standardized interface for fit(), forecast(), and validate() methods.
+"""
 
-import abc
+from abc import ABC, abstractmethod
+from typing import Dict, Any, Optional, List
 import hashlib
 import json
-import pickle
-from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
-from typing import Any, Dict, Optional
-
-from krl_core.results import BaseResult
-from krl_core.utils import compute_dataframe_hash
+from datetime import datetime
+import numpy as np
+from pydantic import BaseModel as PydanticBaseModel, Field
 
 
-@dataclass
-class ModelMeta:
-    """Metadata for model versioning and provenance."""
-
+class ModelMetadata(PydanticBaseModel):
+    """
+    Metadata for model tracking and provenance.
+    
+    Attributes
+    ----------
+    name : str
+        Human-readable model name
+    version : str
+        Model version (semantic versioning)
+    author : str
+        Model author/organization
+    created_at : str
+        ISO 8601 timestamp of creation
+    description : str
+        Brief model description
+    tags : list of str
+        Categorization tags
+    """
     name: str
     version: str = "1.0.0"
     author: str = "KR-Labs"
+    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
     description: str = ""
-    created_at: str = ""
-
-    def __post_init__(self):
-        if not self.created_at:
-            self.created_at = datetime.now(timezone.utc).isoformat()
+    tags: List[str] = Field(default_factory=list)
 
 
-class BaseModel(abc.ABC):
+class BaseModel(ABC):
     """
-    Core abstract model class for krl-model-zoo-core.
-
-    Responsibilities:
-    - Accept standardized input (ModelInputSchema)
-    - Provide fit/predict/persist hooks
-    - Produce Result objects (BaseResult subclass)
-    - Compute deterministic run-hash and register run metadata
-
-    All models in the KRL ecosystem inherit from this base class to ensure:
-    - Consistent interface across econometric, ML, Bayesian, causal models
-    - Automatic provenance tracking and reproducibility
-    - Serialization and caching support
-    - Integration with visualization and dashboard layers
-
-    Example:
-        ```python
-        from krl_core import BaseModel, ModelInputSchema, ForecastResult
-
-        class MyModel(BaseModel):
-            def fit(self) -> BaseResult:
-                # Your training logic here
-                return ForecastResult(...)
-
-            def predict(self, steps=10) -> BaseResult:
-                # Your prediction logic here
-                return ForecastResult(...)
-        ```
+    Abstract base class for all KRL models.
+    
+    All models in the KRL Model Zoo must inherit from this class and implement:
+    - fit(y, X, **kwargs) → self
+    - forecast(steps, **kwargs) → ForecastResult
+    
+    Provides:
+    - Standardized interface across 100+ models
+    - Metadata tracking (name, version, author, SHA256 hash)
+    - Parameter validation
+    - Reproducibility via SHA256 hashing
+    
+    Parameters
+    ----------
+    name : str, optional
+        Model name (defaults to class name)
+    version : str, optional
+        Model version (semantic versioning)
+    description : str, optional
+        Brief model description
+    tags : list of str, optional
+        Categorization tags (e.g., ['time-series', 'volatility'])
+    **kwargs : dict
+        Additional model-specific parameters
+    
+    Attributes
+    ----------
+    metadata_ : ModelMetadata
+        Model metadata (name, version, author, etc.)
+    params_ : dict
+        Model parameters (hyperparameters + fit results)
+    hash_ : str or None
+        SHA256 hash of model state (for reproducibility)
+    fitted_ : bool
+        Whether model has been fitted to data
+    
+    Examples
+    --------
+    >>> class MyModel(BaseModel):
+    ...     def fit(self, y, X=None, **kwargs):
+    ...         # Implementation
+    ...         return self
+    ...     def forecast(self, steps=1, **kwargs):
+    ...         # Implementation
+    ...         return ForecastResult(...)
     """
-
+    
     def __init__(
         self,
-        input_schema=None,
-        params: Optional[Dict[str, Any]] = None,
-        meta: Optional[ModelMeta] = None,
+        name: Optional[str] = None,
+        version: str = "1.0.0",
+        description: str = "",
+        tags: Optional[List[str]] = None,
+        **kwargs
     ):
-        """
-        Initialize base model.
-
-        Args:
-            input_schema: ModelInputSchema instance with validated data (optional for some models)
-            params: Model hyperparameters (stored for reproducibility)
-            meta: Model metadata (name, version, author)
-        """
-        self.input_schema = input_schema
-        self.params = params or {}
-        self.meta = meta or ModelMeta(name=self.__class__.__name__)
-        self._is_fitted = False
-        self._fit_time: Optional[str] = None
-        self._fit_result: Optional[BaseResult] = None
-
-    @abc.abstractmethod
-    def fit(self, *args, **kwargs) -> BaseResult:
-        """
-        Train/fit the model.
-
-        Must be implemented by subclasses. Should set self._is_fitted = True
-        upon successful completion.
-
-        Returns:
-            BaseResult subclass (ForecastResult, CausalResult, etc.)
+        # Metadata
+        self.metadata_ = ModelMetadata(
+            name=name or self.__class__.__name__,
+            version=version,
+            author="KR-Labs",
+            description=description,
+            tags=tags or []
+        )
         
-        Raises:
-            NotImplementedError: If not implemented by subclass
-        """
-        raise NotImplementedError("Subclasses must implement fit()")
-
-    @abc.abstractmethod
-    def predict(self, *args, **kwargs) -> BaseResult:
-        """
-        Generate predictions/forecasts.
-
-        Must be implemented by subclasses. Should check self._is_fitted before
-        making predictions.
-
-        Returns:
-            BaseResult subclass with predictions
+        # Parameters (hyperparameters + fitted parameters)
+        self.params_ = kwargs
         
-        Raises:
-            NotImplementedError: If not implemented by subclass
-            RuntimeError: If called before fit()
+        # State tracking
+        self.hash_ = None
+        self.fitted_ = False
+    
+    @abstractmethod
+    def fit(self, y: np.ndarray, X: Optional[np.ndarray] = None, **kwargs) -> 'BaseModel':
         """
-        raise NotImplementedError("Subclasses must implement predict()")
-
-    def is_fitted(self) -> bool:
-        """
-        Check if model has been fitted.
-
-        Returns:
-            True if model is fitted, False otherwise
-        """
-        return self._is_fitted
-
-    def serialize(self) -> bytes:
-        """
-        Serialize model to bytes for persistence.
-
-        Returns:
-            Pickled model bytes
+        Fit model to training data.
         
-        Raises:
-            pickle.PicklingError: If model cannot be pickled
-        """
-        return pickle.dumps(self)
-
-    @classmethod
-    def deserialize(cls, data: bytes) -> BaseModel:
-        """
-        Deserialize model from bytes.
-
-        Args:
-            data: Pickled model bytes
-
-        Returns:
-            Restored BaseModel instance
+        Parameters
+        ----------
+        y : array-like, shape (n_samples,)
+            Target variable (endogenous variable for time series)
+        X : array-like, shape (n_samples, n_features), optional
+            Exogenous variables (features)
+        **kwargs : dict
+            Additional fit parameters (e.g., validation data, callbacks)
         
-        Raises:
-            pickle.UnpicklingError: If data cannot be unpickled
-        """
-        return pickle.loads(data)
-
-    def run_hash(self) -> str:
-        """
-        Compute deterministic hash of model + input + params.
-
-        This enables exact reproducibility checking: same inputs → same hash.
+        Returns
+        -------
+        self : BaseModel
+            Fitted model instance
         
-        Hash Components:
-            - Model name and version
-            - Input data hash (SHA256 of sorted DataFrame)
-            - Parameters (JSON-serialized, sorted keys)
-
-        Returns:
-            SHA256 hex digest (64 characters)
+        Notes
+        -----
+        Subclasses must implement this method. After fitting:
+        - Set self.fitted_ = True
+        - Compute self.hash_ via _compute_hash()
+        - Store fitted parameters in self.params_
         """
-        # Compute input hash
-        if self.input_schema is not None:
-            input_hash = compute_dataframe_hash(self.input_schema.to_dataframe())
-        else:
-            input_hash = "no_input"
-
-        # Build hash components
-        components = {
-            "model": f"{self.meta.name}@{self.meta.version}",
-            "input_hash": input_hash,
-            "params": self.params,
+        pass
+    
+    @abstractmethod
+    def forecast(self, steps: int = 1, **kwargs) -> 'ForecastResult':
+        """
+        Generate forecasts.
+        
+        Parameters
+        ----------
+        steps : int, default=1
+            Number of steps ahead to forecast
+        **kwargs : dict
+            Additional forecast parameters (e.g., confidence level, exogenous future values)
+        
+        Returns
+        -------
+        result : ForecastResult
+            Forecast results with point estimates and prediction intervals
+        
+        Raises
+        ------
+        ValueError
+            If model has not been fitted (self.fitted_ == False)
+        
+        Notes
+        -----
+        Subclasses must implement this method. Should check self.fitted_ before forecasting.
+        """
+        pass
+    
+    def validate(self, y_true: np.ndarray, y_pred: np.ndarray) -> Dict[str, float]:
+        """
+        Compute validation metrics.
+        
+        Parameters
+        ----------
+        y_true : array-like, shape (n_samples,)
+            True values
+        y_pred : array-like, shape (n_samples,)
+            Predicted values
+        
+        Returns
+        -------
+        metrics : dict
+            Dictionary of metric name → value
+            - mae: Mean Absolute Error
+            - rmse: Root Mean Squared Error
+            - mape: Mean Absolute Percentage Error
+            - r2: R-squared coefficient
+        
+        Examples
+        --------
+        >>> model = MyModel()
+        >>> model.fit(y_train)
+        >>> y_pred = model.forecast(steps=len(y_test)).point_forecast
+        >>> metrics = model.validate(y_test, y_pred)
+        >>> print(f"RMSE: {metrics['rmse']:.3f}")
+        """
+        y_true = np.asarray(y_true)
+        y_pred = np.asarray(y_pred)
+        
+        # Mean Absolute Error
+        mae = float(np.mean(np.abs(y_true - y_pred)))
+        
+        # Root Mean Squared Error
+        rmse = float(np.sqrt(np.mean((y_true - y_pred) ** 2)))
+        
+        # Mean Absolute Percentage Error
+        # Avoid division by zero
+        mask = y_true != 0
+        mape = float(np.mean(np.abs((y_true[mask] - y_pred[mask]) / y_true[mask])) * 100) if np.any(mask) else np.inf
+        
+        # R-squared
+        ss_res = np.sum((y_true - y_pred) ** 2)
+        ss_tot = np.sum((y_true - np.mean(y_true)) ** 2)
+        r2 = float(1 - (ss_res / ss_tot)) if ss_tot != 0 else 0.0
+        
+        return {
+            'mae': mae,
+            'rmse': rmse,
+            'mape': mape,
+            'r2': r2
         }
-
-        # Compute SHA256 of JSON-serialized components
-        hash_str = json.dumps(components, sort_keys=True)
-        return hashlib.sha256(hash_str.encode()).hexdigest()
-
-    @property
-    def input_hash(self) -> str:
+    
+    def get_params(self) -> Dict[str, Any]:
         """
-        Compute hash of input data only.
-
-        Returns:
-            SHA256 hex digest of input DataFrame
-        """
-        if self.input_schema is not None:
-            return compute_dataframe_hash(self.input_schema.to_dataframe())
-        return "no_input"
-
-    def register_run(self, registry, result: BaseResult) -> None:
-        """
-        Register model run with ModelRegistry.
-
-        Args:
-            registry: ModelRegistry instance
-            result: Result from fit() or predict()
-        """
-        run_hash = self.run_hash()
+        Get model parameters.
         
-        # Log run metadata
-        registry.log_run(
-            run_hash=run_hash,
-            model_name=self.meta.name,
-            version=self.meta.version,
-            input_hash=self.input_hash,
-            params=self.params,
-        )
+        Returns
+        -------
+        params : dict
+            Model parameters (hyperparameters + fitted parameters)
         
-        # Log result
-        registry.log_result(
-            run_hash=run_hash,
-            result_hash=result.result_hash,
-            result=result.to_json(),
-        )
-
-    def _process_data(self, data):
+        Examples
+        --------
+        >>> model = MyModel(alpha=0.05)
+        >>> model.fit(y)
+        >>> params = model.get_params()
+        >>> print(params['alpha'])
+        0.05
         """
-        Convert input to numpy array or DataFrame.
-        
-        Args:
-            data: Input data (DataFrame, array, etc.)
-        
-        Returns:
-            Processed data ready for model
+        return self.params_.copy()
+    
+    def set_params(self, **params) -> 'BaseModel':
         """
-        import pandas as pd
-        import numpy as np
+        Set model parameters.
         
-        if isinstance(data, pd.DataFrame):
-            return data.values
-        elif isinstance(data, pd.Series):
-            return data.values.reshape(-1, 1)
-        elif isinstance(data, np.ndarray):
-            return data
-        else:
-            raise TypeError(f"Unsupported data type: {type(data)}")
-
+        Parameters
+        ----------
+        **params : dict
+            Parameters to update
+        
+        Returns
+        -------
+        self : BaseModel
+            Model instance with updated parameters
+        
+        Notes
+        -----
+        If model was previously fitted, this resets fitted_ to False.
+        
+        Examples
+        --------
+        >>> model = MyModel()
+        >>> model.set_params(alpha=0.01, max_iter=1000)
+        >>> model.fit(y)
+        """
+        for key, value in params.items():
+            self.params_[key] = value
+        
+        # Reset fitted state if parameters changed
+        if self.fitted_:
+            self.fitted_ = False
+            self.hash_ = None
+        
+        return self
+    
+    def get_metadata(self) -> Dict[str, Any]:
+        """
+        Get model metadata.
+        
+        Returns
+        -------
+        metadata : dict
+            Model metadata (name, version, author, created_at, etc.)
+        
+        Examples
+        --------
+        >>> model = MyModel()
+        >>> meta = model.get_metadata()
+        >>> print(f"Model: {meta['name']} v{meta['version']}")
+        """
+        return self.metadata_.model_dump()
+    
+    def _compute_hash(self) -> str:
+        """
+        Compute SHA256 hash of model state for reproducibility.
+        
+        Returns
+        -------
+        hash_str : str
+            Hexadecimal SHA256 hash
+        
+        Notes
+        -----
+        Hash includes:
+        - Model class name
+        - Model parameters
+        - Fitted parameters (if fitted)
+        
+        Used for:
+        - Reproducibility tracking
+        - Model versioning
+        - Detecting parameter changes
+        """
+        # Serialize model state
+        state = {
+            'class': self.__class__.__name__,
+            'params': self.params_,
+            'fitted': self.fitted_
+        }
+        
+        # Convert to deterministic JSON string
+        state_str = json.dumps(state, sort_keys=True, default=str)
+        
+        # Compute SHA256 hash
+        return hashlib.sha256(state_str.encode()).hexdigest()
+    
     def __repr__(self) -> str:
         """String representation of model."""
-        fitted_status = "fitted" if self._is_fitted else "not fitted"
-        return f"{self.meta.name}(version={self.meta.version}, {fitted_status})"
+        fitted_status = "fitted" if self.fitted_ else "not fitted"
+        return f"{self.metadata_.name}(version={self.metadata_.version}, {fitted_status})"
+    
+    def __str__(self) -> str:
+        """Human-readable string representation."""
+        return self.__repr__()
