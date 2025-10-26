@@ -223,3 +223,6 @@ GATE_REBUILD_COMPLIANCE_REPORT.md
 .github/ISSUE_TEMPLATE/config.yml
 SECURITY.md
 SUPPORT.md
+
+# Assets directory (keep local only - logos and images)
+assets/
