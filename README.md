@@ -12,19 +12,19 @@
   [![Status](https://img.shields.io/badge/status-production%20ready-success.svg)](https://github.com/KR-Labs/krl-model-zoo)
   [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
   
-  [📚 Documentation](https://krl-model-zoo.readthedocs.io) • [🚀 Quick Start](#quick-start) • [💡 Examples](./examples) • [🤝 Contributing](CONTRIBUTING.md)
+  [Documentation](https://krl-model-zoo.readthedocs.io) • [Quick Start](#quick-start) • [Examples](./examples) • [Contributing](CONTRIBUTING.md)
 </div>
 
 ---
 
-## 🌟 Highlights
+## Highlights
 
-- 🎯 **100+ Production-Ready Models** - ARIMA, GARCH, VAR, Kalman Filters, Random Forest, XGBoost, and more
-- 📊 **Built for Public Data** - Native integration with Census, BLS, FRED, CDC, HUD via [KRL Data Connectors](https://github.com/KR-Labs/krl-data-connectors)
-- 🔬 **Research-Grade Quality** - Peer-reviewed algorithms with comprehensive validation and testing
-- 🚀 **Production Ready** - Battle-tested in real-world policy analysis and forecasting applications
-- 📖 **Fully Documented** - Complete API reference, tutorials, and mathematical formulations
-- 🤝 **Open Source** - Apache 2.0 License, community-driven development
+- **100+ Production-Ready Models** - ARIMA, GARCH, VAR, Kalman Filters, Random Forest, XGBoost, and more
+- **Built for Public Data** - Native integration with Census, BLS, FRED, CDC, HUD via [KRL Data Connectors](https://github.com/KR-Labs/krl-data-connectors)
+- **Research-Grade Quality** - Peer-reviewed algorithms with comprehensive validation and testing
+- **Production Ready** - Battle-tested in real-world policy analysis and forecasting applications
+- **Fully Documented** - Complete API reference, tutorials, and mathematical formulations
+- **Open Source** - Apache 2.0 License, community-driven development
 
 ---
 
