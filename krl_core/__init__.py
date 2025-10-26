@@ -13,16 +13,20 @@ enabling standardized model development, deployment, and tracking across
 diverse analytical domains.
 """
 
-from krl_core.base_model import BaseModel, ModelMeta
+from krl_core.base_model import BaseModel, ModelMetadata
 from krl_core.model_input_schema import ModelInputSchema, Provenance
 from krl_core.model_registry import ModelRegistry
 from krl_core.plotly_adapter import PlotlySchemaAdapter
 from krl_core.results import BaseResult, CausalResult, ClassificationResult, ForecastResult
 
+# Alias for backwards compatibility
+ModelMeta = ModelMetadata
+
 __version__ = "1.0.0"
 __all__ = [
     "BaseModel",
-    "ModelMeta",
+    "ModelMetadata",
+    "ModelMeta",  # Backwards compatibility alias
     "ModelInputSchema",
     "Provenance",
     "BaseResult",
