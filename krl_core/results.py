@@ -1,233 +1,354 @@
-# ----------------------------------------------------------------------
-# © 2025 KR-Labs. All rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
-# a subsidiary of Sudiata Giddasira, Inc.
-# ----------------------------------------------------------------------
-# SPDX-License-Identifier: Apache-2.0
-
 """
-Result classes for model outputs.
+Result Classes for KRL Model Zoo
+=================================
 
-Provides standardized wrappers for different types of model results:
-- BaseResult: Generic result container
-- ForecastResult: Time series forecasts with confidence intervals
-- CausalResult: Causal inference outputs (treatment effects, p-values)
-- ClassificationResult: ML classification results
+Apache 2.0 License - Gate 1 Foundation
+Author: KR Labs
 
-All result classes include deterministic hashing for reproducibility.
+Defines standardized result classes for model outputs:
+- ForecastResult: Time series forecasts with prediction intervals
+- CausalResult: Causal inference results (treatment effects, etc.)
+- ClassificationResult: Classification model outputs
+- BaseResult: Abstract base for custom result types
 """
 
-import hashlib
-import json
-from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, List, Optional, Union
-
-import pandas as pd
+from typing import Dict, Any, Optional, List
+import numpy as np
+from pydantic import BaseModel, Field, field_validator
 
 
-@dataclass
-class BaseResult:
+class BaseResult(BaseModel):
     """
-    Base result class for all model outputs.
+    Abstract base class for model results.
     
-    Provides common functionality:
-    - Payload storage (model-specific results)
-    - Metadata storage (model info, parameters, diagnostics)
-    - Deterministic hashing (reproducibility)
-    - JSON serialization (storage, API transmission)
+    All result classes inherit from this Pydantic BaseModel.
+    Provides automatic validation, serialization, and JSON export.
     
-    Attributes:
-        payload: Model-specific output data (dict, DataFrame, array, etc.)
-        metadata: Additional information (model name, version, diagnostics)
+    Attributes
+    ----------
+    model_name : str
+        Name of model that generated results
+    timestamp : str
+        ISO 8601 timestamp of result generation
+    metadata : dict
+        Additional result metadata
     """
+    model_name: str = "Unknown"
+    timestamp: str = Field(default_factory=lambda: __import__('datetime').datetime.utcnow().isoformat())
+    metadata: Dict[str, Any] = Field(default_factory=dict)
     
-    payload: Any
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    
-    @property
-    def result_hash(self) -> str:
-        """
-        Compute deterministic SHA256 hash of result.
-        
-        Hash includes:
-        - Payload (converted to JSON-serializable form)
-        - Metadata (sorted keys)
-        
-        Returns:
-            SHA256 hex digest (64 characters)
-        """
-        # Convert payload to hashable form
-        if isinstance(self.payload, pd.DataFrame):
-            payload_str = self.payload.to_json(orient='split', date_format='iso')
-        elif isinstance(self.payload, pd.Series):
-            payload_str = self.payload.to_json(date_format='iso')
-        else:
-            payload_str = json.dumps(self.payload, sort_keys=True, default=str)
-        
-        # Combine with metadata
-        hash_components = {
-            'payload': payload_str,
-            'metadata': self.metadata,
-        }
-        
-        hash_str = json.dumps(hash_components, sort_keys=True)
-        return hashlib.sha256(hash_str.encode()).hexdigest()
-    
-    def to_json(self) -> str:
-        """
-        Serialize result to JSON string.
-        
-        Returns:
-            JSON string representation
-        """
-        # Convert payload to JSON-serializable form
-        if isinstance(self.payload, pd.DataFrame):
-            payload_json = self.payload.to_dict(orient='split')
-        elif isinstance(self.payload, pd.Series):
-            payload_json = self.payload.to_dict()
-        else:
-            payload_json = self.payload
-        
-        result_dict = {
-            'payload': payload_json,
-            'metadata': self.metadata,
-            'result_hash': self.result_hash,
-        }
-        
-        return json.dumps(result_dict, default=str)
-    
-    @classmethod
-    def from_json(cls, json_str: str) -> 'BaseResult':
-        """
-        Deserialize result from JSON string.
-        
-        Args:
-            json_str: JSON string representation
-        
-        Returns:
-            BaseResult instance
-        """
-        result_dict = json.loads(json_str)
-        return cls(
-            payload=result_dict['payload'],
-            metadata=result_dict.get('metadata', {}),
-        )
+    class Config:
+        arbitrary_types_allowed = True
 
 
-@dataclass
 class ForecastResult(BaseResult):
     """
-    Result class for time series forecasting models.
+    Forecast results with point estimates and prediction intervals.
     
-    Extends BaseResult with forecast-specific fields:
-    - Forecast values (point estimates)
-    - Confidence intervals (upper/lower bounds)
-    - Forecast index (time/date labels)
+    Used by all forecasting models (ARIMA, GARCH, ML regressors, etc.)
     
-    Example:
-        ```python
-        result = ForecastResult(
-            payload={'model_output': fitted_values},
-            metadata={'model': 'ARIMA', 'order': (1,1,1)},
-            forecast_index=pd.date_range('2024-01-01', periods=12, freq='M'),
-            forecast_values=[100.5, 101.2, ...],
-            ci_lower=[98.0, 99.0, ...],
-            ci_upper=[103.0, 103.5, ...],
-        )
-        ```
+    Attributes
+    ----------
+    point_forecast : array-like
+        Point forecast values
+    lower : array-like, optional
+        Lower bound of prediction interval
+    upper : array-like, optional
+        Upper bound of prediction interval
+    alpha : float
+        Significance level for prediction intervals (default 0.05 = 95% CI)
+    forecast_horizon : int
+        Number of steps forecasted
     
-    Attributes:
-        forecast_index: Time/date labels for forecasts
-        forecast_values: Point forecast estimates
-        ci_lower: Lower confidence interval bounds
-        ci_upper: Upper confidence interval bounds
+    Examples
+    --------
+    >>> result = ForecastResult(
+    ...     point_forecast=np.array([1.0, 1.1, 1.2]),
+    ...     lower=np.array([0.8, 0.9, 1.0]),
+    ...     upper=np.array([1.2, 1.3, 1.4]),
+    ...     alpha=0.05
+    ... )
+    >>> print(f"Forecast: {result.point_forecast}")
+    >>> print(f"95% CI: [{result.lower[0]:.2f}, {result.upper[0]:.2f}]")
     """
+    point_forecast: np.ndarray
+    lower: Optional[np.ndarray] = None
+    upper: Optional[np.ndarray] = None
+    alpha: float = 0.05
+    forecast_horizon: Optional[int] = None
     
-    forecast_index: Union[pd.Index, List[Any]] = field(default_factory=list)
-    forecast_values: Union[List[float], pd.Series] = field(default_factory=list)
-    ci_lower: Union[List[float], pd.Series] = field(default_factory=list)
-    ci_upper: Union[List[float], pd.Series] = field(default_factory=list)
+    @field_validator('point_forecast', 'lower', 'upper', mode='before')
+    @classmethod
+    def validate_arrays(cls, v):
+        """Convert to numpy array and validate."""
+        if v is None:
+            return v
+        v = np.asarray(v)
+        if v.ndim != 1:
+            raise ValueError("Forecast arrays must be 1-dimensional")
+        return v
     
-    def to_dataframe(self) -> pd.DataFrame:
-        """
-        Convert forecast to DataFrame.
+    @field_validator('alpha')
+    @classmethod
+    def validate_alpha(cls, v):
+        """Validate significance level."""
+        if not 0 < v < 1:
+            raise ValueError("alpha must be between 0 and 1")
+        return v
+    
+    def __init__(self, **data):
+        super().__init__(**data)
+        # Set forecast_horizon if not provided
+        if self.forecast_horizon is None:
+            self.forecast_horizon = len(self.point_forecast)
         
-        Returns:
-            DataFrame with columns: [forecast, ci_lower, ci_upper]
+        # Validate interval bounds if provided
+        if self.lower is not None and self.upper is not None:
+            if len(self.lower) != len(self.point_forecast):
+                raise ValueError("lower must match point_forecast length")
+            if len(self.upper) != len(self.point_forecast):
+                raise ValueError("upper must match point_forecast length")
+            if np.any(self.lower > self.upper):
+                raise ValueError("lower must be <= upper for all points")
+    
+    def to_dict(self) -> Dict[str, Any]:
         """
-        return pd.DataFrame({
-            'forecast': self.forecast_values,
-            'ci_lower': self.ci_lower,
-            'ci_upper': self.ci_upper,
-        }, index=self.forecast_index)
+        Convert to dictionary for JSON serialization.
+        
+        Returns
+        -------
+        dict
+            Dictionary with numpy arrays converted to lists
+        """
+        return {
+            'model_name': self.model_name,
+            'timestamp': self.timestamp,
+            'point_forecast': self.point_forecast.tolist(),
+            'lower': self.lower.tolist() if self.lower is not None else None,
+            'upper': self.upper.tolist() if self.upper is not None else None,
+            'alpha': self.alpha,
+            'forecast_horizon': self.forecast_horizon,
+            'metadata': self.metadata
+        }
 
 
-@dataclass
 class CausalResult(BaseResult):
     """
-    Result class for causal inference models.
+    Causal inference results (treatment effects, counterfactuals, etc.)
     
-    Extends BaseResult with causal-specific fields:
-    - Treatment effect estimate (ATE, ATT, etc.)
-    - Standard error and p-value
-    - Confidence interval
+    Used by causal models (DiD, RDD, Synthetic Control, DML, etc.)
     
-    Example:
-        ```python
-        result = CausalResult(
-            payload={'did_estimate': 5.2, 'control_mean': 10.0},
-            metadata={'model': 'DiD', 'method': 'two-way-fe'},
-            treatment_effect=5.2,
-            std_error=1.1,
-            p_value=0.001,
-            confidence_interval=(3.0, 7.4),
-        )
-        ```
+    Attributes
+    ----------
+    treatment_effect : float
+        Average treatment effect (ATE)
+    std_error : float, optional
+        Standard error of treatment effect
+    p_value : float, optional
+        P-value for treatment effect significance
+    confidence_interval : tuple of float, optional
+        Confidence interval for treatment effect
+    treatment_group_mean : float, optional
+        Mean outcome for treatment group
+    control_group_mean : float, optional
+        Mean outcome for control group
+    heterogeneous_effects : dict, optional
+        Subgroup-specific treatment effects
     
-    Attributes:
-        treatment_effect: Estimated causal effect
-        std_error: Standard error of estimate
-        p_value: Statistical significance
-        confidence_interval: (lower, upper) bounds
+    Examples
+    --------
+    >>> result = CausalResult(
+    ...     treatment_effect=5.2,
+    ...     std_error=1.3,
+    ...     p_value=0.0001,
+    ...     confidence_interval=(2.6, 7.8)
+    ... )
+    >>> print(f"ATE: {result.treatment_effect:.2f} (p={result.p_value:.4f})")
     """
+    treatment_effect: float
+    std_error: Optional[float] = None
+    p_value: Optional[float] = None
+    confidence_interval: Optional[tuple] = None
+    treatment_group_mean: Optional[float] = None
+    control_group_mean: Optional[float] = None
+    heterogeneous_effects: Optional[Dict[str, float]] = None
     
-    treatment_effect: float = 0.0
-    std_error: float = 0.0
-    p_value: float = 1.0
-    confidence_interval: tuple = field(default_factory=lambda: (0.0, 0.0))
+    @field_validator('p_value')
+    @classmethod
+    def validate_p_value(cls, v):
+        """Validate p-value range."""
+        if v is not None and not 0 <= v <= 1:
+            raise ValueError("p_value must be between 0 and 1")
+        return v
+    
+    @field_validator('confidence_interval')
+    @classmethod
+    def validate_ci(cls, v):
+        """Validate confidence interval."""
+        if v is not None:
+            if len(v) != 2:
+                raise ValueError("confidence_interval must have 2 elements")
+            if v[0] > v[1]:
+                raise ValueError("CI lower bound must be <= upper bound")
+        return v
+    
+    def is_significant(self, alpha: float = 0.05) -> bool:
+        """
+        Check if treatment effect is statistically significant.
+        
+        Parameters
+        ----------
+        alpha : float, default=0.05
+            Significance level
+        
+        Returns
+        -------
+        bool
+            True if p_value < alpha (significant)
+        """
+        if self.p_value is None:
+            raise ValueError("p_value not available")
+        return self.p_value < alpha
 
 
-@dataclass
 class ClassificationResult(BaseResult):
     """
-    Result class for classification models.
+    Classification model results.
     
-    Extends BaseResult with classification-specific fields:
-    - Predicted classes
-    - Class probabilities
-    - Confusion matrix
-    - Classification metrics (accuracy, F1, etc.)
+    Used by classification models (anomaly detection, etc.)
     
-    Example:
-        ```python
-        result = ClassificationResult(
-            payload={'fitted_model': model_obj},
-            metadata={'model': 'RandomForest', 'n_estimators': 100},
-            predictions=[0, 1, 1, 0, ...],
-            probabilities=[[0.8, 0.2], [0.3, 0.7], ...],
-            confusion_matrix=[[45, 5], [3, 47]],
-            metrics={'accuracy': 0.92, 'f1': 0.91},
-        )
-        ```
+    Attributes
+    ----------
+    predictions : array-like
+        Predicted class labels
+    probabilities : array-like, optional
+        Class probabilities (n_samples, n_classes)
+    decision_scores : array-like, optional
+        Decision function scores
+    class_labels : list of str, optional
+        Class label names
     
-    Attributes:
-        predictions: Predicted class labels
-        probabilities: Class probability estimates
-        confusion_matrix: Confusion matrix (true vs predicted)
-        metrics: Performance metrics dict
+    Examples
+    --------
+    >>> result = ClassificationResult(
+    ...     predictions=np.array([0, 1, 1, 0]),
+    ...     probabilities=np.array([[0.9, 0.1], [0.2, 0.8], [0.3, 0.7], [0.8, 0.2]]),
+    ...     class_labels=['normal', 'anomaly']
+    ... )
+    >>> print(f"Predicted: {result.predictions}")
     """
+    predictions: np.ndarray
+    probabilities: Optional[np.ndarray] = None
+    decision_scores: Optional[np.ndarray] = None
+    class_labels: Optional[List[str]] = None
     
-    predictions: List[Any] = field(default_factory=list)
-    probabilities: List[List[float]] = field(default_factory=list)
-    confusion_matrix: List[List[int]] = field(default_factory=list)
-    metrics: Dict[str, float] = field(default_factory=dict)
+    @field_validator('predictions', 'probabilities', 'decision_scores', mode='before')
+    @classmethod
+    def validate_arrays(cls, v):
+        """Convert to numpy array."""
+        if v is None:
+            return v
+        return np.asarray(v)
+    
+    def __init__(self, **data):
+        super().__init__(**data)
+        
+        # Validate probabilities if provided
+        if self.probabilities is not None:
+            if self.probabilities.ndim not in [1, 2]:
+                raise ValueError("probabilities must be 1D or 2D array")
+            if len(self.probabilities) != len(self.predictions):
+                raise ValueError("probabilities must match predictions length")
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            'model_name': self.model_name,
+            'timestamp': self.timestamp,
+            'predictions': self.predictions.tolist(),
+            'probabilities': self.probabilities.tolist() if self.probabilities is not None else None,
+            'decision_scores': self.decision_scores.tolist() if self.decision_scores is not None else None,
+            'class_labels': self.class_labels,
+            'metadata': self.metadata
+        }
+
+
+class SpecializationResult(BaseResult):
+    """
+    Regional specialization analysis results.
+    
+    Used by location quotient, shift-share, and other regional models.
+    
+    Attributes
+    ----------
+    location_quotients : dict, optional
+        Industry -> LQ value mapping
+    shift_share_decomposition : dict, optional
+        NS, IM, CS components
+    specialized_industries : list of str, optional
+        Industries where region is specialized (LQ > threshold)
+    rankings : dict, optional
+        Region rankings by various metrics
+    
+    Examples
+    --------
+    >>> result = SpecializationResult(
+    ...     location_quotients={'tech': 2.5, 'healthcare': 0.8},
+    ...     specialized_industries=['tech']
+    ... )
+    """
+    location_quotients: Optional[Dict[str, float]] = None
+    shift_share_decomposition: Optional[Dict[str, float]] = None
+    specialized_industries: Optional[List[str]] = None
+    rankings: Optional[Dict[str, Any]] = None
+
+
+class AnomalyResult(BaseResult):
+    """
+    Anomaly detection results.
+    
+    Used by STL, Isolation Forest, and other anomaly detection models.
+    
+    Attributes
+    ----------
+    anomaly_indices : array-like
+        Indices of detected anomalies
+    anomaly_scores : array-like
+        Anomaly scores for all samples
+    threshold : float, optional
+        Threshold used for anomaly detection
+    anomaly_labels : array-like, optional
+        Binary labels (1 = normal, -1 = anomaly)
+    
+    Examples
+    --------
+    >>> result = AnomalyResult(
+    ...     anomaly_indices=np.array([10, 25, 47]),
+    ...     anomaly_scores=np.random.randn(100),
+    ...     threshold=3.0
+    ... )
+    """
+    anomaly_indices: np.ndarray
+    anomaly_scores: np.ndarray
+    threshold: Optional[float] = None
+    anomaly_labels: Optional[np.ndarray] = None
+    
+    @field_validator('anomaly_indices', 'anomaly_scores', 'anomaly_labels', mode='before')
+    @classmethod
+    def validate_arrays(cls, v):
+        """Convert to numpy array."""
+        if v is None:
+            return v
+        return np.asarray(v)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            'model_name': self.model_name,
+            'timestamp': self.timestamp,
+            'anomaly_indices': self.anomaly_indices.tolist(),
+            'anomaly_scores': self.anomaly_scores.tolist(),
+            'threshold': self.threshold,
+            'anomaly_labels': self.anomaly_labels.tolist() if self.anomaly_labels is not None else None,
+            'metadata': self.metadata
+        }
