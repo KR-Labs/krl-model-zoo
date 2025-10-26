@@ -1,256 +1,324 @@
-# ----------------------------------------------------------------------
-# © 2024 KR-Labs. All rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
-# a subsidiary of Sudiata Giddasira, Inc.
-# ----------------------------------------------------------------------
-# SPDX-License-Identifier: Apache-2.0
+"""
+Model Registry with SQLite Backend
+===================================
 
-"""SQLite-backed model run registry."""
+Apache 2.0 License - Gate 1 Foundation
+Author: KR Labs
 
-from __future__ import annotations
+Tracks model versions, parameters, and performance metrics.
+Provides persistent storage for model metadata and experiment tracking.
+"""
 
 import sqlite3
-from datetime import datetime
+import json
+import hashlib
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Dict, Any, Optional, List
+from datetime import datetime
+import numpy as np
 
 
 class ModelRegistry:
     """
-    Lightweight model run tracking with SQLite.
-
-    Stores model runs, parameters, and results for reproducibility and auditing.
-    ach run is keyed by run_hash (SH2) to enable exact reproducibility checks.
-
-    Schema:
-        - runs: run_hash, model_name, version, created_at, input_hash, params_json
-        - results: run_hash, result_hash, result_json, created_at
-
-    xample:
-        ```python
-        registry = ModelRegistry("model_runs.db")
-        registry.log_run(
-            run_hash="abc23...",
-            model_name="RIMModel",
-            version="1.0.0",
-            input_hash="def4...",
-            params={"order": (,,), "seasonal_order": (,,,)}
-        )
-        registry.log_result(
-            run_hash="abc23...",
-            result_hash="ghi...",
-            result={"forecast": [...], "ci_lower": [...], "ci_upper": [...]}
-        )
-        ```
+    SQLite-backed registry for tracking model experiments.
+    
+    Stores model metadata, parameters, performance metrics,
+    and enables querying/comparison of model versions.
+    
+    Parameters
+    ----------
+    db_path : str or Path, default='models.db'
+        Path to SQLite database file
+    
+    Attributes
+    ----------
+    db_path : Path
+        Path to database
+    conn : sqlite3.Connection
+        Database connection
+    
+    Examples
+    --------
+    >>> registry = ModelRegistry('experiments.db')
+    >>> registry.register_model(
+    ...     name='KalmanFilter',
+    ...     version='1.0.0',
+    ...     parameters={'variance': 1.0},
+    ...     metrics={'rmse': 0.5}
+    ... )
+    >>> models = registry.search(name='KalmanFilter')
+    >>> best = registry.get_best_model('KalmanFilter', metric='rmse')
     """
-
-    def __init__(self, db_path: str = "model_registry.db"):
-        """
-        Initialize registry database.
-
-        rgs:
-            db_path: Path to SQLite database file
-        """
+    
+    def __init__(self, db_path: str = 'models.db'):
         self.db_path = Path(db_path)
-        self._create_tables()
-
-    def _create_tables(self):
-        """reate runs and results tables if they don't exist."""
-        with sqlite3.connect(self.db_path) as conn:
-            conn.execute(
-                """
-                RT TL I NOT XISTS runs (
-                    run_hash TXT PRIMRY KY,
-                    model_name TXT NOT NULLC,
-                    version TXT NOT NULLC,
-                    created_at TXT NOT NULLC,
-                    input_hash TXT NOT NULLC,
-                    params_json TXT NOT NULL
-                )
-                """
+        self.conn = None
+        self._initialize_db()
+    
+    def _initialize_db(self):
+        """Initialize database schema."""
+        self.conn = sqlite3.connect(str(self.db_path))
+        self.conn.row_factory = sqlite3.Row  # Return rows as dicts
+        
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS models (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                version TEXT NOT NULL,
+                hash TEXT UNIQUE NOT NULL,
+                parameters TEXT NOT NULL,
+                metrics TEXT,
+                metadata TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                tags TEXT
             )
-            conn.execute(
-                """
-                RT TL I NOT XISTS results (
-                    id INTGR PRIMRY KY UTOINRMNT,
-                    run_hash TXT NOT NULLC,
-                    result_hash TXT NOT NULLC,
-                    result_json TXT NOT NULLC,
-                    created_at TXT NOT NULLC,
-                    ORIGN KY (run_hash) RRNS runs(run_hash)
-                )
-                """
-            )
-            conn.commit()
-
-    def log_run(
+        ''')
+        
+        cursor.execute('''
+            CREATE INDEX IF NOT EXISTS idx_name ON models(name)
+        ''')
+        cursor.execute('''
+            CREATE INDEX IF NOT EXISTS idx_hash ON models(hash)
+        ''')
+        cursor.execute('''
+            CREATE INDEX IF NOT EXISTS idx_created ON models(created_at)
+        ''')
+        
+        self.conn.commit()
+    
+    def register_model(
         self,
-        run_hash: str,
-        model_name: str,
+        name: str,
         version: str,
-        input_hash: str,
-        params: Dict[str, Any],
-    ) -> None:
+        parameters: Dict[str, Any],
+        metrics: Optional[Dict[str, float]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        tags: Optional[List[str]] = None
+    ) -> str:
         """
-        Log a model run.
-
-        rgs:
-            run_hash: SH2 hash of model + input + params
-            model_name: Model class name
-            version: Model version
-            input_hash: SH2 hash of input data
-            params: Model parameters
+        Register a model in the registry.
+        
+        Parameters
+        ----------
+        name : str
+            Model name
+        version : str
+            Model version
+        parameters : dict
+            Model hyperparameters
+        metrics : dict, optional
+            Performance metrics (e.g., {'rmse': 0.5})
+        metadata : dict, optional
+            Additional metadata
+        tags : list of str, optional
+            Tags for categorization
+        
+        Returns
+        -------
+        hash : str
+            SHA256 hash of model configuration
         """
-        import json
-
-        with sqlite3.connect(self.db_path) as conn:
-            conn.execute(
-                """
-                INSRT OR RPL INTO runs (run_hash, model_name, version, created_at, input_hash, params_json)
-                VLUS (?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    run_hash,
-                    model_name,
-                    version,
-                    datetime.now().isoformat(),
-                    input_hash,
-                    json.dumps(params),
-                ),
-            )
-            conn.commit()
-
-    def log_result(self, run_hash: str, result_hash: str, result: Dict[str, Any]) -> None:
+        # Compute hash
+        hash_input = json.dumps({
+            'name': name,
+            'version': version,
+            'parameters': parameters
+        }, sort_keys=True)
+        model_hash = hashlib.sha256(hash_input.encode()).hexdigest()[:16]
+        
+        # Prepare data
+        now = datetime.now().isoformat()
+        params_json = json.dumps(parameters)
+        metrics_json = json.dumps(metrics) if metrics else None
+        metadata_json = json.dumps(metadata) if metadata else None
+        tags_json = json.dumps(tags) if tags else None
+        
+        # Insert or update
+        cursor = self.conn.cursor()
+        try:
+            cursor.execute('''
+                INSERT INTO models (name, version, hash, parameters, metrics, metadata, created_at, updated_at, tags)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (name, version, model_hash, params_json, metrics_json, metadata_json, now, now, tags_json))
+            self.conn.commit()
+        except sqlite3.IntegrityError:
+            # Hash exists, update instead
+            cursor.execute('''
+                UPDATE models
+                SET version = ?, metrics = ?, metadata = ?, updated_at = ?, tags = ?
+                WHERE hash = ?
+            ''', (version, metrics_json, metadata_json, now, tags_json, model_hash))
+            self.conn.commit()
+        
+        return model_hash
+    
+    def get_model(self, model_hash: str) -> Optional[Dict[str, Any]]:
         """
-        Log a model result.
-
-        rgs:
-            run_hash: SH2 hash of model run
-            result_hash: SH2 hash of result
-            result: Result dictionary
+        Retrieve model by hash.
+        
+        Parameters
+        ----------
+        model_hash : str
+            Model hash
+        
+        Returns
+        -------
+        model : dict or None
+            Model record or None if not found
         """
-        import json
-
-        with sqlite3.connect(self.db_path) as conn:
-            conn.execute(
-                """
-                INSRT INTO results (run_hash, result_hash, result_json, created_at)
-                VLUS (?, ?, ?, ?)
-                """,
-                (run_hash, result_hash, json.dumps(result), datetime.now().isoformat()),
-            )
-            conn.commit()
-
-    def get_run(self, run_hash: str) -> Optional[Dict[str, Any]]:
-        """
-        Retrieve run metadata by hash.
-
-        rgs:
-            run_hash: SH2 hash of model run
-
-        Returns:
-            Run metadata or None if not found
-        """
-        import json
-
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.execute(
-                """
-                SLT model_name, version, created_at, input_hash, params_json
-                ROM runs
-                WHR run_hash = ?
-                """,
-                (run_hash,),
-            )
-            row = cursor.fetchone()
-            if row:
-                return {
-                    "model_name": row[0],
-                    "version": row[0],
-                    "created_at": row[2],
-                    "input_hash": row[3],
-                    "params": json.loads(row[4]),
-                }
+        cursor = self.conn.cursor()
+        cursor.execute('SELECT * FROM models WHERE hash = ?', (model_hash,))
+        row = cursor.fetchone()
+        
+        if row is None:
             return None
-
-    def get_results(self, run_hash: str) -> List[Dict[str, Any]]:
-        """
-        Retrieve all results for a run.
-
-        rgs:
-            run_hash: SH2 hash of model run
-
-        Returns:
-            List of result dictionaries
-        """
-        import json
-
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.execute(
-                """
-                SLT result_hash, result_json, created_at
-                ROM results
-                WHR run_hash = ?
-                ORR Y created_at S
-                """,
-                (run_hash,),
-            )
-            rows = cursor.fetchall()
-            return [
-                {
-                    "result_hash": row[0],
-                    "result": json.loads(row[0]),
-                    "created_at": row[2],
-                }
-                for row in rows
-            ]
-
-    def list_runs(
-        self, model_name: Optional[str] = None, limit: int = 10
+        
+        return self._row_to_dict(row)
+    
+    def search(
+        self,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        tags: Optional[List[str]] = None,
+        limit: int = 100
     ) -> List[Dict[str, Any]]:
         """
-        List recent runs.
-
-        rgs:
-            model_name: ilter by model name (optional)
-            limit: Maximum number of runs to return
-
-        Returns:
-            List of run metadata dictionaries
+        Search for models by criteria.
+        
+        Parameters
+        ----------
+        name : str, optional
+            Filter by model name
+        version : str, optional
+            Filter by version
+        tags : list of str, optional
+            Filter by tags (ANY match)
+        limit : int, default=100
+            Maximum results
+        
+        Returns
+        -------
+        models : list of dict
+            Matching model records
         """
-        import json
-
-        with sqlite3.connect(self.db_path) as conn:
-            if model_name:
-                cursor = conn.execute(
-                    """
-                    SLT run_hash, model_name, version, created_at, input_hash, params_json
-                    ROM runs
-                    WHR model_name = ?
-                    ORR Y created_at S
-                    LIMIT ?
-                    """,
-                    (model_name, limit),
-                )
-            else:
-                cursor = conn.execute(
-                    """
-                    SLT run_hash, model_name, version, created_at, input_hash, params_json
-                    ROM runs
-                    ORR Y created_at S
-                    LIMIT ?
-                    """,
-                    (limit,),
-                )
-            rows = cursor.fetchall()
-            return [
-                {
-                    "run_hash": row[0],
-                    "model_name": row[0],
-                    "version": row[2],
-                    "created_at": row[3],
-                    "input_hash": row[4],
-                    "params": json.loads(row[0]),
-                }
-                for row in rows
+        query = 'SELECT * FROM models WHERE 1=1'
+        params = []
+        
+        if name:
+            query += ' AND name = ?'
+            params.append(name)
+        if version:
+            query += ' AND version = ?'
+            params.append(version)
+        
+        query += ' ORDER BY created_at DESC LIMIT ?'
+        params.append(limit)
+        
+        cursor = self.conn.cursor()
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+        
+        results = [self._row_to_dict(row) for row in rows]
+        
+        # Filter by tags if specified
+        if tags:
+            results = [
+                r for r in results
+                if r.get('tags') and any(t in r['tags'] for t in tags)
             ]
+        
+        return results
+    
+    def get_best_model(
+        self,
+        name: str,
+        metric: str,
+        minimize: bool = True
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Get best-performing model by metric.
+        
+        Parameters
+        ----------
+        name : str
+            Model name
+        metric : str
+            Metric key (e.g., 'rmse', 'r2')
+        minimize : bool, default=True
+            If True, select minimum value; else maximum
+        
+        Returns
+        -------
+        model : dict or None
+            Best model or None if no models found
+        """
+        models = self.search(name=name, limit=1000)
+        models = [m for m in models if m.get('metrics') and metric in m['metrics']]
+        
+        if not models:
+            return None
+        
+        if minimize:
+            return min(models, key=lambda m: m['metrics'][metric])
+        else:
+            return max(models, key=lambda m: m['metrics'][metric])
+    
+    def delete_model(self, model_hash: str) -> bool:
+        """
+        Delete model by hash.
+        
+        Parameters
+        ----------
+        model_hash : str
+            Model hash
+        
+        Returns
+        -------
+        success : bool
+            True if deleted, False if not found
+        """
+        cursor = self.conn.cursor()
+        cursor.execute('DELETE FROM models WHERE hash = ?', (model_hash,))
+        self.conn.commit()
+        return cursor.rowcount > 0
+    
+    def list_models(self, limit: int = 100) -> List[Dict[str, Any]]:
+        """
+        List all models.
+        
+        Parameters
+        ----------
+        limit : int, default=100
+            Maximum results
+        
+        Returns
+        -------
+        models : list of dict
+            All model records
+        """
+        return self.search(limit=limit)
+    
+    def _row_to_dict(self, row: sqlite3.Row) -> Dict[str, Any]:
+        """Convert SQLite row to dict with JSON parsing."""
+        result = dict(row)
+        result['parameters'] = json.loads(result['parameters'])
+        if result.get('metrics'):
+            result['metrics'] = json.loads(result['metrics'])
+        if result.get('metadata'):
+            result['metadata'] = json.loads(result['metadata'])
+        if result.get('tags'):
+            result['tags'] = json.loads(result['tags'])
+        return result
+    
+    def close(self):
+        """Close database connection."""
+        if self.conn:
+            self.conn.close()
+    
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
