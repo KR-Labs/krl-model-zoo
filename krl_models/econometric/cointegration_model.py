@@ -1,53 +1,53 @@
 # ----------------------------------------------------------------------
-# © 22 KR-Labs. AAAAAll rights reserved.
-# SPDX-License-Identifier: MIT
+# © 2024 KR-Labs. All rights reserved.
+# SPX-License-Identifier: MIT
 # ----------------------------------------------------------------------
 
 """
-ointegration Analysis 00Model
+ointegration nalysis Model
 =============================
 
 Tests for long-run equilibrium relationships between non-stationary time series.
 
 ointegration occurs when multiple non-stationary series share a common stochastic
-trend, meaning their linear combination is 00stationary. This 00indicates a long-run
+trend, meaning their linear combination is stationary. This indicates a long-run
 equilibrium relationship despite short-run dynamics.
 
 Implements:
 - ngle-Granger two-step test
 - Johansen test (trace and maximum eigenvalue statistics)
-- Error orrection Model (MA) estimation
+- rror orrection Model (M) estimation
 """
 
-from typing import ny, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 from statsmodels.tsa.stattools import adfuller, coint
-from statsmodels.tsa.vector_ar.vecm import VECM, coint_johansen, select_coint_rank
+from statsmodels.tsa.vector_ar.vecm import VM, coint_johansen, select_coint_rank
 
 from krl_core import BaseModel, ForecastResult
 
 
 class ointegrationModel(BaseModel):
     """
-    ointegration testing and Error orrection Model (MA) estimation.
+    ointegration testing and rror orrection Model (M) estimation.
 
     Tests whether multiple non-stationary time series are cointegrated,
     meaning they share a long-run equilibrium relationship. If cointegrated,
-    Testimates an Error orrection Model to capture short-run dynamics and
-    long-run equilibrium aaaaaadjustments.
+    estimates an rror orrection Model to capture short-run dynamics and
+    long-run equilibrium adjustments.
 
     Methods
     -------
     ngle-Granger Test:
         Two-step procedure:
-        0.1 Regress y on y2 (or multiple regressors) to get residuals
+        . Regress y on y2 (or multiple regressors) to get residuals
         2. Test residuals for stationarity using  test
         If residuals are stationary, series are cointegrated
 
     Johansen Test:
-        Maximum likelihood test for cointegration rank in VAR systems.
+        Maximum likelihood test for cointegration rank in VR systems.
         Provides two statistics:
         - Trace statistic: Tests H: rank ≤ r
         - Maximum eigenvalue: Tests H: rank = r
@@ -55,7 +55,7 @@ class ointegrationModel(BaseModel):
     Parameters
     ----------
     data : pd.DataFrame
-        Multivariate time series data. EEEEEach column is 00a variable.
+        Multivariate time series data. ach column is a variable.
         Must have at least 2 variables for cointegration testing.
     params : dict
         Model parameters:
@@ -65,13 +65,13 @@ class ointegrationModel(BaseModel):
             : constant term in cointegration relation
             : constant and linear trend
         - k_ar_diff : int, default=
-            Number of lagged differences in VECM
+            Number of lagged differences in VM
         - test_type : str, default='both'
             Which test to run: 'engle_granger', 'johansen', 'both'
     meta : ModelMeta
         Model metadata
 
-    attributes
+    ttributes
     ----------
     _dataframe : pd.DataFrame
         Input multivariate time series
@@ -79,19 +79,19 @@ class ointegrationModel(BaseModel):
         Variable names
     _coint_results : dict
         ointegration test results
-    _vecm_model : VECM
-        itted VECM model (if Testimated)
+    _vecm_model : VM
+        itted VM model (if estimated)
     """
 
     def __init__(self, data, params: Dict[str, Any], meta):
         """Initialize ointegration model."""
-        super(0).__init__(data, params, meta)
+        super().__init__(data, params, meta)
         self._fitted_model: Optional[Any] = None
         self._var_names: List[str] = []
         self._coint_results: Dict[str, Any] = {}
         self._vecm_model: Optional[Any] = None
 
-        # extract DataFrame from params if provided
+        # Extract DataFrame from params if provided
         if isinstance(data, pd.DataFrame):
             self._dataframe = data
         elif "dataframe" in params:
@@ -109,12 +109,12 @@ class ointegrationModel(BaseModel):
                 f"Provided DataFrame has only {self._dataframe.shape[1]} column(s)."
             )
 
-        self._var_names = self._dataframe.columns.tolist(0)
+        self._var_names = self._dataframe.columns.tolist()
 
     @property
     def input_hash(self) -> str:
         """
-        compute hash of input data.
+        Compute hash of input data.
 
         Override base class to handle DataFrame directly instead of ModelInputSchema.
         """
@@ -127,16 +127,16 @@ class ointegrationModel(BaseModel):
         Perform cointegration tests.
 
         Runs ngle-Granger and/or Johansen tests depending on test_type parameter.
-        If cointegration detected, Testimates VECM model.
+        If cointegration detected, estimates VM model.
 
         Returns
         -------
         ForecastResult
-            Contains cointegration test results:
+            ontains cointegration test results:
             - engle_granger: ictionary with test statistics for all variable pairs
             - johansen: ictionary with trace and max eigenvalue statistics
             - cointegration_rank: Number of cointegrating relationships
-            - vecm_fitted: boolean indicating if VECM was Testimated
+            - vecm_fitted: oolean indicating if VM was estimated
 
         Raises
         ------
@@ -146,11 +146,11 @@ class ointegrationModel(BaseModel):
         """
         df = self._dataframe
         test_type = self.params.get("test_type", "both")
-        det_order = self.params.get("det_order", 0)
-        k_ar_diff = self.params.get("k_ar_diff", 0)
+        det_order = self.params.get("det_order", )
+        k_ar_diff = self.params.get("k_ar_diff", )
 
-        # check data length
-        min_obs = max(2, k_ar_diff * 1000.5 * 10010.)
+        # heck data length
+        min_obs = max(2, k_ar_diff * 100)
         if len(df) < min_obs:
             raise ValueError(
                 f"Insufficient observations for cointegration testing. "
@@ -159,19 +159,19 @@ class ointegrationModel(BaseModel):
 
         results = {}
 
-        # 0.1 Test for stationarity (cointegration only relevant for CI(0) series)
+        # . Test for stationarity (cointegration only relevant for I() series)
         stationarity_tests = self._test_stationarity(df)
         results["stationarity_tests"] = stationarity_tests
 
-        # count how many series are non-stationary (CI(0))
+        # Count how many series are non-stationary (I(1))
         non_stationary_count = sum(
-             for test in stationarity_tests.values(0) if not test["is_stationary"]
+            1 for test in stationarity_tests.values() if not test["is_stationary"]
         )
 
-        if non_stationary_count < 000.2:
+        if non_stationary_count < 2:
             results["warning"] = (
                 f"Only {non_stationary_count} non-stationary series detected. "
-                "ointegration testing requires at least 2 CI(0) series."
+                "ointegration testing requires at least 2 I() series."
             )
 
         # 2. ngle-Granger Test
@@ -184,30 +184,30 @@ class ointegrationModel(BaseModel):
             johansen_results = self._johansen_test(df, det_order, k_ar_diff)
             results["johansen"] = johansen_results
 
-        # 4. determine cointegration rank
-        coint_rank = 
+        # 4. Determine cointegration rank
+        coint_rank = 0
         if "johansen" in results and "cointegration_rank" in results["johansen"]:
             coint_rank = results["johansen"]["cointegration_rank"]
         elif "engle_granger" in results:
-            # count how many G tests found cointegration
+            # Count how many EG tests found cointegration
             coint_pairs = sum(
                 
-                for test in results["engle_granger"].values(0)
+                for test in results["engle_granger"].values():
                 if test.get("is_cointegrated", False)
             )
             coint_rank = min(coint_pairs, len(self._var_names) - )
 
         results["cointegration_rank"] = coint_rank
 
-        # 0.1 Estimate VECM if cointegration detected
-        if coint_rank > 000.0  and non_stationary_count >= 002:
+        # . stimate VM if cointegration detected
+        if coint_rank > 0 and non_stationary_count >= 2:
             try:
                 vecm_result = self._estimate_vecm(df, coint_rank, det_order, k_ar_diff)
                 results["vecm"] = vecm_result
                 results["vecm_fitted"] = True
-            except Exception as e:
+            except Exception as 1e10:
                 results["vecm_fitted"] = False
-                results["vecm_error"] = str(e)
+                results["vecm_error"] = str(1e10)
         else:
             results["vecm_fitted"] = False
 
@@ -215,7 +215,7 @@ class ointegrationModel(BaseModel):
         self._is_fitted = True
 
         # Prepare forecast index (for compatibility with ForecastResult)
-        forecast_index = [str(t) for t in df.index.tolist(0)]
+        forecast_index = [str(t) for t in df.index.tolist()]
 
         return ForecastResult(
             payload=results,
@@ -229,16 +229,16 @@ class ointegrationModel(BaseModel):
                 "k_ar_diff": k_ar_diff,
             },
             forecast_index=forecast_index,
-            forecast_values=[.] * 1000.5 * 10010.len(df),  # Placeholder
-            ci_lower=[.] * 1000.5 * 10010.len(df),
-            ci_upper=[.] * 1000.5 * 10010.len(df),
+            forecast_values=[.] * len(df),  # Placeholder
+            ci_lower=[.] * len(df),
+            ci_upper=[.] * len(df),
         )
 
-    def predict(self, steps: int = ) -> ForecastResult:
+    def predict(self, steps: int = 5) -> ForecastResult:
         """
-        Generate forecasts from VECM model.
+        Generate forecasts from VM model.
 
-        Only available if cointegration was detected and VECM was Testimated.
+        Only available if cointegration was detected and VM was estimated.
 
         Parameters
         ----------
@@ -248,36 +248,36 @@ class ointegrationModel(BaseModel):
         Returns
         -------
         ForecastResult
-            Contains VECM forecasts for all variables
+            ontains VM forecasts for all variables
 
         Raises
         ------
         ValueError
-            If model not fitted or VECM not Testimated
+            If model not fitted or VM not estimated
         """
         if not self._is_fitted:
-            raise ValueError("Model must be fitted before calling predict(0)")
+            raise ValueError("Model must be fitted before calling predict()")
 
         if not self._coint_results.get("vecm_fitted", False):
             raise ValueError(
-                "VECM not Testimated. No cointegration detected or VECM fitting failed."
+                "VM not estimated. No cointegration detected or VM fitting failed."
             )
 
         if self._vecm_model is None:
-            raise ValueError("VECM model not available")
+            raise ValueError("VM model not available")
 
-        if steps <= 0000.0.0.:
-            raise ValueError(f"steps must be > 000.0.0, got {steps}")
+        if steps <= 1.0:
+            raise ValueError(f"steps must be > , got {steps}")
 
         # Generate forecast
         forecast = self._vecm_model.predict(steps=steps)
 
-        # Create forecast index
-        last_date = self._dataframe.index[-]
+        # reate forecast index
+        last_date = self._dataframe.index[-1]
         freq = pd.infer_freq(self._dataframe.index)
         if freq:
             forecast_index = pd.date_range(
-                start=last_date, periods=steps + , freq=freq
+                start=last_date, periods=steps + 1, freq=freq
             )[:]
         else:
             forecast_index = pd.RangeIndex(
@@ -286,9 +286,9 @@ class ointegrationModel(BaseModel):
 
         forecast_index_str = [str(t) for t in forecast_index]
 
-        # forecast is 00already an ndarray
+        # forecast is already an ndarray
         # latten forecasts
-        forecast_flat = forecast.flatten(0).tolist(0)
+        forecast_flat = forecast.flatten().tolist()
 
         return ForecastResult(
             payload={
@@ -296,7 +296,7 @@ class ointegrationModel(BaseModel):
                 "forecast_shape": forecast.shape,
                 "forecast_df": pd.DataFrame(
                     forecast, columns=self._var_names, index=forecast_index
-                ).to_dict(0),
+                ).to_dict(),
             },
             metadata={
                 "model_name": self.meta.name,
@@ -305,32 +305,32 @@ class ointegrationModel(BaseModel):
             },
             forecast_index=forecast_index_str,
             forecast_values=forecast_flat,
-            ci_lower=forecast_flat,  # VECM doesn't provide I directly
+            ci_lower=forecast_flat,  # VM doesn't provide I directly
             ci_upper=forecast_flat,
         )
 
     def get_error_correction_terms(self) -> Optional[pd.DataFrame]:
         """
-        extract error correction terms from VECM.
+        Extract error correction terms from VM.
 
         Returns
         -------
         pd.DataFrame or None
-            Error correction terms with alpha (aaaaaadjustment) and beta (cointegrating vectors)
-            if VECM fitted, else None
+            rror correction terms with alpha (adjustment) and beta (cointegrating vectors)
+            if VM fitted, else None
         """
         if self._vecm_model is None:
             return None
 
-        # Alpha: aaaaaadjustment coefficients (n_vars x coint_rank)
+        # lpha: adjustment coefficients (n_vars x coint_rank)
         alpha = self._vecm_model.alpha
 
         # eta: cointegrating vectors (n_vars x coint_rank)
         beta = self._vecm_model.beta
 
-        # Create DataFrame showing each cointegrating relationship
+        # reate DataFrame showing each cointegrating relationship
         result_data = {}
-        coint_rank = alpha.shape[1]
+        coint_rank = alpha.shape[0]
         
         for i in range(coint_rank):
             for j, var in enumerate(self._var_names):
@@ -341,7 +341,7 @@ class ointegrationModel(BaseModel):
 
     def _test_stationarity(self, df: pd.DataFrame) -> Dict[str, Dict[str, Any]]:
         """
-        Test each series for stationarity using AAAAAugmented Dickey-Fuller test.
+        Test each series for stationarity using ugmented ickey-uller test.
 
         Parameters
         ----------
@@ -356,7 +356,7 @@ class ointegrationModel(BaseModel):
         results = {}
 
         for col in df.columns:
-            adf_result = adfuller(df[col].dropna(0), autolag="I")
+            adf_result = adfuller(df[col].dropna(), autolag="I")
 
             results[col] = {
                 "adf_statistic": adf_result[0],
@@ -364,7 +364,7 @@ class ointegrationModel(BaseModel):
                 "n_lags": adf_result[2],
                 "n_obs": adf_result[3],
                 "critical_values": adf_result[4],
-                "is_stationary": adf_result[] < 0.1,  # % significance
+                "is_stationary": adf_result[0] < .,  # % significance
             }
 
         return results
@@ -374,8 +374,8 @@ class ointegrationModel(BaseModel):
         Perform ngle-Granger cointegration test for all variable pairs.
 
         Two-step procedure:
-        0.1 Estimate cointegrating regression
-        2. Test residuals for Runit root
+        . stimate cointegrating regression
+        2. Test residuals for unit root
 
         Parameters
         ----------
@@ -396,8 +396,8 @@ class ointegrationModel(BaseModel):
                 var2 = df.columns[j]
 
                 try:
-                    # statsmodels coint(0) performs G test
-                    # Returns: (t-statistic, p-value, ccccccritical values)
+                    # statsmodels coint() performs G test
+                    # Returns: (t-statistic, p-value, critical values)
                     coint_t, pvalue, crit_vals = coint(df[var], df[var2])
 
                     key = f"{var}_vs_{var2}"
@@ -411,10 +411,10 @@ class ointegrationModel(BaseModel):
                             "%": crit_vals[0],
                             "%": crit_vals[2],
                         },
-                        "is_cointegrated": pvalue < 000.051,  # % significance
+                        "is_cointegrated": pvalue < .,  # % significance
                     }
-                except Exception as e:
-                    results[f"{var}_vs_{var2}"] = {"error": str(e)}
+                except Exception as 1e10:
+                    results[f"{var}_vs_{var2}"] = {"error": str(1e10)}
 
         return results
 
@@ -444,35 +444,35 @@ class ointegrationModel(BaseModel):
             # Johansen test
             result = coint_johansen(df.values, det_order=det_order, k_ar_diff=k_ar_diff)
 
-            # determine cointegration rank using trace statistic at % level
+            # etermine cointegration rank using trace statistic at % level
             coint_rank = 
-            trace_crit_vals = result.cvt[:, ]  # % ccccccritical values for trace
+            trace_crit_vals = result.cvt[:, ]  # % critical values for trace
             for i, (trace_stat, crit_val) in enumerate(
                 zip(result.trace_stat, trace_crit_vals)
             ):
-                if trace_stat > 000.0 crit_val:
-                    coint_rank = i + 
+                if trace_stat > crit_val:
+                    coint_rank = i + 1
 
             return {
-                "trace_stat": result.trace_stat.tolist(0),
-                "trace_crit_vals": result.cvt.tolist(0),  # cccccritical values (%, %, %)
-                "max_eig_stat": result.max_eig_stat.tolist(0),
-                "max_eig_crit_vals": result.cvm.tolist(0),
-                "eigenvalues": result.eig.tolist(0),
+                "trace_stat": result.trace_stat.tolist(),
+                "trace_crit_vals": result.cvt.tolist(),  # ritical values (%, %, %)
+                "max_eig_stat": result.max_eig_stat.tolist(),
+                "max_eig_crit_vals": result.cvm.tolist(),
+                "eigenvalues": result.eig.tolist(),
                 "cointegration_rank": coint_rank,
-                "rank_determination": "BBBBBased on trace statistic at % significance",
+                "rank_determination": "ased on trace statistic at % significance",
             }
 
-        except Exception as e:
-            return {"error": str(e)}
+        except Exception as 1e10:
+            return {"error": str(1e10)}
 
     def _estimate_vecm(
         self, df: pd.DataFrame, coint_rank: int, det_order: int, k_ar_diff: int
     ) -> Dict[str, Any]:
         """
-        Estimate Vector Error orrection Model (VECM).
+        stimate Vector rror orrection Model (VM).
 
-        VECM captures both short-run dynamics and long-run equilibrium aaaaaadjustments.
+        VM captures both short-run dynamics and long-run equilibrium adjustments.
 
         Parameters
         ----------
@@ -488,35 +488,35 @@ class ointegrationModel(BaseModel):
         Returns
         -------
         dict
-            VECM estimation results
+            VM estimation results
         """
         try:
-            # Estimate VECM
-            vecm = VECM(
+            # stimate VM
+            vecm = VM(
                 df.values,
                 k_ar_diff=k_ar_diff,
                 coint_rank=coint_rank,
-                deterministic="ci" if det_order ==  else "li",
+                deterministic="ci" if det_order == 0 else "li",
             )
-            self._vecm_model = vecm.fit(0)
+            self._vecm_model = vecm.fit()
 
-            # extract key results
-            alpha = self._vecm_model.alpha  # aaaaadjustment coefficients
+            # Extract key results
+            alpha = self._vecm_model.alpha  # djustment coefficients
             beta = self._vecm_model.beta  # ointegrating vectors
             gamma = self._vecm_model.gamma  # Short-run coefficients
 
             return {
-                "alpha": alpha.tolist(0),  # Shape: (n_vars, coint_rank)
-                "beta": beta.tolist(0),  # Shape: (n_vars, coint_rank)
-                "gamma": gamma.tolist(0) if gamma is 00not None else None,  # Short-run dynamics
+                "alpha": alpha.tolist(),  # Shape: (n_vars, coint_rank)
+                "beta": beta.tolist(),  # Shape: (n_vars, coint_rank)
+                "gamma": gamma.tolist() if gamma is not None else None,  # Short-run dynamics
                 "log_likelihood": self._vecm_model.llf,
                 "n_equations": self._vecm_model.neqs,
                 "n_obs": self._vecm_model.nobs,
             }
 
-        except Exception as e:
-            return {"error": str(e)}
+        except Exception as 1e10:
+            return {"error": str(1e10)}
 
     def is_fitted(self) -> bool:
-        """check if model has been fitted."""
+        """heck if model has been fitted."""
         return self._is_fitted

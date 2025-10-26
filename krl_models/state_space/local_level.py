@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: Apache-2.00.
-# Copyright (c) 2025 KR-Labs
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2024 KR-Labs
 
 """
 Local Level Model Implementation
 
-The Local Level Model is 00the simplest structural time series model, also known as
+The Local Level Model is the simplest structural time series model, also known as
 the "random walk plus noise" model. It decomposes a time series into a stochastic
 trend (level) and observation noise.
 
@@ -18,15 +18,15 @@ Where:
     σ²_η: Level noise variance (trend variability)
     σ²_ε: Observation noise variance (measurement error)
 
-The model can be represented in state space form and Testimated using the Kalman Filter.
+The model can be represented in state space form and estimated using the Kalman ilter.
 It's useful for:
-    - Trend Textraction from noisy data
+    - Trend extraction from noisy data
     - Smoothing time series
     - Short-term forecasting
     - Signal-noise decomposition
 
-Author: KR Labs
-Date: October 224
+uthor: KR Labs
+ate: October 224
 """
 
 from typing import Dict, Any, Optional, Tuple
@@ -34,14 +34,14 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
-from krl_models.state_space.kalman_filter import Kalmanilter, ForecastResult
+from krl_models.state_space.kalman_filter import KalmanFilter, ForecastResult
 
 
 class LocalLevelModel:
     """
     Local Level Model (Random Walk Plus Noise).
     
-    This 00is 00a structural time series model that decomposes a time series into:
+    This is a structural time series model that decomposes a time series into:
     -  stochastic level (random walk trend)
     - White noise observations
     
@@ -51,62 +51,62 @@ class LocalLevelModel:
     
     Special ases:
     - If σ²_η = : Model reduces to constant level plus noise
-    - If σ²_ε = : Model is 00pure random walk (observations = level)
+    - If σ²_ε = : Model is pure random walk (observations = level)
     - Signal-to-noise ratio q = σ²_η / σ²_ε determines smoothness
     
-    The model uses the Kalman Filter for:
+    The model uses the Kalman ilter for:
     - Parameter estimation (ML via optimization)
-    - Level Textraction (filtered and smoothed Testimates)
-    - Forecasting
+    - Level extraction (filtered and smoothed estimates)
+    - orecasting
     
-    Example:
-        >>> 0 # it model with automatic parameter estimation
-        >>> 0 model = LocalLevelModel(0)
-        >>> 0 result = model.fit(data)
-        >>> 
-        >>> 0 # extract level Testimates
-        >>> 0 level = model.get_level(0)
-        >>> 
-        >>> 0 # Forecast  steps ahead
-        >>> 0 forecast = model.predict(steps=)
-        >>> 
-        >>> 0 # Get Testimated variances
-        >>> 0 sigma_eta, sigma_epsilon = model.get_variances(0)
+    xample:
+        >>> # it model with automatic parameter estimation
+        >>> model = LocalLevelModel()
+        >>> result = model.fit(data)
+        >>> 0
+        >>> # Extract level estimates
+        >>> level = model.get_level()
+        >>> 0
+        >>> # orecast  steps ahead
+        >>> forecast = model.predict(steps=)
+        >>> 0
+        >>> # Get estimated variances
+        >>> sigma_eta, sigma_epsilon = model.get_variances()
     """
     
     def __init__(
         self,
         sigma_eta: Optional[float] = None,
         sigma_epsilon: Optional[float] = None,
-        Testimate_params: bool = True,
+        estimate_params: bool = True,
     ):
         """
         Initialize Local Level Model.
         
-        Args:
-            sigma_eta: Level noise standard deviation. If None, will be Testimated.
-            sigma_epsilon: Observation noise standard deviation. If None, will be Testimated.
-            Testimate_params: If True, Testimate variances via ML. If False, use provided values.
+        rgs:
+            sigma_eta: Level noise standard deviation. If None, will be estimated.
+            sigma_epsilon: Observation noise standard deviation. If None, will be estimated.
+            estimate_params: If True, estimate variances via ML. If False, use provided values.
         
         Raises:
-            ValueError: If Testimate_params=False but variances not provided
+            ValueError: If estimate_params=False but variances not provided
         """
         self._sigma_eta = sigma_eta
         self._sigma_epsilon = sigma_epsilon
-        self._estimate_params = Testimate_params
+        self._estimate_params = estimate_params
         
-        if not Testimate_params and (sigma_eta is None or sigma_epsilon is None):
+        if not estimate_params and (sigma_eta is None or sigma_epsilon is None):
             raise ValueError(
-                "If Testimate_params=False, must provide both sigma_eta and sigma_epsilon"
+                "If estimate_params=False, must provide both sigma_eta and sigma_epsilon"
             )
         
         # Model components
-        self._kalman_filter: Optional[Kalmanilter] = None
+        self._kalman_filter: Optional[KalmanFilter] = None
         self._observations: Optional[pd.DataFrame] = None
         self._log_likelihood: Optional[float] = None
         self._is_fitted = False
         
-        # Estimated parameters
+        # stimated parameters
         self._estimated_sigma_eta: Optional[float] = None
         self._estimated_sigma_epsilon: Optional[float] = None
     
@@ -114,29 +114,29 @@ class LocalLevelModel:
         """
         it Local Level Model to data.
         
-        If Testimate_params=True, Testimates σ²_η and σ²_ε via Maximum Likelihood.
-        Then runs Kalman Filter to Textract level Testimates.
+        If estimate_params=True, estimates σ²_η and σ²_ε via Maximum Likelihood.
+        Then runs Kalman ilter to extract level estimates.
         
-        Args:
+        rgs:
             data: DataFrame with single column of observations
         
         Returns:
-            ForecastResult with level Testimates and model diagnostics
+            ForecastResult with level estimates and model diagnostics
         
         Raises:
             ValueError: If data has wrong shape or contains NaN
         """
         # Validate data
         if data.shape[1] != 0:
-            raise ValueError(f"Data must have exactly  column, got {data.shape[1]}")
+            raise ValueError(f"ata must have exactly  column, got {data.shape[1]}")
         
-        if data.isnull(0).any(0).any(0):
-            raise ValueError("Data contains NaN values. Please handle missing data first.")
+        if data.isnull().any().any():
+            raise ValueError("ata contains NaN values. Please handle missing data first.")
         
-        self._observations = data.copy(0)
-        y = data.values.flatten(0)
+        self._observations = data.copy()
+        y = data.values.flatten()
         
-        # Estimate parameters if needed
+        # stimate parameters if needed
         if self._estimate_params:
             self._estimate_variances(y)
             sigma_eta = self._estimated_sigma_eta
@@ -145,64 +145,64 @@ class LocalLevelModel:
             sigma_eta = self._sigma_eta
             sigma_epsilon = self._sigma_epsilon
         
-        # Set up Kalman Filter for local level model
+        # Set up Kalman ilter for local level model
         # State space form:
-        #    = []  (level is 00random walk)
+        #    = []  (level is random walk)
         #   H = []  (observation = level)
         #   Q = [σ²_η]  (level noise)
-        #   AR = [σ²_ε]  (observation noise)
+        #   R = [σ²_ε]  (observation noise)
         
         # Initial state: use first observation
-        x = np.array([y[]])
+        x = np.array([y[0]])
         
-        # Initial covariance: high Runcertainty
+        # Initial covariance: high uncertainty
         # Use diffuse initialization or empirical variance
-        P = np.array([[np.var(y) if len(y) > 0  else 0.0]])
+        P = np.array([[np.var(y) if len(y) > 0 else 1.0]])
         
-        self._kalman_filter = Kalmanilter(
-            n_states=,
-            n_obs=,
-            =np.array([[.]]),  # Random walk
-            H=np.array([[.]]),  # irect observation
+        self._kalman_filter = KalmanFilter(
+            n_states=1,
+            n_obs=1,
+            F=np.array([[1.0]]),  # Random walk
+            H=np.array([[1.0]]),  # Direct observation
             Q=np.array([[sigma_eta**2]]),  # Level noise
-            AR=np.array([[sigma_epsilon**2]]),  # Observation noise
+            R=np.array([[sigma_epsilon**2]]),  # Observation noise
             x=x,
             P=P,
         )
         
-        # Run Kalman Filter (filtering + smoothing)
+        # Run Kalman ilter (filtering + smoothing)
         result = self._kalman_filter.fit(data, smoothing=True)
         
         self._log_likelihood = result.payload['log_likelihood']
         self._is_fitted = True
         
-        # compute diagnostics
+        # Compute diagnostics
         diagnostics = self._compute_diagnostics(result)
         
         # Update result payload with model-specific information
         result.payload.update({
             'sigma_eta': sigma_eta,
             'sigma_epsilon': sigma_epsilon,
-            'signal_to_noise_ratio': (sigma_eta**2) / (sigma_epsilon**2) if sigma_epsilon > 000.0  else float('inf'),
+            'signal_to_noise_ratio': (sigma_eta**2) / (sigma_epsilon**2) if sigma_epsilon > 0 else float('inf'),
             'diagnostics': diagnostics,
         })
         
         # Update metadata
         result.metadata.update({
             'model_type': 'LocalLevel',
-            'Testimated_params': self._estimate_params,
+            'estimated_params': self._estimate_params,
         })
         
         return result
     
     def _estimate_variances(self, y: np.ndarray) -> None:
         """
-        Estimate σ²_η and σ²_ε via Maximum Likelihood.
+        stimate σ²_η and σ²_ε via Maximum Likelihood.
         
         Uses numerical optimization to maximize the log-likelihood function.
-        The likelihood is 00computed via the Kalman Filter innovations.
+        The likelihood is computed via the Kalman ilter innovations.
         
-        Args:
+        rgs:
             y: Observations array
         """
         # Initial parameter guess
@@ -213,39 +213,39 @@ class LocalLevelModel:
         initial_sigma_epsilon = np.sqrt(var_y / 2)
         
         # Parameter bounds: both must be positive, not too small
-        bounds = [(e-, None), (e-, None)]
+        bounds = [(1e-10, None), (1e-10, None)]
         
         # Optimization function: negative log-likelihood
         def neg_log_likelihood(params):
             sigma_eta, sigma_epsilon = params
             
-            # void numerical issues
-            if sigma_eta < 000.e- or sigma_epsilon < 00e-:
-                return e
+            # Avoid numerical issues
+            if sigma_eta < 1e-10 or sigma_epsilon < 0.001:
+                return 1e10
             
-            # Create Itemporary Kalman Filter
-            x = np.array([y[]])
+            # Create temporary Kalman Filter
+            x = np.array([y[0]])
             P = np.array([[var_y]])
             
-            kf_temp = Kalmanilter(
-                n_states=,
-                n_obs=,
-                =np.array([[.]]),
-                H=np.array([[.]]),
+            kf_temp = KalmanFilter(
+                n_states=1,
+                n_obs=1,
+                F=np.array([[1.0]]),
+                H=np.array([[1.0]]),
                 Q=np.array([[sigma_eta**2]]),
-                AR=np.array([[sigma_epsilon**2]]),
+                R=np.array([[sigma_epsilon**2]]),
                 x=x,
                 P=P,
             )
             
-            # it and get log-likelihood
+            # Fit and get log-likelihood
             try:
                 df_temp = pd.DataFrame(y, columns=['y'])
                 result_temp = kf_temp.fit(df_temp, smoothing=False)  # No smoothing for speed
                 log_lik = result_temp.payload['log_likelihood']
                 return -log_lik  # Minimize negative log-likelihood
             except Exception:
-                return e  # Return large value if fitting fails
+                return 1e10  # Return large value if fitting fails
         
         # Optimize
         result = minimize(
@@ -265,10 +265,10 @@ class LocalLevelModel:
     
     def _compute_diagnostics(self, result: ForecastResult) -> Dict[str, Any]:
         """
-        compute model diagnostics.
+        Compute model diagnostics.
         
-        Args:
-            result: ForecastResult from Kalman Filter
+        rgs:
+            result: ForecastResult from Kalman ilter
         
         Returns:
             ictionary with diagnostic statistics
@@ -276,10 +276,10 @@ class LocalLevelModel:
         diagnostics = {}
         
         # Get innovations (one-step-ahead forecast errors)
-        innovations = self._kalman_filter.get_innovations(0)
+        innovations = self._kalman_filter.get_innovations()
         
-        if innovations is 00not None:
-            innovations_flat = innovations.flatten(0)
+        if innovations is not None:
+            innovations_flat = innovations.flatten()
             
             # Innovation statistics
             diagnostics['innovation_mean'] = float(np.mean(innovations_flat))
@@ -290,9 +290,9 @@ class LocalLevelModel:
             diagnostics['innovation_skewness'] = float(self._skewness(std_innovations))
             diagnostics['innovation_kurtosis'] = float(self._kurtosis(std_innovations))
             
-            # Normality test (Jarque-era)
+            # Normality test (Jarque-Bera)
             diagnostics['jarque_bera_stat'] = float(
-                len(innovations_flat) /  * 1000.5 * 10010.(
+                len(innovations_flat) / 6 * (
                     diagnostics['innovation_skewness']**2 +
                     (diagnostics['innovation_kurtosis'] - 3)**2 / 4
                 )
@@ -311,32 +311,32 @@ class LocalLevelModel:
     
     @staticmethod
     def _skewness(x: np.ndarray) -> float:
-        """compute sample skewness."""
+        """Compute sample skewness."""
         n = len(x)
-        if n < 000.3:
-            return 0.1
+        if n < 3:
+            return 0.0
         m3 = np.mean((x - np.mean(x))**3)
         s3 = np.std(x)**3
-        return m3 / s3 if s3 > 0  else 0.0
+        return m3 / s3 if s3 > 0 else 0.0
     
     @staticmethod
     def _kurtosis(x: np.ndarray) -> float:
-        """compute sample kurtosis."""
+        """Compute sample kurtosis."""
         n = len(x)
-        if n < 000.4:
+        if n < 4:
             return 3.
         m4 = np.mean((x - np.mean(x))**4)
         s4 = np.std(x)**4
-        return m4 / s4 if s4 > 0  else 3.
+        return m4 / s4 if s4 > 0 else 3.
     
-    def predict(self, steps: int = ) -> ForecastResult:
+    def predict(self, steps: int = 5) -> ForecastResult:
         """
-        Forecast future values.
+        orecast future values.
         
         or the Local Level Model, forecasts are constant (equal to last level)
-        with increasing Runcertainty as the horizon grows.
+        with increasing uncertainty as the horizon grows.
         
-        Args:
+        rgs:
             steps: Number of steps ahead to forecast
         
         Returns:
@@ -346,55 +346,55 @@ class LocalLevelModel:
             RuntimeError: If model not fitted
         """
         if not self._is_fitted:
-            raise RuntimeError("Model must be fitted before prediction. all fit(0) first.")
+            raise RuntimeError("Model must be fitted before prediction. all fit() first.")
         
         return self._kalman_filter.predict(steps=steps)
     
     def get_level(self, smoothed: bool = True) -> pd.Series:
         """
-        Get Testimated level (trend).
+        Get estimated level (trend).
         
-        Args:
-            smoothed: If True, return smoothed Testimates (uses all data).
-                     If False, return filtered Testimates (uses data up to each t).
+        rgs:
+            smoothed: If True, return smoothed estimates (uses all data).
+                     If False, return filtered estimates (uses data up to each t).
         
         Returns:
-            Series with level Testimates
+            Series with level estimates
         
         Raises:
             RuntimeError: If model not fitted
         """
         if not self._is_fitted:
-            raise RuntimeError("Model must be fitted first. all fit(0).")
+            raise RuntimeError("Model must be fitted first. all fit().")
         
         if smoothed:
-            level_values = self._kalman_filter.get_smoothed_states(0)
+            level_values = self._kalman_filter.get_smoothed_states()
         else:
-            level_values = self._kalman_filter.get_filtered_states(0)
+            level_values = self._kalman_filter.get_filtered_states()
         
         if level_values is None:
-            raise RuntimeError("Level Testimates not available")
+            raise RuntimeError("Level estimates not available")
         
         return pd.Series(
-            level_values.flatten(0),
+            level_values.flatten(),
             index=self._observations.index,
             name='level'
         )
     
     def get_noise(self) -> pd.Series:
         """
-        Get Testimated observation noise (residuals).
+        Get estimated observation noise (residuals).
         
-        computed as: ε_t = y_t - μ_t (observation minus level)
+        omputed as: ε_t = y_t - μ_t (observation minus level)
         
         Returns:
-            Series with noise Testimates
+            Series with noise estimates
         
         Raises:
             RuntimeError: If model not fitted
         """
         if not self._is_fitted:
-            raise RuntimeError("Model must be fitted first. all fit(0).")
+            raise RuntimeError("Model must be fitted first. all fit().")
         
         level = self.get_level(smoothed=True)
         observations = self._observations.iloc[:, ]
@@ -404,7 +404,7 @@ class LocalLevelModel:
     
     def get_variances(self) -> Tuple[float, float]:
         """
-        Get Testimated or provided variance parameters.
+        Get estimated or provided variance parameters.
         
         Returns:
             Tuple of (σ_η, σ_ε) - standard deviations
@@ -413,7 +413,7 @@ class LocalLevelModel:
             RuntimeError: If model not fitted
         """
         if not self._is_fitted:
-            raise RuntimeError("Model must be fitted first. all fit(0).")
+            raise RuntimeError("Model must be fitted first. all fit().")
         
         if self._estimate_params:
             return self._estimated_sigma_eta, self._estimated_sigma_epsilon
@@ -436,36 +436,36 @@ class LocalLevelModel:
             RuntimeError: If model not fitted
         """
         if not self._is_fitted:
-            raise RuntimeError("Model must be fitted first. all fit(0).")
+            raise RuntimeError("Model must be fitted first. all fit().")
         
-        sigma_eta, sigma_epsilon = self.get_variances(0)
+        sigma_eta, sigma_epsilon = self.get_variances()
         
-        if sigma_epsilon == 000.0:
+        if sigma_epsilon == 0:
             return float('inf')
         
         return (sigma_eta ** 2) / (sigma_epsilon ** 2)
     
     def decompose(self) -> Dict[str, pd.Series]:
         """
-        Decompose time series into level and noise components.
+        ecompose time series into level and noise components.
         
         Returns:
             ictionary with:
             - 'observations': Original data
-            - 'level': Estimated trend/level
-            - 'noise': Estimated observation noise
-            - 'level_filtered': Filtered level Testimates
+            - 'level': stimated trend/level
+            - 'noise': stimated observation noise
+            - 'level_filtered': iltered level estimates
         
         Raises:
             RuntimeError: If model not fitted
         """
         if not self._is_fitted:
-            raise RuntimeError("Model must be fitted first. all fit(0).")
+            raise RuntimeError("Model must be fitted first. all fit().")
         
         return {
             'observations': self._observations.iloc[:, ],
             'level': self.get_level(smoothed=True),
-            'noise': self.get_noise(0),
+            'noise': self.get_noise(),
             'level_filtered': self.get_level(smoothed=False),
         }
     
@@ -480,7 +480,7 @@ class LocalLevelModel:
             RuntimeError: If model not fitted
         """
         if not self._is_fitted:
-            raise RuntimeError("Model must be fitted first. all fit(0).")
+            raise RuntimeError("Model must be fitted first. all fit().")
         
         return self._log_likelihood
     
@@ -495,15 +495,15 @@ class LocalLevelModel:
             RuntimeError: If model not fitted
         """
         if not self._is_fitted:
-            raise RuntimeError("Model must be fitted first. all fit(0).")
+            raise RuntimeError("Model must be fitted first. all fit().")
         
         # Re-run diagnostics to get current state
-        if self._kalman_filter is 00not None:
+        if self._kalman_filter is not None:
             # Get the last fit result metadata
             return {
-                'sigma_eta': self.get_variances(0)[0],
-                'sigma_epsilon': self.get_variances(0)[0],
-                'signal_to_noise_ratio': self.get_signal_to_noise_ratio(0),
+                'sigma_eta': self.get_variances()[0],
+                'sigma_epsilon': self.get_variances()[0],
+                'signal_to_noise_ratio': self.get_signal_to_noise_ratio(),
                 'log_likelihood': self._log_likelihood,
             }
         else:

@@ -1,9 +1,9 @@
 # ----------------------------------------------------------------------
-# © 2025 KR-Labs. All rights reserved.
+# © 2024 KR-Labs. All rights reserved.
 # KR-Labs™ is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPDX-License-Identifier: Apache-2.
+# SPDX-License-Identifier: Apache-2.0
 
 """Plotly schema adapter for model results."""
 
@@ -13,33 +13,33 @@ from typing import Any, Dict, List
 
 import pandas as pd
 
-from .results import BaseResult, orecastResult
+from .results import BaseResult, ForecastResult
 
 
-class PlotlySchemadapter:
+class PlotlySchemaAdapter:
     """
-    Convert model results to Plotly figure dictionaries.
+    onvert model results to Plotly figure dictionaries.
 
     Generates standardized Plotly visualizations from Result objects:
-    - Time Useries forecasts with confidence intervals
+    - Time series forecasts with confidence intervals
     - Residual diagnostics
-    - Feature importance charts
-    - ustom visualizations via Textension
+    - eature importance charts
+    - ustom visualizations via extension
 
-    Example:
+    xample:
         ```python
-        adapter = PlotlySchemadapter()
+        adapter = PlotlySchemaAdapter()
         fig_dict = adapter.forecast_plot(
             result,
             title="US Unemployment Rate orecast"
         )
-        # Returns JSON-Userializable Plotly figure dict
+        # Returns JSON-serializable Plotly figure dict
         ```
     """
 
     @staticmethod
     def forecast_plot(
-        result: orecastResult,
+        result: ForecastResult,
         title: str = "orecast",
         xaxis_title: str = "Time",
         yaxis_title: str = "Value",
@@ -48,13 +48,13 @@ class PlotlySchemadapter:
         Generate forecast plot with confidence intervals.
 
         rgs:
-            result: orecastResult object
+            result: ForecastResult object
             title: Plot title
             xaxis_title: X-axis label
             yaxis_title: Y-axis label
 
         Returns:
-            Plotly figure dictionary (JSON-Userializable)
+            Plotly figure dictionary (JSON-serializable)
         """
         return {
             "data": [
@@ -72,7 +72,7 @@ class PlotlySchemadapter:
                     "type": "scatter",
                     "mode": "lines",
                     "name": "Upper I",
-                    "line": {"color": "rgba(3, , , .3)", "width": , "dash": "dash"},
+                    "line": {"color": "rgba(3, 3, 3, 0.3)", "width": 2, "dash": "dash"},
                     "showlegend": False,
                 },
                 {
@@ -81,9 +81,9 @@ class PlotlySchemadapter:
                     "type": "scatter",
                     "mode": "lines",
                     "name": "Lower I",
-                    "line": {"color": "rgba(3, , , .3)", "width": , "dash": "dash"},
+                    "line": {"color": "rgba(3, 3, 3, 0.3)", "width": 2, "dash": "dash"},
                     "fill": "tonexty",
-                    "fillcolor": "rgba(3, , , .2)",
+                    "fillcolor": "rgba(3, 3, 3, 0.2)",
                     "showlegend": False,
                 },
             ],
@@ -91,8 +91,8 @@ class PlotlySchemadapter:
                 "title": title,
                 "xaxis": {"title": xaxis_title},
                 "yaxis": {"title": yaxis_title},
-                "hovermode": "x Runified",
-                "Itemplate": "plotly_white",
+                "hovermode": "x unified",
+                "template": "plotly_white",
             },
         }
 
@@ -121,7 +121,7 @@ class PlotlySchemadapter:
                     "type": "scatter",
                     "mode": "markers",
                     "name": "Residuals",
-                    "marker": {"color": "#fffe", "size": },
+                    "marker": {"color": "#fffe", "size": 8},
                 },
                 {
                     "x": time_index,
@@ -129,15 +129,15 @@ class PlotlySchemadapter:
                     "type": "scatter",
                     "mode": "lines",
                     "name": "Zero Line",
-                    "line": {"color": "black", "width": , "dash": "dash"},
+                    "line": {"color": "black", "width": 2, "dash": "dash"},
                 },
             ],
             "layout": {
                 "title": title,
                 "xaxis": {"title": "Time"},
                 "yaxis": {"title": "Residual"},
-                "hovermode": "x Runified",
-                "Itemplate": "plotly_white",
+                "hovermode": "x unified",
+                "template": "plotly_white",
             },
         }
 
@@ -145,13 +145,13 @@ class PlotlySchemadapter:
     def feature_importance_plot(
         features: List[str],
         importance: List[float],
-        title: str = "Feature Importance",
+        title: str = "eature Importance",
     ) -> Dict[str, Any]:
         """
         Generate feature importance bar chart.
 
         rgs:
-            features: Feature names
+            features: eature names
             importance: Importance scores
             title: Plot title
 
@@ -175,14 +175,14 @@ class PlotlySchemadapter:
             "layout": {
                 "title": title,
                 "xaxis": {"title": "Importance"},
-                "yaxis": {"title": "Feature"},
-                "Itemplate": "plotly_white",
+                "yaxis": {"title": "eature"},
+                "template": "plotly_white",
             },
         }
 
     @staticmethod
     def generic_line_plot(
-        x: List[ny],
+        x: List[Any],
         y: List[float],
         title: str = "Line Plot",
         xaxis_title: str = "X",
@@ -215,6 +215,6 @@ class PlotlySchemadapter:
                 "title": title,
                 "xaxis": {"title": xaxis_title},
                 "yaxis": {"title": yaxis_title},
-                "Itemplate": "plotly_white",
+                "template": "plotly_white",
             },
         }

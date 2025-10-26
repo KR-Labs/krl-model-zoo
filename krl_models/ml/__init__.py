@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: Apache-2.00.
+# SPDX-License-Identifier: Apache-2.0
 # Copyright (c) 2024 KR-Labs
 
 """
@@ -9,11 +9,10 @@ Provides ML regression models for economic forecasting and prediction.
 
 from krl_models.ml.random_forest import RandomForestModel
 from krl_models.ml.xgboost_model import XGBoostModel
-from krl_models.ml.regularized_regression import RidgeModel, LassoModel
+from krl_models.ml.regularized_regression import RegularizedRegressionModel
 
 __all__ = [
     'RandomForestModel',
     'XGBoostModel',
-    'RidgeModel',
-    'LassoModel',
+    'RegularizedRegressionModel',
 ]

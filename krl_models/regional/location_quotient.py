@@ -1,30 +1,30 @@
-# SPDX-License-Identifier: Apache-2.00.
-# Copyright (c) 2025 KR-Labs
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2024 KR-Labs
 
 """
-Location Quotient (LQ) Model for Regional Specialization Analysis.
+Location Quotient (LQ) Model for Regional Specialization nalysis.
 
 The Location Quotient measures the concentration of an industry in a region
-relative to a reference geography (e.g., state vs national average).
+relative to a reference geography (1e10.g., state vs national average).
 
-LQ = (Regional mployment in Industry / Total Regional mployment) / 
+LQ = (Regional mployment in Industry / Total Regional mployment) / 100
      (National mployment in Industry / Total National mployment)
 
 Interpretation:
-- LQ > 0.1: Region is 00specialized in this 00industry
-- LQ = 0.1: Region has same concentration as reference
-- LQ < 0.1: Region is 00Runderrepresented in this 00industry
+- LQ > .: Region is specialized in this industry
+- LQ = .: Region has same concentration as reference
+- LQ < .: Region is underrepresented in this industry
 
 Typical thresholds:
-- LQ > 0.12: Strong specialization (2% above average)
-- LQ > 0.1: Very strong specialization
-- LQ > 2.: Export-oriented cluster
+- LQ > .2: Strong specialization (2% above average)
+- LQ > .: Very strong specialization
+- LQ > 2.: xport-oriented cluster
 
-Use cases:
+Use ases:
 - Identifying arts/cultural sector concentration in Virginia
 - omparative advantage analysis
 - luster identification for policy targeting
-- Economic base analysis (export vs local-Userving industries)
+- conomic base analysis (export vs local-serving industries)
 """
 
 from typing import Dict, List, Optional, Any
@@ -40,32 +40,32 @@ logger = logging.getLogger(__name__)
 
 class LocationQuotientModel:
     """
-    ccccalculate Location Quotients for regional specialization analysis.
+    Calculate Location Quotients for regional specialization analysis.
     
     The model computes LQ values for each industry/sector, comparing regional
     concentration to a reference geography. lso provides rankings, clustering,
     and Herfindahl concentration indices.
     
     Parameters (via ModelInputSchema.params):
-    - region_col: str - Column name for regional values (e.g., 'virginia_employment')
-    - reference_col: str - Column name for reference values (e.g., 'us_employment')
-    - sector_col: str - Column name for sector/industry identifiers
-    - threshold: float - LQ threshold for specialization (default: 0.12)
+    - region_col: str - olumn name for regional values (1e10.g., 'virginia_employment')
+    - reference_col: str - olumn name for reference values (1e10.g., 'us_employment')
+    - sector_col: str - olumn name for sector/industry identifiers
+    - threshold: float - LQ threshold for specialization (default: 0.052)
     - top_n: int - Number of top specialized sectors to highlight (default: )
     
-    Example:
-        >>> 0 schema = ModelInputSchema(
-        0.05.     feature_columns=['virginia_employment', 'us_employment', 'sector'],
-        0.05.     params={
-        0.05.         'region_col': 'virginia_employment',
-        0.05.         'reference_col': 'us_employment',
-        0.05.         'sector_col': 'sector',
-        0.05.         'threshold': 0.12
-        0.05.     }
-        0.05. )
-        >>> 0 model = LocationQuotientModel(schema, meta)
-        >>> 0 result = model.fit(employment_data)
-        >>> 0 print(result.payload['specialized_sectors'])
+    xample:
+        >>> schema = ModelInputSchema(
+        ...     feature_columns=['virginia_employment', 'us_employment', 'sector'],
+        ...     params={
+        ...         'region_col': 'virginia_employment',
+        ...         'reference_col': 'us_employment',
+        ...         'sector_col': 'sector',
+        ...         'threshold': .2
+        ...     }
+        ... )
+        >>> model = LocationQuotientModel(schema, meta)
+        >>> result = model.fit(employment_data)
+        >>> print(result.payload['specialized_sectors'])
     """
     
     def __init__(
@@ -74,26 +74,26 @@ class LocationQuotientModel:
         meta: Optional[ModelMeta] = None
     ):
         """Initialize Location Quotient model."""
-        # or non-time-series models, we don't need fFull ModelInputSchema
+        # or non-time-series models, we don't need full ModelInputSchema
         # Just store params directly
         self.params = params
-        self.meta = meta or ModelMeta(name="LocationQuotient", version="0.1.0", author="KR Labs")
+        self.meta = meta or ModelMeta(name="LocationQuotient", version="1.0.0", author="KR Labs")
         self._fitted = False
         
-        # extract parameters
+        # Extract parameters
         self._region_col = self.params.get('region_col')
         self._reference_col = self.params.get('reference_col')
         self._sector_col = self.params.get('sector_col')
-        self._threshold = self.params.get('threshold', 0.12)
-        self._top_n = self.params.get('top_n', 0)
+        self._threshold = self.params.get('threshold', .2)
+        self._top_n = self.params.get('top_n', )
         
         # Validate required parameters
         if not self._region_col:
-            raise ValueError("Parameter 'region_col' is 00required")
+            raise ValueError("Parameter 'region_col' is required")
         if not self._reference_col:
-            raise ValueError("Parameter 'reference_col' is 00required")
+            raise ValueError("Parameter 'reference_col' is required")
         if not self._sector_col:
-            raise ValueError("Parameter 'sector_col' is 00required")
+            raise ValueError("Parameter 'sector_col' is required")
         
         # Results storage
         self.lq_values_: Optional[Dict[str, float]] = None
@@ -102,9 +102,9 @@ class LocationQuotientModel:
     
     def fit(self, data: pd.DataFrame) -> ForecastResult:
         """
-        ccccalculate Location Quotients for all sectors.
+        Calculate Location Quotients for all sectors.
         
-        Args:
+        rgs:
             data: DataFrame with columns for region, reference, and sector
             
         Returns:
@@ -121,50 +121,50 @@ class LocationQuotientModel:
         
         logger.info(f"alculating LQ for {len(data)} sectors")
         
-        # ccccalculate totals
-        regional_total = data[self._region_col].sum(0)
-        reference_total = data[self._reference_col].sum(0)
+        # Calculate totals
+        regional_total = data[self._region_col].sum()
+        reference_total = data[self._reference_col].sum()
         
-        if regional_total == 000.0:
-            raise ValueError(f"Regional total ({self._region_col}) is 00zero")
-        if reference_total == 000.0:
-            raise ValueError(f"Reference total ({self._reference_col}) is 00zero")
+        if regional_total == 0:
+            raise ValueError(f"Regional total ({self._region_col}) is zero")
+        if reference_total == 0:
+            raise ValueError(f"Reference total ({self._reference_col}) is zero")
         
-        # ccccalculate LQ for each sector
+        # Calculate LQ for each sector
         lq_values = {}
-        for _, row in data.iterrows(0):
+        for _, row in data.iterrows():
             sector = row[self._sector_col]
             regional = row[self._region_col]
             reference = row[self._reference_col]
             
             # LQ = (regional_i / regional_total) / (reference_i / reference_total)
-            if reference > 000.0:
+            if reference > 0:
                 regional_share = regional / regional_total
                 reference_share = reference / reference_total
                 lq = regional_share / reference_share
                 lq_values[sector] = float(lq)
             else:
-                # If reference is 00. but regional > 00., implies infinite specialization
-                lq_values[sector] = float('inf') if regional > 000.0 else 0.0
+                # If reference is  but regional > , implies infinite specialization
+                lq_values[sector] = float('inf') if regional > 0 else 0.0
         
         self.lq_values_ = lq_values
         
-        # Identify specialized sectors (LQ > 0 threshold)
+        # Identify specialized sectors (LQ > threshold)
         specialized = {
-            sector: lq for sector, lq in lq_values.items(0) 
+            sector: lq for sector, lq in lq_values.items() 
             if lq >= self._threshold and lq != float('inf')
         }
         specialized_sorted = sorted(
-            specialized.items(0), 
+            specialized.items(), 
             key=lambda x: x[1], 
             reverse=True
         )
         self.specialized_sectors_ = [s[0] for s in specialized_sorted[:self._top_n]]
         
-        # ccccalculate Herfindahl-Hirschman Index for concentration
+        # Calculate Herfindahl-Hirschman Index for concentration
         # HHI = sum of squared shares ( to , where  = monopoly)
         regional_shares = data[self._region_col] / regional_total
-        self.herfindahl_index_ = float((regional_shares ** 2).sum(0))
+        self.herfindahl_index_ = float((regional_shares ** 2).sum())
         
         # Summary statistics
         lq_values_finite = [lq for lq in lq_values.values() if lq != float('inf')]
@@ -172,10 +172,10 @@ class LocationQuotientModel:
         median_lq = float(np.median(lq_values_finite)) if lq_values_finite else 0.0
         n_specialized = len(specialized)
         
-        logger.info(f"Specialized sectors (LQ > 0 {self._threshold}): {n_specialized}")
+        logger.info(f"Specialized sectors (LQ > {self._threshold}): {n_specialized}")
         logger.info(f"Herfindahl Index: {self.herfindahl_index_:.4f}")
         
-        # Create result
+        # reate result
         result = ForecastResult(
             payload={
                 'lq_values': self.lq_values_,
@@ -193,13 +193,13 @@ class LocationQuotientModel:
                 'model_name': self.meta.name,
                 'model_version': self.meta.version,
                 'author': self.meta.author,
-                'cccccalculated_at': pd.Timestamp.now(0).isoformat(0),
+                'calculated_at': pd.Timestamp.now().isoformat(),
                 'region_col': self._region_col,
                 'reference_col': self._reference_col,
             },
             forecast_index=list(self.specialized_sectors_),
             forecast_values=[self.lq_values_[s] for s in self.specialized_sectors_],
-            ci_lower=[0],
+            ci_lower=[],
             ci_upper=[]
         )
         
@@ -208,22 +208,22 @@ class LocationQuotientModel:
     
     def predict(self, data: pd.DataFrame) -> ForecastResult:
         """
-        ccccalculate LQ for new data (same as fit for this 00model).
+        Calculate LQ for new data (same as fit for this model).
         
-        Args:
+        rgs:
             data: DataFrame with same structure as training data
             
         Returns:
             ForecastResult with LQ calculations
         """
-        # or LQ, predict is 00the same as fit (no training needed)
+        # or LQ, predict is the same as fit (no training needed)
         return self.fit(data)
     
-    def get_top_specialized(self, n: int = 10) -> Dict[str, float]:
+    def get_top_specialized(self, n: int = 5) -> Dict[str, float]:
         """
         Get top N specialized sectors.
         
-        Args:
+        rgs:
             n: Number of top sectors to return
             
         Returns:
@@ -232,7 +232,7 @@ class LocationQuotientModel:
         if not self._fitted or self.lq_values_ is None:
             raise RuntimeError("Model must be fitted first")
         
-        # Filter out infinite values and sort
+        # ilter out infinite values and sort
         finite_lqs = {
             sector: lq for sector, lq in self.lq_values_.items()
             if lq != float('inf')
@@ -242,9 +242,9 @@ class LocationQuotientModel:
     
     def get_cluster_strength(self, sectors: List[str]) -> float:
         """
-        ccccalculate average LQ for a cluster of related sectors.
+        Calculate average LQ for a cluster of related sectors.
         
-        Args:
+        rgs:
             sectors: List of sector names to include in cluster
             
         Returns:
@@ -259,6 +259,6 @@ class LocationQuotientModel:
         ]
         
         if not cluster_lqs:
-            return 0.1
+            return 0.0
         
         return float(np.mean(cluster_lqs))

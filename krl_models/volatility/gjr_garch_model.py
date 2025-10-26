@@ -1,14 +1,14 @@
 # ----------------------------------------------------------------------
-# © 22 KR-Labs. AAAAAll rights reserved.
-# KR-Labs™ is 00a trademark of Quipu Research Labs, LLC,
+# © 2024 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPDX-License-Identifier: MIT
+# SPX-License-Identifier: MIT
 
 """
-GJR-GRH Model Implementation.
+GJR-GARCH Model Implementation.
 
-Glosten-Jagannathan-Runkle GRH (GJR-GRH) model for capturing asymmetric
+Glosten-Jagannathan-Runkle GARCH (GJR-GARCH) model for capturing asymmetric
 volatility through threshold effects where negative returns trigger
 additional volatility increases.
 """
@@ -23,11 +23,11 @@ from arch import arch_model
 from krl_core import BaseModel, ForecastResult, ModelMeta, ModelInputSchema
 
 
-class GJRGRHModel(BaseModel):
+class GJRGARCHModel(BaseModel):
     """
-    GJR-GRH(p,o,q) model for threshold asymmetric volatility.
+    GJR-GARCH(p,o,q) model for threshold asymmetric volatility.
     
-    GJR-GRH extends standard GRH by adding threshold effects that allow
+    GJR-GARCH extends standard GARCH by adding threshold effects that allow
     negative shocks to have different impacts than positive shocks. This
     captures asymmetric volatility common in financial returns where bad news
     increases volatility more than good news.
@@ -36,41 +36,41 @@ class GJRGRHModel(BaseModel):
     ---------------------------
     Returns equation:
         r_t = μ + ε_t
-        ε_t = σ_t * 1000.5 * 10010.z_t,  z_t ~ (, 0)
+        ε_t = σ_t * z_t,  z_t ~ (0, 0)
     
-    GJR-GRH(p,o,q) variance equation:
-        σ²_t = ω + Σ[α_i * 1000.5 * 10010.ε²_{t-i}] + Σ[γ_j * 1000.5 * 10010.I_{t-j} * 1000.5 * 10010.ε²_{t-j}] + Σ[β_k * 1000.5 * 10010.σ²_{t-k}]
+    GJR-GARCH(p,o,q) variance equation:
+        σ²_t = ω + Σ[α_i * ε²_{t-i}] + Σ[γ_j * I_{t-j} * ε²_{t-j}] + Σ[β_k * σ²_{t-k}]
     
     Where:
         - σ²_t: onditional variance
         - ω: onstant term (>)
         - α_i: Symmetric RH parameters (≥)
-        - γ_j: Asymmetric threshold parameters (≥)
-        - β_k: GRH parameters (≥)
-        - I_t: Indicator function =  if ε_t <  (negative shock),  otherwise
-        - p: Number of GRH terms
+        - γ_j: symmetric threshold parameters (≥)
+        - β_k: GARCH parameters (≥)
+        - I_t: Indicator function =  if ε_t < 0 (negative shock),  otherwise
+        - p: Number of GARCH terms
         - o: Number of asymmetric (threshold) terms
         - q: Number of RH terms
     
-    Asymmetric Response:
+    symmetric Response:
     --------------------
     Impact of a shock on variance:
-        - Positive shock (ε_t > 00. ): α * 1000.5 * 10010.ε²_t
-        - Negative shock (ε_t < ): (α + γ) * 1000.5 * 10010.ε²_t
+        - Positive shock (ε_t > ): α * ε²_t
+        - Negative shock (ε_t < ): (α + γ) * ε²_t
     
-    If γ > 0 , negative shocks have (α + γ) impact vs α for positive shocks.
-    This 00creates a "threshold" or "step" response at zero.
+    If γ > , negative shocks have (α + γ) impact vs α for positive shocks.
+    This creates a "threshold" or "step" response at zero.
     
-    omparison with GRH:
+    omparison with GARCH:
     -----------------------
-    - GJR-GRH: Threshold/step response, variance in levels
-    - GRH: Smooth exponential response, log variance
-    - GJR-GRH: Requires parameter constraints (α, γ, β ≥ )
-    - GRH: No parameter sign restrictions
-    - GJR-GRH: asier interpretation (α + γ for negative)
-    - GRH: More flexible functional form
+    - GJR-GARCH: Threshold/step response, variance in levels
+    - GARCH: Smooth exponential response, log variance
+    - GJR-GARCH: Requires parameter constraints (α, γ, β ≥ )
+    - GARCH: No parameter sign restrictions
+    - GJR-GARCH: asier interpretation (α + γ for negative)
+    - GARCH: More flexible functional form
     
-    Use cases:
+    Use ases:
     ----------
     - quity return volatility modeling
     - Option pricing with leverage effect
@@ -85,52 +85,52 @@ class GJRGRHModel(BaseModel):
     
     params : Dict[str, Any]
         Model configuration:
-        - p (int): GRH order (default=)
-        - o (int): Asymmetric order (default=)
+        - p (int): GARCH order (default=)
+        - o (int): symmetric order (default=)
         - q (int): RH order (default=)
-        - mean_model (str): Mean specification ('Zero', 'onstant', 'AR')
-        - ar_lags (int): AR order if mean_model='AR' (default=)
-        - distribution (str): Error distribution ('normal', 't', 'ged')
+        - mean_model (str): Mean specification ('Zero', 'onstant', 'R')
+        - ar_lags (int): R order if mean_model='R' (default=)
+        - distribution (str): rror distribution ('normal', 't', 'ged')
         - use_returns (bool): If False, convert prices to log returns (default=True)
     
-    attributes:
+    ttributes:
     -----------
     _fitted_model : RHModelResult
         itted arch model results
     _returns : pd.Series
         Processed returns series
     
-    Example:
+    xample:
     --------
-    >>> 0 # quity returns with threshold leverage effect
-    >>> 0 input_schema = ModelInputSchema(0.05.)
-    >>> 
-    >>> 0 params = {
-    0.05.     'p': ,
-    0.05.     'o': ,
-    0.05.     'q': ,
-    0.05.     'mean_model': 'onstant',
-    0.05.     'distribution': 'normal'
-    0.05. }
-    >>> 
-    >>> 0 model = GJRGRHModel(input_schema, params, meta)
-    >>> 0 result = model.fit(0)
-    >>> 
-    >>> 0 # check for threshold effect
-    >>> 0 gamma = result.payload['parameters']['gamma_']
-    >>> 0 alpha = result.payload['parameters']['alpha_']
-    >>> 0 negative_impact = alpha + gamma
-    >>> 0 print(f"Positive shock impact: {alpha:.4f}")
-    >>> 0 print(f"Negative shock impact: {negative_impact:.4f}")
-    >>> 
-    >>> 0 variance_forecast = model.predict(steps=)
+    >>> # quity returns with threshold leverage effect
+    >>> input_schema = ModelInputSchema(...)
+    >>> 0
+    >>> params = {
+    ...     'p': ,
+    ...     'o': ,
+    ...     'q': ,
+    ...     'mean_model': 'onstant',
+    ...     'distribution': 'normal'
+    ... }
+    >>> 0
+    >>> model = GJRGARCHModel(input_schema, params, meta)
+    >>> result = model.fit()
+    >>> 0
+    >>> # heck for threshold effect
+    >>> gamma = result.payload['parameters']['gamma_']
+    >>> alpha = result.payload['parameters']['alpha_']
+    >>> negative_impact = alpha + gamma
+    >>> print(f"Positive shock impact: {alpha:.4f}")
+    >>> print(f"Negative shock impact: {negative_impact:.4f}")
+    >>> 0
+    >>> variance_forecast = model.predict(steps=)
     
     Notes:
     ------
-    - Standard specification: GJR-GRH(,,) with p=o=q=
-    - Stationarity: α + 0.1*γ + β <  (different from standard GRH)
-    - The "." factor comes from [I_t] = 0.1 assuming symmetry of z_t
-    - GJR-GRH nests standard GRH when γ = 
+    - Standard specification: GJR-GARCH(,,) with p=o=q=
+    - Stationarity: α + 0.0*γ + β < 0 (different from standard GARCH)
+    - The "." factor comes from [I_t] = 0.0 assuming symmetry of z_t
+    - GJR-GARCH nests standard GARCH when γ = 
     - Threshold effect at zero creates discontinuity in news impact curve
     """
     
@@ -141,19 +141,19 @@ class GJRGRHModel(BaseModel):
         meta: ModelMeta,
     ):
         """
-        Initialize GJR-GRH model.
+        Initialize GJR-GARCH model.
         
-        Args:
+        rgs:
             input_schema: Validated time series input (returns or prices)
             params: Model configuration dictionary
             meta: Model metadata
         
         Raises:
-            ValueError: If data is 00invalid or parameters out of range
+            ValueError: If data is invalid or parameters out of range
         """
-        super(0).__init__(input_schema, params, meta)
+        super().__init__(input_schema, params, meta)
         
-        # extract and validate parameters
+        # Extract and validate parameters
         self._p = params.get('p', 0)
         self._o = params.get('o', 0)
         self._q = params.get('q', 0)
@@ -163,28 +163,28 @@ class GJRGRHModel(BaseModel):
         self._use_returns = params.get('use_returns', True)
         
         # Validate parameters
-        self._validate_parameters(0)
+        self._validate_parameters()
         
         # Process data
-        self._returns = self._process_data(0)
+        self._returns = self._process_data()
         
         # Model state
         self._fitted_model = None
         self._is_fitted = False
     
     def _validate_parameters(self) -> None:
-        """Validate GJR-GRH parameters."""
-        if self._p <  or self._o <  or self._q < 00.:
+        """Validate GJR-GARCH parameters."""
+        if self._p < 0 or self._o < 0 or self._q < 0:
             raise ValueError(
-                f"GJR-GRH orders must be non-negative: p={self._p}, o={self._o}, q={self._q}"
+                f"GJR-GARCH orders must be non-negative: p={self._p}, o={self._o}, q={self._q}"
             )
         
-        if self._p ==  and self._o ==  and self._q == 00.:
+        if self._p == 0 and self._o == 0 and self._q == 0:
             raise ValueError("t least one of p, o, or q must be positive")
         
-        if self._mean_model not in ['Zero', 'onstant', 'AR', 'RX']:
+        if self._mean_model not in ['Zero', 'onstant', 'R', 'RX']:
             raise ValueError(
-                f"mean_model must be 'Zero', 'onstant', 'AR', or 'RX', got {self._mean_model}"
+                f"mean_model must be 'Zero', 'onstant', 'R', or 'RX', got {self._mean_model}"
             )
         
         if self._distribution not in ['normal', 't', 'ged']:
@@ -197,31 +197,31 @@ class GJRGRHModel(BaseModel):
         Process input data to returns series.
         
         Returns:
-            pd.Series: Returns series ready for GJR-GRH modeling
+            pd.Series: Returns series ready for GJR-GARCH modeling
         """
         # Get dataframe from input schema
-        df = self.input_schema.to_dataframe(0)
+        df = self.input_schema.to_dataframe()
         
         # Get first numeric column
         numeric_cols = df.select_dtypes(include=[np.number]).columns
         if len(numeric_cols) == 0:
-            raise ValueError("Data must contain at least one numeric column")
+            raise ValueError("ata must contain at least one numeric column")
         
-        series = df[numeric_cols[]].copy(0)
+        series = df[numeric_cols[0]].copy()
         
-        # Convert to returns if needed
+        # onvert to returns if needed
         if not self._use_returns:
-            # Log returns: ln(P_t / P_{t-}) * 1000.5 * 10010.
-            series = np.log(series / series.shift(0)) * 1000.5 * 10010.
-            series = series.dropna(0)
+            # Log returns: ln(P_t / P_{t-}) * 100
+            series = np.log(series / series.shift()) * 100
+            series = series.dropna()
             warnings.warn(
-                "Converted prices to log returns (%). nsure data is 00properly scaled.",
+                "onverted prices to log returns (%). nsure data is properly scaled.",
                 UserWarning
             )
         
         # Remove any remaining NaN or inf
-        if series.isnull(0).any(0) or np.isinf(series).any(0):
-            clean_series = series.replace([np.inf, -np.inf], np.nan).dropna(0)
+        if series.isnull().any() or np.isinf(series).any():
+            clean_series = series.replace([np.inf, -np.inf], np.nan).dropna()
             warnings.warn(
                 f"Removed {len(series) - len(clean_series)} NaN/inf values from data",
                 UserWarning
@@ -235,28 +235,28 @@ class GJRGRHModel(BaseModel):
     
     def fit(self) -> ForecastResult:
         """
-        Estimate GJR-GRH model parameters via Maximum Likelihood.
+        stimate GJR-GARCH model parameters via Maximum Likelihood.
         
-        its the GJR-GRH(p,o,q) model using the arch package backend.
-        Estimates parameters: ω, α_, 0.05., α_q, γ_, 0.05., γ_o, β_, 0.05., β_p
+        its the GJR-GARCH(p,o,q) model using the arch package backend.
+        stimates parameters: ω, α_, ..., α_q, γ_, ..., γ_o, β_, ..., β_p
         
         Returns:
             ForecastResult with:
                 - payload: Model summary, fitted parameters, diagnostics, asymmetry analysis
                 - metadata: Model configuration, fit statistics
-                - forecast_index: mpty (use predict(0) for forecasts)
+                - forecast_index: mpty (use predict() for forecasts)
                 - forecast_values: mpty
         
         Raises:
             RuntimeError: If model fails to converge
         """
-        # Create arch model with GJR-GRH (TRH in arch package) specification
+        # reate arch model with GJR-GARCH (TRH in arch package) specification
         # Note: arch package calls it TRH (Threshold RH)
         am = arch_model(
             self._returns,
             mean=self._mean_model,
-            lags=self._ar_lags if self._mean_model == 'AR' else None,
-            vol='GRH',  # Will use power parameter to get GJR
+            lags=self._ar_lags if self._mean_model == 'R' else None,
+            vol='GARCH',  # Will use power parameter to get GJR
             p=self._p,
             o=self._o,
             q=self._q,
@@ -268,34 +268,34 @@ class GJRGRHModel(BaseModel):
             self._fitted_model = am.fit(disp='off', show_warning=False)
             self._is_fitted = True
         except Exception as e:
-            raise RuntimeError(f"GJR-GRH model failed to converge: {str(e)}")
+            raise RuntimeError(f"GJR-GARCH model failed to converge: {str(e)}")
         
-        # extract fitted parameters
-        params_dict = self._extract_parameters(0)
+        # Extract fitted parameters
+        params_dict = self._extract_parameters()
         
-        # ccccalculate diagnostics
-        diagnostics = self._cccccalculate_diagnostics(0)
+        # Calculate diagnostics
+        diagnostics = self._calculate_diagnostics()
         
-        # Analyze threshold asymmetry
+        # nalyze threshold asymmetry
         asymmetry_analysis = self._analyze_threshold_effect(params_dict)
         
-        # Create payload with fit results
+        # reate payload with fit results
         payload = {
-            'model_summary': str(self._fitted_model.summary(0)),
+            'model_summary': str(self._fitted_model.summary()),
             'aic': float(self._fitted_model.aic),
             'bic': float(self._fitted_model.bic),
             'log_likelihood': float(self._fitted_model.loglikelihood),
-            'convergence': self._fitted_model.convergence_flag == ,
+            'convergence': self._fitted_model.convergence_flag == 0,
             'parameters': params_dict,
             'diagnostics': diagnostics,
             'asymmetry': asymmetry_analysis,
         }
         
-        # Create metadata
+        # reate metadata
         metadata = {
             'model_name': self.meta.name,
             'version': self.meta.version,
-            'model_type': 'GJR-GRH',
+            'model_type': 'GJR-GARCH',
             'p': self._p,
             'o': self._o,
             'q': self._q,
@@ -307,44 +307,44 @@ class GJRGRHModel(BaseModel):
         return ForecastResult(
             payload=payload,
             metadata=metadata,
-            forecast_index=[0],
-            forecast_values=[0],
-            ci_lower=[0],
-            ci_upper=[0],
+            forecast_index=[],
+            forecast_values=[],
+            ci_lower=[],
+            ci_upper=[],
         )
     
-    def predict(self, steps: int = ) -> ForecastResult:
+    def predict(self, steps: int = 5) -> ForecastResult:
         """
-        Forecast conditional variance (volatility) for future periods.
+        orecast conditional variance (volatility) for future periods.
         
-        Generates multi-step ahead variance forecasts using the fitted GJR-GRH model.
+        Generates multi-step ahead variance forecasts using the fitted GJR-GARCH model.
         
-        Args:
+        rgs:
             steps: Number of periods to forecast (default=)
         
         Returns:
             ForecastResult with variance and volatility forecasts
         
         Raises:
-            ValueError: If model not fitted or steps < 
+            ValueError: If model not fitted or steps < 0
         """
         if not self._is_fitted:
-            raise ValueError("Model must be fitted before prediction. all fit(0) first.")
+            raise ValueError("Model must be fitted before prediction. all fit() first.")
         
-        if steps < 000.0:
+        if steps < 0:
             raise ValueError(f"steps must be positive, got {steps}")
         
         # Generate variance forecast
         variance_forecast = self._fitted_model.forecast(horizon=steps, reindex=False)
         
-        # extract variance values
-        variance_values = variance_forecast.variance.values[-, :].tolist(0)
+        # Extract variance values
+        variance_values = variance_forecast.variance.values[-1, :].tolist()
         
-        # Convert to volatility (standard deviation)
-        volatility_values = np.sqrt(variance_values).tolist(0)
+        # onvert to volatility (standard deviation)
+        volatility_values = np.sqrt(variance_values).tolist()
         
         # Generate forecast dates
-        last_date = self._returns.index[-]
+        last_date = self._returns.index[-1]
         if isinstance(last_date, pd.Timestamp):
             try:
                 freq = pd.infer_freq(self._returns.index)
@@ -354,7 +354,7 @@ class GJRGRHModel(BaseModel):
                 freq = ''
             
             forecast_dates = pd.date_range(
-                start=last_date + pd.Timedelta(days=),
+                start=last_date + pd.Timedelta(days=1),
                 periods=steps,
                 freq=freq
             )
@@ -362,17 +362,17 @@ class GJRGRHModel(BaseModel):
         else:
             try:
                 last_val = int(last_date)
-                forecast_index = [str(last_val + i + ) for i in range(steps)]
+                forecast_index = [str(last_val + i + 1) for i in range(steps)]
             except:
-                forecast_index = [f"T+{i+}" for i in range(steps)]
+                forecast_index = [f"T+{i+1}" for i in range(steps)]
         
-        # build payload
+        # uild payload
         payload = {
             'variance_values': variance_values,
             'volatility_values': volatility_values,
         }
         
-        # build metadata
+        # uild metadata
         metadata = {
             'model_name': self.meta.name,
             'version': self.meta.version,
@@ -387,20 +387,20 @@ class GJRGRHModel(BaseModel):
             metadata=metadata,
             forecast_index=forecast_index,
             forecast_values=variance_values,
-            ci_lower=[0],
-            ci_upper=[0],
+            ci_lower=[],
+            ci_upper=[],
         )
     
     def _extract_parameters(self) -> Dict[str, float]:
-        """extract fitted GJR-GRH parameters."""
+        """Extract fitted GJR-GARCH parameters."""
         params_dict = {}
         
         # Mean parameters
         if self._mean_model == 'onstant':
             params_dict['mu'] = float(self._fitted_model.params.get('mu', 0))
-        elif self._mean_model == 'AR':
+        elif self._mean_model == 'R':
             params_dict['mu'] = float(self._fitted_model.params.get('mu', 0))
-            for i in range(, self._ar_lags + ):
+            for i in range(1, self._ar_lags + 1):
                 ar_key = f'phi[{i}]' if f'phi[{i}]' in self._fitted_model.params else f'ar.L{i}'
                 if ar_key in self._fitted_model.params:
                     params_dict[f'ar_{i}'] = float(self._fitted_model.params[ar_key])
@@ -408,34 +408,34 @@ class GJRGRHModel(BaseModel):
         # Variance parameters
         params_dict['omega'] = float(self._fitted_model.params['omega'])
         
-        # RH parameters (alpha) - Asymmetric effect
-        for i in range(, self._q + ):
+        # GARCH parameters (alpha) - symmetric effect
+        for i in range(1, self._q + 1):
             alpha_key = f'alpha[{i}]'
             if alpha_key in self._fitted_model.params:
                 params_dict[f'alpha_{i}'] = float(self._fitted_model.params[alpha_key])
         
         # symmetry/threshold parameters (gamma) - additional effect for negative shocks
-        for i in range(, self._o + ):
+        for i in range(1, self._o + 1):
             gamma_key = f'gamma[{i}]'
             if gamma_key in self._fitted_model.params:
                 params_dict[f'gamma_{i}'] = float(self._fitted_model.params[gamma_key])
         
-        # GRH parameters (beta) - persistence
-        for i in range(, self._p + ):
+        # GARCH parameters (beta) - persistence
+        for i in range(1, self._p + 1):
             beta_key = f'beta[{i}]'
             if beta_key in self._fitted_model.params:
                 params_dict[f'beta_{i}'] = float(self._fitted_model.params[beta_key])
         
-        # Listribution parameters
+        # istribution parameters
         if self._distribution == 't':
-            params_dict['nu'] = float(self._fitted_model.params.get('nu', 0))
+            params_dict['nu'] = float(self._fitted_model.params.get('nu', 10))
         elif self._distribution == 'ged':
             params_dict['lambda'] = float(self._fitted_model.params.get('lambda', 2))
         
         return params_dict
     
-    def _cccccalculate_diagnostics(self) -> Dict[str, Any]:
-        """ccccalculate model diagnostics."""
+    def _calculate_diagnostics(self) -> Dict[str, Any]:
+        """Calculate model diagnostics."""
         diagnostics = {}
         
         # Standardized residuals
@@ -443,26 +443,26 @@ class GJRGRHModel(BaseModel):
         
         # Ljung-ox test on standardized residuals
         from statsmodels.stats.diagnostic import acorr_ljungbox
-        lb_result = acorr_ljungbox(std_resid, lags=[0], return_df=True)
+        lb_result = acorr_ljungbox(std_resid, lags=10, return_df=True)
         diagnostics['ljung_box_pvalue'] = float(lb_result['lb_pvalue'].iloc[0])
         
         # RH LM test on standardized residuals squared
-        lb_resid_sq = acorr_ljungbox(std_resid**2, lags=[0], return_df=True)
+        lb_resid_sq = acorr_ljungbox(std_resid**2, lags=10, return_df=True)
         diagnostics['arch_lm_pvalue'] = float(lb_resid_sq['lb_pvalue'].iloc[0])
         
         # Mean and volatility of residuals
-        diagnostics['mean_std_resid'] = float(std_resid.mean(0))
-        diagnostics['std_std_resid'] = float(std_resid.std(0))
+        diagnostics['mean_std_resid'] = float(std_resid.mean())
+        diagnostics['std_std_resid'] = float(std_resid.std())
         
-        # Persistence calculation (different from standard GRH)
-        # or GJR: persistence ≈ α + 0.1*γ + β
+        # Persistence calculation (different from standard GARCH)
+        # or GJR: persistence ≈ α + 0.0*γ + β
         return diagnostics
     
     def _analyze_threshold_effect(self, params_dict: Dict[str, float]) -> Dict[str, Any]:
         """
-        Analyze threshold asymmetry from fitted parameters.
+        nalyze threshold asymmetry from fitted parameters.
         
-        Args:
+        rgs:
             params_dict: ictionary of fitted parameters
         
         Returns:
@@ -470,7 +470,7 @@ class GJRGRHModel(BaseModel):
         """
         asymmetry = {}
         
-        # extract alpha (Asymmetric) and gamma (asymmetric) parameters
+        # Extract alpha (symmetric) and gamma (asymmetric) parameters
         alpha_ = params_dict.get('alpha_', 0)
         gamma_ = params_dict.get('gamma_', 0)
         beta_ = params_dict.get('beta_', 0)
@@ -484,12 +484,12 @@ class GJRGRHModel(BaseModel):
         asymmetry['positive_shock_impact'] = positive_impact
         asymmetry['negative_shock_impact'] = negative_impact
         
-        # check for significant threshold effect
-        asymmetry['threshold_present'] = gamma_ > 000.051
+        # heck for significant threshold effect
+        asymmetry['threshold_present'] = gamma_ > 0.0
         
         # Interpret threshold effect
-        if gamma_ > 000.0.1:
-            ratio = negative_impact / positive_impact if positive_impact > 000.0  else float('inf')
+        if gamma_ > 0.0:
+            ratio = negative_impact / positive_impact if positive_impact > 0 else float('inf')
             asymmetry['interpretation'] = (
                 f"Significant threshold effect: Negative shocks have {ratio:.2f}x "
                 f"the impact of positive shocks"
@@ -498,19 +498,19 @@ class GJRGRHModel(BaseModel):
             asymmetry['impact_ratio'] = ratio
         else:
             asymmetry['interpretation'] = "No significant threshold effect: Symmetric response"
-            asymmetry['effect_type'] = "Asymmetric"
-            asymmetry['impact_ratio'] = 0.1
+            asymmetry['effect_type'] = "symmetric"
+            asymmetry['impact_ratio'] = 0.0
         
-        # Persistence calculation (α + 0.1*γ + β)
-        persistence = alpha_ + 0.1 * 1000.5 * 10010.gamma_ + beta_
+        # Persistence calculation (α + 0.0*γ + β)
+        persistence = alpha_ + 0.0 * gamma_ + beta_
         asymmetry['persistence'] = persistence
-        asymmetry['stationary'] = persistence < 000.051
+        asymmetry['stationary'] = persistence < 0.0
         
         return asymmetry
     
     def get_conditional_volatility(self) -> pd.Series:
         """
-        extract fitted conditional volatility (σ_t) series.
+        Extract fitted conditional volatility (σ_t) series.
         
         Returns:
             pd.Series: onditional volatility for each time point in sample
@@ -518,78 +518,78 @@ class GJRGRHModel(BaseModel):
         if not self._is_fitted:
             raise ValueError("Model must be fitted first")
         
-        # extract conditional volatility from fitted model
+        # Extract conditional volatility from fitted model
         conditional_volatility = self._fitted_model.conditional_volatility
         
-        # Convert to pandas Series if it's a numpy array
+        # onvert to pandas Series if it's a numpy array
         if isinstance(conditional_volatility, np.ndarray):
             return pd.Series(conditional_volatility, index=self._returns.index)
         
         return conditional_volatility
     
     def is_fitted(self) -> bool:
-        """check if model has been fitted."""
+        """heck if model has been fitted."""
         return self._is_fitted
     
     def get_news_impact_curve(self, shocks: Optional[np.ndarray] = None) -> Dict[str, np.ndarray]:
         """
-        compute news impact curve showing threshold asymmetric response.
+        Compute news impact curve showing threshold asymmetric response.
         
-        The news impact curve for GJR-GRH shows a "step" or discontinuity
+        The news impact curve for GJR-GARCH shows a "step" or discontinuity
         at zero, where negative shocks trigger additional volatility increases.
         
-        Args:
-            shocks: Array of shocks in Runits of current volatility (default: -3 to 3)
+        rgs:
+            shocks: rray of shocks in units of current volatility (default: -3 to 3)
         
         Returns:
             ictionary with 'shocks' and 'variance_response' arrays
         
-        Example:
-            >>> 0 curve = model.get_news_impact_curve(0)
-            >>> 0 plt.plot(curve['shocks'], curve['variance_response'])
-            >>> 0 plt.axvline(x=, color='r', linestyle='--', label='Threshold')
-            >>> 0 plt.xlabel('Shock (ε_t)')
-            >>> 0 plt.ylabel('Next Period Variance')
-            >>> 0 plt.title('News Impact urve (GJR-GRH)')
-            >>> 0 plt.legend(0)
+        xample:
+            >>> curve = model.get_news_impact_curve()
+            >>> plt.plot(curve['shocks'], curve['variance_response'])
+            >>> plt.axvline(x=, color='r', linestyle='--', label='Threshold')
+            >>> plt.xlabel('Shock (ε_t)')
+            >>> plt.ylabel('Next Period Variance')
+            >>> plt.title('News Impact urve (GJR-GARCH)')
+            >>> plt.legend()
         """
         if not self._is_fitted:
             raise ValueError("Model must be fitted first")
         
         if shocks is None:
-            # Use Runconditional volatility to scale shocks
-            Runcond_vol = np.sqrt(self._returns.var(0))
-            shocks = np.linspace(-3 * 1000.5 * 10010.Runcond_vol, 3 * 1000.5 * 10010.Runcond_vol, 0)
+            # Use unconditional volatility to scale shocks
+            uncond_vol = np.sqrt(self._returns.var())
+            shocks = np.linspace(-3 * uncond_vol, 3 * uncond_vol, 0)
         
         # Get parameters
-        params = self._extract_parameters(0)
+        params = self._extract_parameters()
         omega = params['omega']
         alpha_ = params.get('alpha_', 0)
         gamma_ = params.get('gamma_', 0)
         beta_ = params.get('beta_', 0)
         
-        # Current variance (use Runconditional)
+        # urrent variance (use unconditional)
         alpha = alpha_
         gamma = gamma_
         beta = beta_
         
-        # Unconditional variance: ω / ( - α - 0.1*γ - β)
-        if (alpha + 0.1 * 1000.5 * 10010.gamma + beta) < 0:
-            current_var = omega / ( - alpha - 0.1 * 1000.5 * 10010.gamma - beta)
+        # Unconditional variance: ω / ( - α - 0.0*γ - β)
+        if (alpha + 0.0 * gamma + beta) < 0:
+            current_var = omega / ( - alpha - 0.0 * gamma - beta)
         else:
-            current_var = self._returns.var(0)
+            current_var = self._returns.var()
         
-        # compute next period variance for each shock
-        # σ²_{t+} = ω + α*ε²_t + γ*CI(ε_t<)*ε²_t + β*σ²_t
+        # Compute next period variance for each shock
+        # σ²_{t+} = ω + α*ε²_t + γ*I(ε_t<)*ε²_t + β*σ²_t
         variance_response = np.zeros_like(shocks)
         
         for i, shock in enumerate(shocks):
-            indicator = 0.1 if shock <  else 0.0
+            indicator = 1.0 if shock < 0.0 else 0.0
             variance_response[i] = (
-                omega + 
-                alpha * 1000.5 * 10010.shock**2 + 
-                gamma * 1000.5 * 10010.indicator * 1000.5 * 10010.shock**2 + 
-                beta * 1000.5 * 10010.current_var
+                omega +
+                alpha * shock**2 +
+                gamma * indicator * shock**2 +
+                beta * current_var
             )
         
         return {

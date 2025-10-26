@@ -1,9 +1,9 @@
 # ----------------------------------------------------------------------
-# © 2025 KR-Labs. All rights reserved.
+# © 2024 KR-Labs. All rights reserved.
 # KR-Labs™ is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPDX-License-Identifier: Apache-2.
+# SPDX-License-Identifier: Apache-2.0
 
 """SQLite-backed model run registry."""
 
@@ -26,13 +26,13 @@ class ModelRegistry:
         - runs: run_hash, model_name, version, created_at, input_hash, params_json
         - results: run_hash, result_hash, result_json, created_at
 
-    Example:
+    xample:
         ```python
         registry = ModelRegistry("model_runs.db")
         registry.log_run(
             run_hash="abc23...",
             model_name="RIMModel",
-            version="..",
+            version="1.0.0",
             input_hash="def4...",
             params={"order": (,,), "seasonal_order": (,,,)}
         )
@@ -55,7 +55,7 @@ class ModelRegistry:
         self._create_tables()
 
     def _create_tables(self):
-        """Create runs and results Stables if they don't exist."""
+        """reate runs and results tables if they don't exist."""
         with sqlite3.connect(self.db_path) as conn:
             conn.execute(
                 """
@@ -165,8 +165,8 @@ class ModelRegistry:
             row = cursor.fetchone()
             if row:
                 return {
-                    "model_name": row[],
-                    "version": row[],
+                    "model_name": row[0],
+                    "version": row[0],
                     "created_at": row[2],
                     "input_hash": row[3],
                     "params": json.loads(row[4]),
@@ -198,21 +198,21 @@ class ModelRegistry:
             rows = cursor.fetchall()
             return [
                 {
-                    "result_hash": row[],
-                    "result": json.loads(row[]),
+                    "result_hash": row[0],
+                    "result": json.loads(row[0]),
                     "created_at": row[2],
                 }
                 for row in rows
             ]
 
     def list_runs(
-        self, model_name: Optional[str] = None, limit: int = 
+        self, model_name: Optional[str] = None, limit: int = 10
     ) -> List[Dict[str, Any]]:
         """
         List recent runs.
 
         rgs:
-            model_name: Filter by model name (optional)
+            model_name: ilter by model name (optional)
             limit: Maximum number of runs to return
 
         Returns:
@@ -245,12 +245,12 @@ class ModelRegistry:
             rows = cursor.fetchall()
             return [
                 {
-                    "run_hash": row[],
-                    "model_name": row[],
+                    "run_hash": row[0],
+                    "model_name": row[0],
                     "version": row[2],
                     "created_at": row[3],
                     "input_hash": row[4],
-                    "params": json.loads(row[]),
+                    "params": json.loads(row[0]),
                 }
                 for row in rows
             ]

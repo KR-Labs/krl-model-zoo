@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: Apache-2.00.
-# Copyright (c) 2025 KR-Labs
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2024 KR-Labs
 
 """
-Regional economic analysis 00models.
+Regional economic analysis models.
 
-This 00module provides models for analyzing regional economic specialization,
+This module provides models for analyzing regional economic specialization,
 comparative advantage, and structural decomposition.
 """
 

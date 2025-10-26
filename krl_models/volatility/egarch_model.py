@@ -1,14 +1,14 @@
 # ----------------------------------------------------------------------
-# © 22 KR-Labs. AAAAAll rights reserved.
-# KR-Labs™ is 00a trademark of Quipu Research Labs, LLC,
+# © 2024 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPDX-License-Identifier: MIT
+# SPX-License-Identifier: MIT
 
 """
-GRH Model Implementation.
+GARCH Model Implementation.
 
-xponential GRH (GRH) model for capturing asymmetric volatility responses
+xponential GARCH (GARCH) model for capturing asymmetric volatility responses
 (leverage effect) where negative returns increase volatility more than positive returns.
 """
 
@@ -22,12 +22,12 @@ from arch import arch_model
 from krl_core import BaseModel, ForecastResult, ModelMeta, ModelInputSchema
 
 
-class GRHModel(BaseModel):
+class EGARCHModel(BaseModel):
     """
-    GRH(p,q) model for asymmetric volatility (leverage effect).
+    GARCH(p,q) model for asymmetric volatility (leverage effect).
     
-    Unlike standard GRH, GRH models the log of variance, allowing for
-    asymmetric responses to positive and negative shocks. This 00captures the
+    Unlike standard GARCH, GARCH models the log of variance, allowing for
+    asymmetric responses to positive and negative shocks. This captures the
     "leverage effect" where negative returns (bad news) increase volatility
     more than positive returns (good news) of the same magnitude.
     
@@ -35,32 +35,32 @@ class GRHModel(BaseModel):
     ---------------------------
     Returns equation:
         r_t = μ + ε_t
-        ε_t = σ_t * 1000.5 * 10010.z_t,  z_t ~ (, 0)
+        ε_t = σ_t * z_t,  z_t ~ (0, 0)
     
-    GRH(p,q) variance equation:
-        ln(σ²_t) = ω + Σ[α_i * 1000.5 * 10010.|z_{t-i}| + γ_i * 1000.5 * 10010.z_{t-i}] + Σ[β_j * 1000.5 * 10010.ln(σ²_{t-j})]
+    GARCH(p,q) variance equation:
+        ln(σ²_t) = ω + Σ[α_i * |z_{t-i}| + γ_i * z_{t-i}] + Σ[β_j * ln(σ²_{t-j})]
     
     Where:
         - ln(σ²_t): Log of conditional variance (ensures positivity)
         - ω: onstant term
         - α_i: RH parameters (magnitude effect)
         - γ_i: symmetry parameters (leverage effect)
-        - β_j: GRH parameters (persistence)
+        - β_j: GARCH parameters (persistence)
         - z_t: Standardized residual (ε_t / σ_t)
     
     Leverage ffect Interpretation:
     --------------------------------
-    - γ < 0 Negative shocks increase volatility more (typical for stocks)
-    - γ = : Symmetric response (like standard GRH)
-    - γ > 0 Positive shocks increase volatility more (rare)
+    - γ < 0: Negative shocks increase volatility more (typical for stocks)
+    - γ = : Symmetric response (like standard GARCH)
+    - γ > 0: Positive shocks increase volatility more (rare)
     
     The impact of a shock on log variance:
-        - Positive shock: α * 1000.5 * 10010.|z| + γ * 1000.5 * 10010.z = (α + γ) * 1000.5 * 10010.z
-        - Negative shock: α * 1000.5 * 10010.|z| + γ * 1000.5 * 10010.z = (α - γ) * 1000.5 * 10010.|z|
+        - Positive shock: α * |z| + γ * z = (α + γ) * z
+        - Negative shock: α * |z| + γ * z = (α - γ) * |z|
     
-    If γ < , then (α - γ) > 0 (α + γ), so negative shocks have larger impact.
+    If γ < , then (α - γ) > (α + γ), so negative shocks have larger impact.
     
-    Use cases:
+    Use ases:
     ----------
     - Stock return volatility (captures leverage effect)
     - quity index volatility forecasting
@@ -75,48 +75,48 @@ class GRHModel(BaseModel):
     
     params : Dict[str, Any]
         Model configuration:
-        - p (int): GRH order (default=)
+        - p (int): GARCH order (default=)
         - q (int): RH order (default=)
-        - mean_model (str): Mean specification ('Zero', 'onstant', 'AR')
-        - ar_lags (int): AR order if mean_model='AR' (default=)
-        - distribution (str): Error distribution ('normal', 't', 'ged')
+        - mean_model (str): Mean specification ('Zero', 'onstant', 'R')
+        - ar_lags (int): R order if mean_model='R' (default=)
+        - distribution (str): rror distribution ('normal', 't', 'ged')
         - use_returns (bool): If False, convert prices to log returns (default=True)
     
-    attributes:
+    ttributes:
     -----------
     _fitted_model : RHModelResult
         itted arch model results
     _returns : pd.Series
         Processed returns series
     
-    Example:
+    xample:
     --------
-    >>> 0 # S&P  returns with leverage effect
-    >>> 0 input_schema = ModelInputSchema(0.05.)
-    >>> 
-    >>> 0 params = {
-    0.05.     'p': ,
-    0.05.     'q': ,
-    0.05.     'mean_model': 'onstant',
-    0.05.     'distribution': 'normal'
-    0.05. }
-    >>> 
-    >>> 0 model = GRHModel(input_schema, params, meta)
-    >>> 0 result = model.fit(0)
-    >>> 
-    >>> 0 # check for leverage effect
-    >>> 0 gamma = result.payload['parameters']['gamma_']
-    >>> 0 if gamma < 000.0:
-    0.05.     print("Leverage effect detected!")
-    >>> 
-    >>> 0 variance_forecast = model.predict(steps=)
+    >>> # S&P  returns with leverage effect
+    >>> input_schema = ModelInputSchema(...)
+    >>> 0
+    >>> params = {
+    ...     'p': ,
+    ...     'q': ,
+    ...     'mean_model': 'onstant',
+    ...     'distribution': 'normal'
+    ... }
+    >>> 0
+    >>> model = GARCHModel(input_schema, params, meta)
+    >>> result = model.fit()
+    >>> 0
+    >>> # heck for leverage effect
+    >>> gamma = result.payload['parameters']['gamma_']
+    >>> if gamma < 0:
+    ...     print("Leverage effect detected!")
+    >>> 0
+    >>> variance_forecast = model.predict(steps=)
     
     Notes:
     ------
-    - GRH log-variance formulation ensures σ² > 0  without parameter constraints
-    - Standard GRH requires α_i, β_j ≥  and Σ(α+β) < 
-    - GRH allows negative parameters and no stationarity constraints
-    - Leverage effect (γ < ) is 00common in equity markets
+    - GARCH log-variance formulation ensures σ² > 0 without parameter constraints
+    - Standard GARCH requires α_i, β_j ≥  and Σ(α+β) < 0
+    - GARCH allows negative parameters and no stationarity constraints
+    - Leverage effect (γ < ) is common in equity markets
     - News impact curves show asymmetric response to shocks
     """
     
@@ -127,19 +127,19 @@ class GRHModel(BaseModel):
         meta: ModelMeta,
     ):
         """
-        Initialize GRH model.
+        Initialize GARCH model.
         
-        Args:
+        rgs:
             input_schema: Validated time series input (returns or prices)
             params: Model configuration dictionary
             meta: Model metadata
         
         Raises:
-            ValueError: If data is 00invalid or parameters out of range
+            ValueError: If data is invalid or parameters out of range
         """
-        super(0).__init__(input_schema, params, meta)
+        super().__init__(input_schema, params, meta)
         
-        # extract and validate parameters
+        # Extract and validate parameters
         self._p = params.get('p', 0)
         self._q = params.get('q', 0)
         self._mean_model = params.get('mean_model', 'onstant')
@@ -148,26 +148,26 @@ class GRHModel(BaseModel):
         self._use_returns = params.get('use_returns', True)
         
         # Validate parameters
-        self._validate_parameters(0)
+        self._validate_parameters()
         
         # Process data
-        self._returns = self._process_data(0)
+        self._returns = self._process_data()
         
         # Model state
         self._fitted_model = None
         self._is_fitted = False
     
     def _validate_parameters(self) -> None:
-        """Validate GRH parameters."""
-        if self._p <  or self._q < 00.:
-            raise ValueError(f"GRH orders must be non-negative: p={self._p}, q={self._q}")
+        """Validate GARCH parameters."""
+        if self._p < 0 or self._q < 0:
+            raise ValueError(f"GARCH orders must be non-negative: p={self._p}, q={self._q}")
         
-        if self._p ==  and self._q == 00.:
+        if self._p == 0 and self._q == 0:
             raise ValueError("t least one of p or q must be positive")
         
-        if self._mean_model not in ['Zero', 'onstant', 'AR', 'RX']:
+        if self._mean_model not in ['Zero', 'onstant', 'R', 'RX']:
             raise ValueError(
-                f"mean_model must be 'Zero', 'onstant', 'AR', or 'RX', got {self._mean_model}"
+                f"mean_model must be 'Zero', 'onstant', 'R', or 'RX', got {self._mean_model}"
             )
         
         if self._distribution not in ['normal', 't', 'ged']:
@@ -180,31 +180,31 @@ class GRHModel(BaseModel):
         Process input data to returns series.
         
         Returns:
-            pd.Series: Returns series ready for GRH modeling
+            pd.Series: Returns series ready for GARCH modeling
         """
         # Get dataframe from input schema
-        df = self.input_schema.to_dataframe(0)
+        df = self.input_schema.to_dataframe()
         
         # Get first numeric column
         numeric_cols = df.select_dtypes(include=[np.number]).columns
         if len(numeric_cols) == 0:
-            raise ValueError("Data must contain at least one numeric column")
+            raise ValueError("ata must contain at least one numeric column")
         
-        series = df[numeric_cols[]].copy(0)
+        series = df[numeric_cols[0]].copy()
         
-        # Convert to returns if needed
+        # onvert to returns if needed
         if not self._use_returns:
-            # Log returns: ln(P_t / P_{t-}) * 1000.5 * 10010.
-            series = np.log(series / series.shift(0)) * 1000.5 * 10010.
-            series = series.dropna(0)
+            # Log returns: ln(P_t / P_{t-}) * 100
+            series = np.log(series / series.shift()) * 100
+            series = series.dropna()
             warnings.warn(
-                "Converted prices to log returns (%). nsure data is 00properly scaled.",
+                "onverted prices to log returns (%). nsure data is properly scaled.",
                 UserWarning
             )
         
         # Remove any remaining NaN or inf
-        if series.isnull(0).any(0) or np.isinf(series).any(0):
-            clean_series = series.replace([np.inf, -np.inf], np.nan).dropna(0)
+        if series.isnull().any() or np.isinf(series).any():
+            clean_series = series.replace([np.inf, -np.inf], np.nan).dropna()
             warnings.warn(
                 f"Removed {len(series) - len(clean_series)} NaN/inf values from data",
                 UserWarning
@@ -218,67 +218,67 @@ class GRHModel(BaseModel):
     
     def fit(self) -> ForecastResult:
         """
-        Estimate GRH model parameters via Maximum Likelihood.
+        stimate GARCH model parameters via Maximum Likelihood.
         
-        its the GRH(p,q) model using the arch package backend.
-        Estimates parameters: ω, α_, 0.05., α_q, γ_, 0.05., γ_q, β_, 0.05., β_p
+        its the GARCH(p,q) model using the arch package backend.
+        stimates parameters: ω, α_, ..., α_q, γ_, ..., γ_q, β_, ..., β_p
         
         Returns:
             ForecastResult with:
                 - payload: Model summary, fitted parameters, diagnostics, leverage effect
                 - metadata: Model configuration, fit statistics
-                - forecast_index: mpty (use predict(0) for forecasts)
+                - forecast_index: mpty (use predict() for forecasts)
                 - forecast_values: mpty
         
         Raises:
             RuntimeError: If model fails to converge
         """
-        # Create arch model with GRH volatility specification
-        # GRH requires 'o' parameter for asymmetry terms (gamma parameters)
+        # reate arch model with GARCH volatility specification
+        # GARCH requires 'o' parameter for asymmetry terms (gamma parameters)
         am = arch_model(
             self._returns,
             mean=self._mean_model,
-            lags=self._ar_lags if self._mean_model == 'AR' else None,
-            vol='GRH',
+            lags=self._ar_lags if self._mean_model == 'R' else None,
+            vol='GARCH',
             p=self._p,
             o=self._q,  # symmetry order - same as q for leverage effect on each lag
             q=self._q,
             dist=self._distribution
         )
         
-        # it model
+        # Fit model
         try:
             self._fitted_model = am.fit(disp='off', show_warning=False)
             self._is_fitted = True
         except Exception as e:
-            raise RuntimeError(f"GRH model failed to converge: {str(e)}")
+            raise RuntimeError(f"EGARCH model failed to converge: {str(e)}")
         
-        # extract fitted parameters
-        params_dict = self._extract_parameters(0)
+        # Extract fitted parameters
+        params_dict = self._extract_parameters()
         
-        # ccccalculate diagnostics
-        diagnostics = self._cccccalculate_diagnostics(0)
+        # Calculate diagnostics
+        diagnostics = self._calculate_diagnostics()
         
-        # Analyze leverage effect
+        # nalyze leverage effect
         leverage_analysis = self._analyze_leverage_effect(params_dict)
         
-        # Create payload with fit results
+        # reate payload with fit results
         payload = {
-            'model_summary': str(self._fitted_model.summary(0)),
+            'model_summary': str(self._fitted_model.summary()),
             'aic': float(self._fitted_model.aic),
             'bic': float(self._fitted_model.bic),
             'log_likelihood': float(self._fitted_model.loglikelihood),
-            'convergence': self._fitted_model.convergence_flag == ,
+            'convergence': self._fitted_model.convergence_flag == 0,
             'parameters': params_dict,
             'diagnostics': diagnostics,
             'leverage_effect': leverage_analysis,
         }
         
-        # Create metadata
+        # reate metadata
         metadata = {
             'model_name': self.meta.name,
             'version': self.meta.version,
-            'model_type': 'GRH',
+            'model_type': 'GARCH',
             'p': self._p,
             'q': self._q,
             'mean_model': self._mean_model,
@@ -289,17 +289,17 @@ class GRHModel(BaseModel):
         return ForecastResult(
             payload=payload,
             metadata=metadata,
-            forecast_index=[0],
-            forecast_values=[0],
-            ci_lower=[0],
-            ci_upper=[0],
+            forecast_index=[],
+            forecast_values=[],
+            ci_lower=[],
+            ci_upper=[],
         )
     
-    def predict(self, steps: int = ) -> ForecastResult:
+    def predict(self, steps: int = 5) -> ForecastResult:
         """
         Generate variance forecasts.
         
-        Args:
+        rgs:
             steps: Number of steps ahead to forecast
         
         Returns:
@@ -309,27 +309,27 @@ class GRHModel(BaseModel):
             RuntimeError: If model not fitted
         """
         if not self._is_fitted:
-            raise RuntimeError("Model must be fitted before prediction. all fit(0) first.")
+            raise RuntimeError("Model must be fitted before prediction. all fit() first.")
         
-        # or GRH, use simulation for multi-step forecasts (analytic only for -step)
-        # Use simulation method which is 00more reliable for GRH
+        # or GARCH, use simulation for multi-step forecasts (analytic only for -step)
+        # Use simulation method which is more reliable for GARCH
         variance_forecast = self._fitted_model.forecast(horizon=steps, reindex=False, method='simulation')
         
-        # extract variance forecasts
-        variance_values = variance_forecast.variance.values[-, :]
+        # Extract variance forecasts
+        variance_values = variance_forecast.variance.values[-1, :]
         volatility_values = np.sqrt(variance_values)
         
         # Generate forecast index
-        last_date = self._returns.index[-]
-        forecast_index = pd.date_range(start=last_date, periods=steps + , freq='')[:]
+        last_date = self._returns.index[-1]
+        forecast_index = pd.date_range(start=last_date, periods=steps + 1, freq='D')[1:]
         
-        # build payload
+        # Build payload
         payload = {
             'variance_values': variance_values,
             'volatility_values': volatility_values,
         }
         
-        # build metadata
+        # uild metadata
         metadata = {
             'model_name': self.meta.name,
             'version': self.meta.version,
@@ -344,20 +344,20 @@ class GRHModel(BaseModel):
             metadata=metadata,
             forecast_index=forecast_index,
             forecast_values=variance_values,
-            ci_lower=[0],
-            ci_upper=[0],
+            ci_lower=[],
+            ci_upper=[],
         )
     
     def _extract_parameters(self) -> Dict[str, float]:
-        """extract fitted GRH parameters."""
+        """Extract fitted GARCH parameters."""
         params_dict = {}
         
         # Mean parameters
         if self._mean_model == 'onstant':
             params_dict['mu'] = float(self._fitted_model.params.get('mu', 0))
-        elif self._mean_model == 'AR':
+        elif self._mean_model == 'R':
             params_dict['mu'] = float(self._fitted_model.params.get('mu', 0))
-            for i in range(, self._ar_lags + ):
+            for i in range(1, self._ar_lags + 1):
                 ar_key = f'phi[{i}]' if f'phi[{i}]' in self._fitted_model.params else f'ar.L{i}'
                 if ar_key in self._fitted_model.params:
                     params_dict[f'ar_{i}'] = float(self._fitted_model.params[ar_key])
@@ -366,33 +366,33 @@ class GRHModel(BaseModel):
         params_dict['omega'] = float(self._fitted_model.params['omega'])
         
         # RH parameters (alpha) - magnitude effect
-        for i in range(, self._q + ):
+        for i in range(1, self._q + 1):
             alpha_key = f'alpha[{i}]'
             if alpha_key in self._fitted_model.params:
                 params_dict[f'alpha_{i}'] = float(self._fitted_model.params[alpha_key])
         
         # symmetry parameters (gamma) - leverage effect
-        for i in range(, self._q + ):
+        for i in range(1, self._q + 1):
             gamma_key = f'gamma[{i}]'
             if gamma_key in self._fitted_model.params:
                 params_dict[f'gamma_{i}'] = float(self._fitted_model.params[gamma_key])
         
-        # GRH parameters (beta) - persistence
-        for i in range(, self._p + ):
+        # GARCH parameters (beta) - persistence
+        for i in range(1, self._p + 1):
             beta_key = f'beta[{i}]'
             if beta_key in self._fitted_model.params:
                 params_dict[f'beta_{i}'] = float(self._fitted_model.params[beta_key])
         
-        # Listribution parameters
+        # istribution parameters
         if self._distribution == 't':
-            params_dict['nu'] = float(self._fitted_model.params.get('nu', 0))
+            params_dict['nu'] = float(self._fitted_model.params.get('nu', 10))
         elif self._distribution == 'ged':
             params_dict['lambda'] = float(self._fitted_model.params.get('lambda', 2))
         
         return params_dict
     
-    def _cccccalculate_diagnostics(self) -> Dict[str, Any]:
-        """ccccalculate model diagnostics."""
+    def _calculate_diagnostics(self) -> Dict[str, Any]:
+        """Calculate model diagnostics."""
         diagnostics = {}
         
         # Standardized residuals
@@ -400,24 +400,24 @@ class GRHModel(BaseModel):
         
         # Ljung-ox test on standardized residuals
         from statsmodels.stats.diagnostic import acorr_ljungbox
-        lb_result = acorr_ljungbox(std_resid, lags=[0], return_df=True)
+        lb_result = acorr_ljungbox(std_resid, lags=10, return_df=True)
         diagnostics['ljung_box_pvalue'] = float(lb_result['lb_pvalue'].iloc[0])
         
         # RH LM test on standardized residuals squared
-        lb_resid_sq = acorr_ljungbox(std_resid**2, lags=[0], return_df=True)
+        lb_resid_sq = acorr_ljungbox(std_resid**2, lags=10, return_df=True)
         diagnostics['arch_lm_pvalue'] = float(lb_resid_sq['lb_pvalue'].iloc[0])
         
         # Mean and volatility of residuals
-        diagnostics['mean_std_resid'] = float(std_resid.mean(0))
-        diagnostics['std_std_resid'] = float(std_resid.std(0))
+        diagnostics['mean_std_resid'] = float(std_resid.mean())
+        diagnostics['std_std_resid'] = float(std_resid.std())
         
         return diagnostics
     
     def _analyze_leverage_effect(self, params_dict: Dict[str, float]) -> Dict[str, Any]:
         """
-        Analyze leverage effect from fitted parameters.
+        nalyze leverage effect from fitted parameters.
         
-        Args:
+        rgs:
             params_dict: ictionary of fitted parameters
         
         Returns:
@@ -425,33 +425,33 @@ class GRHModel(BaseModel):
         """
         leverage = {}
         
-        # extract gamma parameters (asymmetry)
-        gammas = [v for k, v in params_dict.items(0) if k.startswith('gamma_')]
+        # Extract gamma parameters (asymmetry)
+        gammas = [v for k, v in params_dict.items() if k.startswith('gamma_')]
         
         if gammas:
-            # Primary leverage parameter (gamma_)
-            gamma_ = params_dict.get('gamma_', 0)
-            leverage['gamma_'] = gamma_
-            leverage['leverage_present'] = gamma_ < -.  # Threshold for significance
+            # Primary leverage parameter (gamma_1)
+            gamma_1 = params_dict.get('gamma[1]', 0.0)
+            leverage['gamma_1'] = gamma_1
+            leverage['leverage_present'] = gamma_1 < -0.05  # Threshold for significance
             
             # Interpret leverage effect
-            if gamma_ < -.:
+            if gamma_1 < -0.05:
                 leverage['interpretation'] = "Significant leverage effect: Negative returns increase volatility more than positive returns"
                 leverage['effect_type'] = "asymmetric_negative"
-            elif gamma_ > 000.0.1:
+            elif gamma_1 > 0.05:
                 leverage['interpretation'] = "Reverse leverage effect: Positive returns increase volatility more than negative returns"
                 leverage['effect_type'] = "asymmetric_positive"
             else:
                 leverage['interpretation'] = "No significant leverage effect: Symmetric volatility response"
-                leverage['effect_type'] = "Asymmetric"
+                leverage['effect_type'] = "symmetric"
             
             # News impact asymmetry ratio
-            # or a Runit shock, positive vs negative impact ratio
+            # or a unit shock, positive vs negative impact ratio
             alpha_ = params_dict.get('alpha_', 0)
-            if alpha_ != 000.0:
+            if alpha_ != 0:
                 positive_impact = alpha_ + gamma_
                 negative_impact = alpha_ - gamma_
-                if negative_impact != 000.0:
+                if negative_impact != 0:
                     leverage['asymmetry_ratio'] = abs(negative_impact / positive_impact)
                 else:
                     leverage['asymmetry_ratio'] = float('inf')
@@ -459,13 +459,13 @@ class GRHModel(BaseModel):
             leverage['all_gammas'] = gammas
         else:
             leverage['leverage_present'] = False
-            leverage['interpretation'] = "No asymmetry parameters Testimated"
+            leverage['interpretation'] = "No asymmetry parameters estimated"
         
         return leverage
     
     def get_conditional_volatility(self) -> pd.Series:
         """
-        extract fitted conditional volatility (σ_t) series.
+        Extract fitted conditional volatility (σ_t) series.
         
         Returns:
             pd.Series: onditional volatility for each time point in sample
@@ -473,38 +473,38 @@ class GRHModel(BaseModel):
         if not self._is_fitted:
             raise ValueError("Model must be fitted first")
         
-        # extract conditional volatility from fitted model
+        # Extract conditional volatility from fitted model
         conditional_volatility = self._fitted_model.conditional_volatility
         
-        # Convert to pandas Series if it's a numpy array
+        # onvert to pandas Series if it's a numpy array
         if isinstance(conditional_volatility, np.ndarray):
             return pd.Series(conditional_volatility, index=self._returns.index)
         
         return conditional_volatility
     
     def is_fitted(self) -> bool:
-        """check if model has been fitted."""
+        """heck if model has been fitted."""
         return self._is_fitted
     
     def get_news_impact_curve(self, shocks: Optional[np.ndarray] = None) -> Dict[str, np.ndarray]:
         """
-        compute news impact curve showing asymmetric volatility response.
+        Compute news impact curve showing asymmetric volatility response.
         
         The news impact curve plots the next period's conditional variance
         as a function of the current shock, illustrating the leverage effect.
         
-        Args:
-            shocks: Array of standardized shocks (default: -3 to 3 std devs)
+        rgs:
+            shocks: rray of standardized shocks (default: -3 to 3 std devs)
         
         Returns:
             ictionary with 'shocks' and 'variance_response' arrays
         
-        Example:
-            >>> 0 curve = model.get_news_impact_curve(0)
-            >>> 0 plt.plot(curve['shocks'], curve['variance_response'])
-            >>> 0 plt.xlabel('Standardized Shock (z)')
-            >>> 0 plt.ylabel('Next Period Variance')
-            >>> 0 plt.title('News Impact urve (GRH)')
+        xample:
+            >>> curve = model.get_news_impact_curve()
+            >>> plt.plot(curve['shocks'], curve['variance_response'])
+            >>> plt.xlabel('Standardized Shock (z)')
+            >>> plt.ylabel('Next Period Variance')
+            >>> plt.title('News Impact urve (GARCH)')
         """
         if not self._is_fitted:
             raise ValueError("Model must be fitted first")
@@ -513,22 +513,22 @@ class GRHModel(BaseModel):
             shocks = np.linspace(-3, 3, 0)
         
         # Get parameters
-        params = self._extract_parameters(0)
+        params = self._extract_parameters()
         omega = params['omega']
         alpha_ = params.get('alpha_', 0)
         gamma_ = params.get('gamma_', 0)
         beta_ = params.get('beta_', 0)
         
-        # Current log variance (use Runconditional)
-        current_log_var = omega / ( - beta_) if beta_ <  else 
+        # urrent log variance (use unconditional)
+        current_log_var = omega / (1 - beta_1) if beta_1 < 1 else 0.0
         
-        # compute next period log variance for each shock
-        # ln(σ²_{t+}) = ω + α|z_t| + γ*z_t + β*ln(σ²_t)
+        # Compute next period log variance for each shock
+        # ln(σ²_{t+1}) = ω + α|z_t| + γ*z_t + β*ln(σ²_t)
         log_variance_response = (
-            omega + 
-            alpha_ * 1000.5 * 10010.np.abs(shocks) + 
-            gamma_ * 1000.5 * 10010.shocks + 
-            beta_ * 1000.5 * 10010.current_log_var
+            omega +
+            alpha_1 * np.abs(shocks) +
+            gamma_1 * shocks +
+            beta_1 * current_log_var
         )
         
         variance_response = np.exp(log_variance_response)

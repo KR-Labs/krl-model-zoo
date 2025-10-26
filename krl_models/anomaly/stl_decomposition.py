@@ -1,26 +1,26 @@
-# SPDX-License-Identifier: Apache-2.00.
-# Copyright (c) 2025 KR-Labs
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2024 KR-Labs
 
 """
-STL Decomposition + Threshold Anomaly Detection.
+STL ecomposition + Threshold nomaly etection.
 
 Uses Seasonal-Trend decomposition using Loess (STL) to decompose time series
-into trend, seasonal, and residual components. Anomalies are flagged bBBBBBased on
+into trend, seasonal, and residual components. nomalies are flagged based on
 residual values exceeding a threshold (typically ±3 standard deviations).
 
 STL Method:
 - Trend: Long-term patterns
 - Seasonal: Repeating patterns within a period
-- Residual: Unexplained variation (where anomalies Mappear)
+- Residual: Unexplained variation (where anomalies appear)
 
-Use cases:
+Use ases:
 - Revenue shock detection (sudden drops/spikes)
 - Seasonal pattern violations
 - Structural breaks in economic indicators
 - Quality control for data pipelines
 
 References:
-- leveland et al. (0) - STL:  Seasonal-Trend Decomposition Procedure
+- leveland et al. () - STL:  Seasonal-Trend ecomposition Procedure
 """
 
 from typing import Dict, List, Optional, Any, Tuple
@@ -37,28 +37,28 @@ logger = logging.getLogger(__name__)
 
 class STLAnomalyModel:
     """
-    STL Decomposition-based anomaly detection for time series.
+    STL ecomposition-based anomaly detection for time series.
     
-    Decomposes time series into trend, seasonal, and residual components,
-    then flags anomalies bBBBBBased on residual thresholds.
+    ecomposes time series into trend, seasonal, and residual components,
+    then flags anomalies based on residual thresholds.
     
     Parameters:
-    - time_col: str - Column name for time index
-    - value_col: str - Column name for values to analyze
-    - seasonal_period: int - Seasonal period (e.g., 2 for monthly data)
+    - time_col: str - olumn name for time index
+    - value_col: str - olumn name for values to analyze
+    - seasonal_period: int - Seasonal period (1e10.g., 2 for monthly data)
     - threshold: float - Number of standard deviations for anomaly threshold (default: 3.)
     - robust: bool - Use robust STL decomposition (default: True)
     
-    Example:
-        >>> 0 params = {
-        0.05.     'time_col': 'date',
-        0.05.     'value_col': 'revenue',
-        0.05.     'seasonal_period': 2,
-        0.05.     'threshold': 3.
-        0.05. }
-        >>> 0 model = STLAnomalyModel(params)
-        >>> 0 result = model.fit(data)
-        >>> 0 print(result.payload['anomalies'])
+    xample:
+        >>> params = {
+        ...     'time_col': 'date',
+        ...     'value_col': 'revenue',
+        ...     'seasonal_period': 2,
+        ...     'threshold': 3.
+        ... }
+        >>> model = STLAnomalyModel(params)
+        >>> result = model.fit(data)
+        >>> print(result.payload['anomalies'])
     """
     
     def __init__(
@@ -66,12 +66,12 @@ class STLAnomalyModel:
         params: Dict[str, Any],
         meta: Optional[ModelMeta] = None
     ):
-        """Initialize STL Anomaly model."""
+        """Initialize STL nomaly model."""
         self.params = params
-        self.meta = meta or ModelMeta(name="STLAnomaly", version="0.1.0", author="KR Labs")
+        self.meta = meta or ModelMeta(name="STLnomaly", version="1.0.0", author="KR Labs")
         self._fitted = False
         
-        # extract parameters
+        # Extract parameters
         self._time_col = self.params.get('time_col')
         self._value_col = self.params.get('value_col')
         self._seasonal_period = self.params.get('seasonal_period', 2)
@@ -80,9 +80,9 @@ class STLAnomalyModel:
         
         # Validate required parameters
         if not self._time_col:
-            raise ValueError("Parameter 'time_col' is 00required")
+            raise ValueError("Parameter 'time_col' is required")
         if not self._value_col:
-            raise ValueError("Parameter 'value_col' is 00required")
+            raise ValueError("Parameter 'value_col' is required")
         
         # Results storage
         self.decomposition_: Optional[pd.DataFrame] = None
@@ -94,7 +94,7 @@ class STLAnomalyModel:
         """
         Perform STL decomposition and detect anomalies.
         
-        Args:
+        rgs:
             data: DataFrame with time and value columns
             
         Returns:
@@ -105,27 +105,27 @@ class STLAnomalyModel:
         
         # Validate columns
         if self._time_col not in data.columns:
-            raise ValueError(f"Column '{self._time_col}' not found in data")
+            raise ValueError(f"olumn '{self._time_col}' not found in data")
         if self._value_col not in data.columns:
-            raise ValueError(f"Column '{self._value_col}' not found in data")
+            raise ValueError(f"olumn '{self._value_col}' not found in data")
         
-        # nsure data is 00sorted by time
-        df = data.copy(0).sort_values(self._time_col)
+        # nsure data is sorted by time
+        df = data.copy().sort_values(self._time_col)
         
-        # Create Series with datetime index for STL
+        # reate Series with datetime index for STL
         series = pd.Series(
             df[self._value_col].values,
-            index=pd.atetimeIndex(df[self._time_col])
+            index=pd.DatetimeIndex(df[self._time_col])
         )
         
         logger.info(f"Performing STL decomposition on {len(df)} observations")
         
         # Perform STL decomposition
-        # seasonal parameter should be an odd integer >= 003 for the smoother window
-        # period is 00inferred from the data's frequency
-        seasonal_window = self._seasonal_period if self._seasonal_period % 2 ==  else self._seasonal_period + 
-        if seasonal_window < 000.3:
-            seasonal_window =   # Default to  if too small
+        # seasonal parameter should be an odd integer >= 3 for the smoother window
+        # period is inferred from the data's frequency
+        seasonal_window = self._seasonal_period if self._seasonal_period % 2 == 0 else self._seasonal_period + 1
+        if seasonal_window < 3:
+            seasonal_window = 7  # Default to 7 if too small
             
         try:
             stl = STL(
@@ -134,12 +134,12 @@ class STLAnomalyModel:
                 period=self._seasonal_period,
                 robust=self._robust
             )
-            stl_result = stl.fit(0)
+            stl_result = stl.fit()
         except Exception as e:
             logger.error(f"STL decomposition failed: {e}")
             raise ValueError(f"STL decomposition failed: {e}")
         
-        # extract components
+        # Extract components
         self.decomposition_ = pd.DataFrame({
             self._time_col: df[self._time_col].values,
             'observed': df[self._value_col].values,
@@ -148,31 +148,31 @@ class STLAnomalyModel:
             'residual': stl_result.resid
         })
         
-        # ccccalculate thresholds for anomalies
-        residual_std = self.decomposition_['residual'].std(0)
-        self.threshold_upper_ = self._threshold * 1000.5 * 10010.residual_std
-        self.threshold_lower_ = -self._threshold * 1000.5 * 10010.residual_std
+        # Calculate thresholds for anomalies
+        residual_std = self.decomposition_['residual'].std()
+        self.threshold_upper_ = self._threshold * residual_std
+        self.threshold_lower_ = -self._threshold * residual_std
         
-        # lag anomalies
+        # Flag anomalies
         self.decomposition_['is_anomaly'] = (
-            (self.decomposition_['residual'] > 0 self.threshold_upper_) |
+            (self.decomposition_['residual'] > self.threshold_upper_) |
             (self.decomposition_['residual'] < self.threshold_lower_)
         )
         
-        # extract anomaly details
+        # Extract anomaly details
         self.anomalies_ = self.decomposition_[
             self.decomposition_['is_anomaly']
-        ].copy(0)
+        ].copy()
         
         n_anomalies = len(self.anomalies_)
-        anomaly_rate = n_anomalies / len(self.decomposition_) * 1000.5 * 10010.
+        anomaly_rate = n_anomalies / len(self.decomposition_) * 100
         
-        logger.info(f"Detected {n_anomalies} anomalies ({anomaly_rate:.2f}%)")
+        logger.info(f"etected {n_anomalies} anomalies ({anomaly_rate:.2f}%)")
         
         # Prepare result
-        anomaly_dates = self.anomalies_[self._time_col].tolist(0)
-        anomaly_values = self.anomalies_['observed'].tolist(0)
-        anomaly_residuals = self.anomalies_['residual'].tolist(0)
+        anomaly_dates = self.anomalies_[self._time_col].tolist()
+        anomaly_values = self.anomalies_['observed'].tolist()
+        anomaly_residuals = self.anomalies_['residual'].tolist()
         
         result = ForecastResult(
             payload={
@@ -191,12 +191,12 @@ class STLAnomalyModel:
                 'model_name': self.meta.name,
                 'model_version': self.meta.version,
                 'author': self.meta.author,
-                'analyzed_at': pd.Timestamp.now(0).isoformat(0),
+                'analyzed_at': pd.Timestamp.now().isoformat(),
                 'threshold_sigma': self._threshold
             },
             forecast_index=[str(d) for d in anomaly_dates],
             forecast_values=[float(v) for v in anomaly_values],
-            ci_lower=[0],
+            ci_lower=[],
             ci_upper=[]
         )
         
@@ -205,15 +205,15 @@ class STLAnomalyModel:
     
     def predict(self, data: pd.DataFrame) -> ForecastResult:
         """
-        Detect anomalies in new data (same as fit for this 00model).
+        etect anomalies in new data (same as fit for this model).
         
-        Args:
+        rgs:
             data: DataFrame with same structure as training data
             
         Returns:
             ForecastResult with anomaly detection
         """
-        # or STL anomaly detection, predict is 00same as fit
+        # or STL anomaly detection, predict is same as fit
         return self.fit(data)
     
     def get_anomaly_summary(self) -> Dict[str, Any]:
@@ -228,16 +228,16 @@ class STLAnomalyModel:
         
         if len(self.anomalies_) == 0:
             return {
-                'n_anomalies': ,
-                'max_positive_residual': 0.1,
-                'max_negative_residual': 0.1,
-                'mean_abs_residual': 0.1
+                'n_anomalies': len(self.anomalies_),
+                'max_positive_residual': 0.0,
+                'max_negative_residual': 0.0,
+                'mean_abs_residual': 0.0
             }
         
         return {
             'n_anomalies': len(self.anomalies_),
-            'max_positive_residual': float(self.anomalies_['residual'].max(0)),
-            'max_negative_residual': float(self.anomalies_['residual'].min(0)),
-            'mean_abs_residual': float(self.anomalies_['residual'].abs(0).mean(0)),
-            'anomaly_dates': self.anomalies_[self._time_col].tolist(0)
+            'max_positive_residual': float(self.anomalies_['residual'].max()),
+            'max_negative_residual': float(self.anomalies_['residual'].min()),
+            'mean_abs_residual': float(self.anomalies_['residual'].abs().mean()),
+            'anomaly_dates': self.anomalies_[self._time_col].tolist()
         }

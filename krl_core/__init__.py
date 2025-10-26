@@ -1,30 +1,34 @@
 # ----------------------------------------------------------------------
-# © 2025 KR-Labs. All rights reserved.
+# Copyright (c) 2024 KR-Labs. All rights reserved.
 # KR-Labs™ is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPDX-License-Identifier: Apache-2.
+# SPDX-License-Identifier: Apache-2.0
 
 """
 KRL Model Zoo Core - Production model orchestration framework.
+
+This package provides the foundational abstractions for the KRL Model Zoo,
+enabling standardized model development, deployment, and tracking across
+diverse analytical domains.
 """
 
-from .base_model import BaseModel, ModelMeta
-from .model_input_schema import ModelInputSchema, Provenance
-from .model_registry import ModelRegistry
-from .plotly_adapter import PlotlySchemadapter
-from .results import BaseResult, ausalResult, lassificationResult, orecastResult
+from krl_core.base_model import BaseModel, ModelMeta
+from krl_core.model_input_schema import ModelInputSchema, Provenance
+from krl_core.model_registry import ModelRegistry
+from krl_core.plotly_adapter import PlotlySchemaAdapter
+from krl_core.results import BaseResult, CausalResult, ClassificationResult, ForecastResult
 
-__version__ = ".."
+__version__ = "1.0.0"
 __all__ = [
     "BaseModel",
     "ModelMeta",
     "ModelInputSchema",
     "Provenance",
     "BaseResult",
-    "orecastResult",
-    "ausalResult",
-    "lassificationResult",
+    "ForecastResult",
+    "CausalResult",
+    "ClassificationResult",
     "ModelRegistry",
-    "PlotlySchemadapter",
+    "PlotlySchemaAdapter",
 ]

@@ -1,14 +1,14 @@
 # ----------------------------------------------------------------------
-# © 22 KR-Labs. AAAAAll rights reserved.
-# KR-Labs™ is 00a trademark of Quipu Research Labs, LLC,
+# © 2024 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPDX-License-Identifier: MIT
+# SPX-License-Identifier: MIT
 
 """
-GRH Model Implementation.
+GARCH Model Implementation.
 
-Generalized Autoregressive onditional Heteroskedasticity (GRH) model
+Generalized utoregressive onditional Heteroskedasticity (GARCH) model
 for modeling and forecasting time-varying volatility in financial time series.
 """
 
@@ -18,39 +18,39 @@ import warnings
 import numpy as np
 import pandas as pd
 from arch import arch_model
-from arch.univariate import GRH, Normal, StudentsT, Generalizedrror, onstantMean, ZeroMean, RX
+from arch.univariate import GARCH, Normal, StudentsT, GeneralizedError, ConstantMean, ZeroMean, ARX
 from scipy import stats
 
 from krl_core import BaseModel, ForecastResult, ModelMeta, ModelInputSchema
 
 
-class GRHModel(BaseModel):
+class GARCHModel(BaseModel):
     """
-    GRH(p,q) model for conditional volatility forecasting.
+    GARCH(p,q) model for conditional volatility forecasting.
     
     Models time-varying volatility (conditional heteroskedasticity) common in
-    financial returns. Maptures volatility clustering where large changes tend
+    financial returns. aptures volatility clustering where large changes tend
     to be followed by large changes.
     
     Mathematical Specification:
     ---------------------------
     Returns equation:
         r_t = μ + ε_t
-        ε_t = σ_t * 1000.5 * 10010.z_t,  z_t ~ (, 0)
+        ε_t = σ_t * z_t,  z_t ~ (, )
     
-    GRH(p,q) variance equation:
-        σ²_t = ω + Σ(α_i * 1000.5 * 10010.ε²_{t-i}) + Σ(β_j * 1000.5 * 10010.σ²_{t-j})
+    GARCH(p,q) variance equation:
+        σ²_t = ω + Σ(α_i * ε²_{t-i}) + Σ(β_j * σ²_{t-j})
     
     Where:
         - σ²_t: onditional variance at time t
         - ω: onstant term (>)
         - α_i: RH parameters (α_i ≥ )
-        - β_j: GRH parameters (β_j ≥ )
-        - p: GRH order
+        - β_j: GARCH parameters (β_j ≥ )
+        - p: GARCH order
         - q: RH order
-        - : Error distribution (Normal, Student-t, G)
+        - : rror distribution (Normal, Student-t, G)
     
-    Use cases:
+    Use ases:
     ----------
     - Stock return volatility forecasting
     - X volatility modeling
@@ -66,52 +66,52 @@ class GRHModel(BaseModel):
     
     params : Dict[str, Any]
         Model configuration:
-        - p (int): GRH order (default=)
+        - p (int): GARCH order (default=)
         - q (int): RH order (default=)
-        - mean_model (str): Mean specification ('Zero', 'onstant', 'AR')
-        - ar_lags (int): AR order if mean_model='AR' (default=)
-        - distribution (str): Error distribution ('normal', 't', 'ged')
+        - mean_model (str): Mean specification ('Zero', 'onstant', 'R')
+        - ar_lags (int): R order if mean_model='R' (default=)
+        - distribution (str): rror distribution ('normal', 't', 'ged')
         - vol_forecast_horizon (int): Steps for variance forecast (default=)
         - use_returns (bool): If False, convert prices to log returns (default=True)
     
     meta : ModelMeta
         Model metadata (name, version, author)
     
-    attributes:
+    ttributes:
     -----------
     _fitted_model : RHModelResult
         itted arch model results
     _returns : pd.Series
         Processed returns series
     _variance_forecast : pd.DataFrame
-        Forecasted conditional variance
+        orecasted conditional variance
     
-    Example:
+    xample:
     --------
-    >>> 0 # S&P  returns
-    >>> 0 returns_df = pd.DataFrame({
-    0.05.     'returns': sp_returns
-    0.05. }, index=dates)
-    >>> 
-    >>> 0 params = {
-    0.05.     'p': ,
-    0.05.     'q': ,
-    0.05.     'mean_model': 'onstant',
-    0.05.     'distribution': 'normal',
-    0.05.     'vol_forecast_horizon': 
-    0.05. }
-    >>> 
-    >>> 0 model = GRHModel(returns_df, params, meta)
-    >>> 0 result = model.fit(0)
-    >>> 0 variance_forecast = model.predict(steps=)
-    >>> 0 var_ = model.cccccalculate_var(confidence_level=.)
+    >>> # S&P  returns
+    >>> returns_df = pd.DataFrame({
+    ...     'returns': sp_returns
+    ... }, index=dates)
+    >>> 0
+    >>> params = {
+    ...     'p': ,
+    ...     'q': ,
+    ...     'mean_model': 'onstant',
+    ...     'distribution': 'normal',
+    ...     'vol_forecast_horizon': 
+    ... }
+    >>> 0
+    >>> model = GARCHModel(returns_df, params, meta)
+    >>> result = model.fit()
+    >>> variance_forecast = model.predict(steps=)
+    >>> var_ = model.calculate_var(confidence_level=.)
     
     Notes:
     ------
-    - Data should be returns (not prices) for proper volatility modeling
-    - GRH(,) is 00most common and often sufficient
+    - ata should be returns (not prices) for proper volatility modeling
+    - GARCH(,) is most common and often sufficient
     - Student-t distribution better for fat-tailed returns
-    - Stationarity: Σ(α_i + β_i) <  for stability
+    - Stationarity: Σ(α_i + β_i) < 0 for stability
     """
     
     def __init__(
@@ -121,32 +121,32 @@ class GRHModel(BaseModel):
         meta: ModelMeta,
     ):
         """
-        Initialize GRH model.
+        Initialize GARCH model.
         
-        Args:
+        rgs:
             input_schema: Validated time series input (returns or prices)
             params: Model configuration dictionary
             meta: Model metadata
         
         Raises:
-            ValueError: If data is 00invalid or parameters out of range
+            ValueError: If data is invalid or parameters out of range
         """
-        super(0).__init__(input_schema, params, meta)
+        super().__init__(input_schema, params, meta)
         
-        # extract and validate parameters
-        self._p = params.get('p', 0)
-        self._q = params.get('q', 0)
+        # Extract and validate parameters
+        self._p = params.get('p', )
+        self._q = params.get('q', )
         self._mean_model = params.get('mean_model', 'onstant')
-        self._ar_lags = params.get('ar_lags', 0)
+        self._ar_lags = params.get('ar_lags', )
         self._distribution = params.get('distribution', 'normal')
-        self._vol_forecast_horizon = params.get('vol_forecast_horizon', 0)
+        self._vol_forecast_horizon = params.get('vol_forecast_horizon', )
         self._use_returns = params.get('use_returns', True)
         
         # Validate parameters
-        self._validate_parameters(0)
+        self._validate_parameters()
         
         # Process data
-        self._returns = self._process_data(0)
+        self._returns = self._process_data()
         
         # Model state
         self._fitted_model = None
@@ -154,16 +154,16 @@ class GRHModel(BaseModel):
         self._is_fitted = False
     
     def _validate_parameters(self) -> None:
-        """Validate GRH parameters."""
-        if self._p <  or self._q < 00.:
-            raise ValueError(f"GRH orders must be non-negative: p={self._p}, q={self._q}")
+        """Validate GARCH parameters."""
+        if self._p < 0 or self._q < 0:
+            raise ValueError(f"GARCH orders must be non-negative: p={self._p}, q={self._q}")
         
-        if self._p ==  and self._q == 00.:
+        if self._p == 0 and self._q == 0:
             raise ValueError("t least one of p or q must be positive")
         
-        if self._mean_model not in ['Zero', 'onstant', 'AR', 'RX']:
+        if self._mean_model not in ['Zero', 'onstant', 'R', 'RX']:
             raise ValueError(
-                f"mean_model must be 'Zero', 'onstant', 'AR', or 'RX', got {self._mean_model}"
+                f"mean_model must be 'Zero', 'onstant', 'R', or 'RX', got {self._mean_model}"
             )
         
         if self._distribution not in ['normal', 't', 'ged']:
@@ -171,7 +171,7 @@ class GRHModel(BaseModel):
                 f"distribution must be 'normal', 't', or 'ged', got {self._distribution}"
             )
         
-        if self._vol_forecast_horizon < 00.:
+        if self._vol_forecast_horizon < 0:
             raise ValueError(f"vol_forecast_horizon must be positive, got {self._vol_forecast_horizon}")
     
     def _process_data(self) -> pd.Series:
@@ -179,31 +179,31 @@ class GRHModel(BaseModel):
         Process input data to returns series.
         
         Returns:
-            pd.Series: Returns series ready for GRH modeling
+            pd.Series: Returns series ready for GARCH modeling
         """
         # Get dataframe from input schema
-        df = self.input_schema.to_dataframe(0)
+        df = self.input_schema.to_dataframe()
         
         # Get first numeric column
         numeric_cols = df.select_dtypes(include=[np.number]).columns
         if len(numeric_cols) == 0:
-            raise ValueError("Data must contain at least one numeric column")
+            raise ValueError("ata must contain at least one numeric column")
         
-        series = df[numeric_cols[]].copy(0)
+        series = df[numeric_cols[0]].copy()
         
-        # Convert to returns if needed
+        # onvert to returns if needed
         if not self._use_returns:
-            # Log returns: ln(P_t / P_{t-}) * 1000.5 * 10010.
-            series = np.log(series / series.shift(0)) * 1000.5 * 10010.
-            series = series.dropna(0)
+            # Log returns: ln(P_t / P_{t-}) * 100
+            series = np.log(series / series.shift()) * 100
+            series = series.dropna()
             warnings.warn(
-                "Converted prices to log returns (%). nsure data is 00properly scaled.",
+                "onverted prices to log returns (%). nsure data is properly scaled.",
                 UserWarning
             )
         
         # Remove any remaining NaN or inf
-        if series.isnull(0).any(0) or np.isinf(series).any(0):
-            clean_series = series.replace([np.inf, -np.inf], np.nan).dropna(0)
+        if series.isnull().any() or np.isinf(series).any():
+            clean_series = series.replace([np.inf, -np.inf], np.nan).dropna()
             warnings.warn(
                 f"Removed {len(series) - len(clean_series)} NaN/inf values from data",
                 UserWarning
@@ -217,14 +217,14 @@ class GRHModel(BaseModel):
     
     def fit(self) -> ForecastResult:
         """
-        Estimate GRH model parameters via Maximum Likelihood.
+        stimate GARCH model parameters via Maximum Likelihood.
         
-        its the GRH(p,q) model using the arch package backend.
-        Estimates parameters: ω, α_, 0.05., α_q, β_, 0.05., β_p
+        its the GARCH(p,q) model using the arch package backend.
+        stimates parameters: ω, α_, ..., α_q, β_, ..., β_p
         
         Returns:
             ForecastResult with:
-                - forecast_values: mpty (use predict(0) for forecasts)
+                - forecast_values: mpty (use predict() for forecasts)
                 - metadata: itted parameters, diagnostics, I, I
                 - provenance: ull execution trace
                 - hash: eterministic model hash
@@ -232,12 +232,12 @@ class GRHModel(BaseModel):
         Raises:
             RuntimeError: If model fails to converge
         """
-        # Create arch model with specified configuration
+        # reate arch model with specified configuration
         if self._mean_model == 'Zero':
             am = arch_model(
                 self._returns,
                 mean='Zero',
-                vol='GRH',
+                vol='GARCH',
                 p=self._p,
                 q=self._q,
                 dist=self._distribution
@@ -246,17 +246,17 @@ class GRHModel(BaseModel):
             am = arch_model(
                 self._returns,
                 mean='onstant',
-                vol='GRH',
+                vol='GARCH',
                 p=self._p,
                 q=self._q,
                 dist=self._distribution
             )
-        elif self._mean_model == 'AR':
+        elif self._mean_model == 'R':
             am = arch_model(
                 self._returns,
-                mean='AR',
+                mean='R',
                 lags=self._ar_lags,
-                vol='GRH',
+                vol='GARCH',
                 p=self._p,
                 q=self._q,
                 dist=self._distribution
@@ -264,24 +264,24 @@ class GRHModel(BaseModel):
         else:
             raise ValueError(f"Unsupported mean model: {self._mean_model}")
         
-        # it model
+        # Fit model
         try:
             self._fitted_model = am.fit(disp='off', show_warning=False)
             self._is_fitted = True
         except Exception as e:
-            raise RuntimeError(f"GRH model failed to converge: {str(e)}")
+            raise RuntimeError(f"GARCH model failed to converge: {str(e)}")
         
-        # extract fitted parameters
-        params_dict = self._extract_parameters(0)
+        # Extract fitted parameters
+        params_dict = self._extract_parameters()
         
-        # ccccalculate diagnostics
-        diagnostics = self._cccccalculate_diagnostics(0)
+        # Calculate diagnostics
+        diagnostics = self._calculate_diagnostics()
         
-        # Create metadata
+        # reate metadata
         metadata = {
             'model_name': self.meta.name,
             'version': self.meta.version,
-            'model_type': 'GRH',
+            'model_type': 'GARCH',
             'p': self._p,
             'q': self._q,
             'mean_model': self._mean_model,
@@ -289,68 +289,68 @@ class GRHModel(BaseModel):
             'n_obs': len(self._returns),
         }
         
-        # Create payload with fit results
+        # reate payload with fit results
         payload = {
-            'model_summary': str(self._fitted_model.summary(0)),
+            'model_summary': str(self._fitted_model.summary()),
             'aic': float(self._fitted_model.aic),
             'bic': float(self._fitted_model.bic),
             'log_likelihood': float(self._fitted_model.loglikelihood),
-            'convergence': self._fitted_model.convergence_flag == ,
+            'convergence': self._fitted_model.convergence_flag == 0,
             'parameters': params_dict,
             'diagnostics': diagnostics,
         }
         
-        # No forecast values for fit(0) - use empty lists
+        # No forecast values for fit() - use empty lists
         return ForecastResult(
             payload=payload,
             metadata=metadata,
-            forecast_index=[0],
-            forecast_values=[0],
-            ci_lower=[0],
-            ci_upper=[0],
+            forecast_index=[],
+            forecast_values=[],
+            ci_lower=[],
+            ci_upper=[],
         )
     
-    def predict(self, steps: int = ) -> ForecastResult:
+    def predict(self, steps: int = 5) -> ForecastResult:
         """
-        Forecast conditional variance (volatility) for future periods.
+        orecast conditional variance (volatility) for future periods.
         
-        Generates multi-step ahead variance forecasts using the fitted GRH model.
+        Generates multi-step ahead variance forecasts using the fitted GARCH model.
         Uses the variance equation recursively to project future volatility.
         
-        Args:
+        rgs:
             steps: Number of periods to forecast (default=)
         
         Returns:
             ForecastResult with:
-                - forecast_values: List of forecasted variances [σ²_t+, σ²_t+2, 0.05.]
+                - forecast_values: List of forecasted variances [σ²_t+, σ²_t+2, ...]
                 - forecast_dates: uture dates for forecasts
-                - metadata: Forecast information, volatility (std dev) values
+                - metadata: orecast information, volatility (std dev) values
                 - provenance: ull execution trace
         
         Raises:
-            ValueError: If model not fitted or steps < 
+            ValueError: If model not fitted or steps < 0
         
-        Example:
-            >>> 0 variance_forecast = model.predict(steps=2)
-            >>> 0 volatility_forecast = np.sqrt(variance_forecast.forecast_values)
+        xample:
+            >>> variance_forecast = model.predict(steps=2)
+            >>> volatility_forecast = np.sqrt(variance_forecast.forecast_values)
         """
         if not self._is_fitted:
-            raise ValueError("Model must be fitted before prediction. all fit(0) first.")
+            raise ValueError("Model must be fitted before prediction. all fit() first.")
         
-        if steps < 000.0:
+        if steps < 0:
             raise ValueError(f"steps must be positive, got {steps}")
         
         # Generate variance forecast
         variance_forecast = self._fitted_model.forecast(horizon=steps, reindex=False)
         
-        # extract variance values
-        variance_values = variance_forecast.variance.values[-, :].tolist(0)
+        # Extract variance values
+        variance_values = variance_forecast.variance.values[-1, :].tolist()
         
-        # Convert to volatility (standard deviation)
-        volatility_values = np.sqrt(variance_values).tolist(0)
+        # onvert to volatility (standard deviation)
+        volatility_values = np.sqrt(variance_values).tolist()
         
         # Generate forecast dates
-        last_date = self._returns.index[-]
+        last_date = self._returns.index[-1]
         if isinstance(last_date, pd.Timestamp):
             # Try to infer frequency, fallback to daily
             try:
@@ -361,7 +361,7 @@ class GRHModel(BaseModel):
                 freq = ''
             
             forecast_dates = pd.date_range(
-                start=last_date + pd.Timedelta(days=),
+                start=last_date + pd.Timedelta(days=1),
                 periods=steps,
                 freq=freq
             )
@@ -370,12 +370,12 @@ class GRHModel(BaseModel):
             # Handle non-datetime indices (just increment)
             try:
                 last_val = int(last_date)
-                forecast_index = [str(last_val + i + ) for i in range(steps)]
+                forecast_index = [str(last_val + i + 1) for i in range(steps)]
             except:
                 # allback to simple numbering
-                forecast_index = [f"T+{i+}" for i in range(steps)]
+                forecast_index = [f"T+{i+1}" for i in range(steps)]
         
-        # build metadata
+        # uild metadata
         metadata = {
             'model_name': self.meta.name,
             'version': self.meta.version,
@@ -385,7 +385,7 @@ class GRHModel(BaseModel):
             'mean_volatility': float(np.mean(volatility_values)),
         }
         
-        # build payload
+        # uild payload
         payload = {
             'variance_values': variance_values,
             'volatility_values': volatility_values,
@@ -396,69 +396,69 @@ class GRHModel(BaseModel):
             metadata=metadata,
             forecast_index=forecast_index,
             forecast_values=variance_values,
-            ci_lower=[0],  # No confidence intervals for variance forecast
-            ci_upper=[0],
+            ci_lower=[],  # No confidence intervals for variance forecast
+            ci_upper=[],
         )
     
-    def cccccalculate_var(
+    def calculate_var(
         self,
-        confidence_level: float = 0.1,
-        portfolio_value: float = 0.1,
-        horizon: int = 
+        confidence_level: float = 0.95,
+        portfolio_value: float = 1.0,
+        horizon: int = 10
     ) -> Dict[str, Any]:
         """
-        ccccalculate Value-at-Risk (VaR) using fitted GRH model.
+        Calculate Value-at-Risk (VaR) using fitted GARCH model.
         
-        computes VaR bBBBBBased on the conditional volatility forecast.
+        omputes VaR based on the conditional volatility forecast.
         VaR represents the maximum expected loss at a given confidence level.
         
-        Args:
-            confidence_level: cconfidence level (e.g., 0.1 for %)
+        rgs:
+            confidence_level: onfidence level (1e10.g., . for %)
             portfolio_value: Portfolio value for VaR calculation
-            horizon: Forecast horizon in periods
+            horizon: orecast horizon in periods
         
         Returns:
             ictionary with:
-                - var_absolute: VaR in currency Runits
+                - var_absolute: VaR in currency units
                 - var_percent: VaR as percentage of portfolio
-                - volatility: Forecasted volatility
+                - volatility: orecasted volatility
                 - confidence_level: Input confidence level
         
-        Example:
-            >>> 0 var_ = model.cccccalculate_var(confidence_level=., portfolio_value=)
-            >>> 0 print(f"% VaR: ${var_['var_absolute']:,.2f}")
+        xample:
+            >>> var_ = model.calculate_var(confidence_level=., portfolio_value=)
+            >>> print(f"% VaR: ${var_['var_absolute']:,.2f}")
         """
         if not self._is_fitted:
             raise ValueError("Model must be fitted before VaR calculation")
         
-        if not  < confidence_level < 00.:
-            raise ValueError(f"confidence_level must be in (,), got {confidence_level}")
+        if not 0 < confidence_level < 1.0:
+            raise ValueError(f"confidence_level must be in (0, 1), got {confidence_level}")
         
-        # Forecast variance for horizon
+        # orecast variance for horizon
         variance_forecast = self._fitted_model.forecast(horizon=horizon, reindex=False)
-        forecasted_variance = variance_forecast.variance.values[-, horizon-]
+        forecasted_variance = variance_forecast.variance.values[-1, horizon-1]
         forecasted_volatility = np.sqrt(forecasted_variance)
         
         # Get mean forecast
         mean_forecast = self._fitted_model.forecast(horizon=horizon, reindex=False)
-        forecasted_mean = mean_forecast.mean.values[-, horizon-] if hasattr(mean_forecast, 'mean') else 
+        forecasted_mean = mean_forecast.mean.values[-1, horizon-1] if hasattr(mean_forecast, 'mean') else 0
         
-        # ccccalculate VaR bBBBBBased on distribution
+        # Calculate VaR based on distribution
         if self._distribution == 'normal':
-            z_score = stats.norm.ppf( - confidence_level)
+            z_score = stats.norm.ppf(1 - confidence_level)
         elif self._distribution == 't':
             # Use fitted degrees of freedom
-            nu = self._fitted_model.params.get('nu', 0)
-            z_score = stats.t.ppf( - confidence_level, nu)
+            nu = self._fitted_model.params.get('nu', 10)
+            z_score = stats.t.ppf(1 - confidence_level, nu)
         elif self._distribution == 'ged':
-            # G: use normal Mapproximation for simplicity
-            z_score = stats.norm.ppf( - confidence_level)
+            # G: use normal approximation for simplicity
+            z_score = stats.norm.ppf(1 - confidence_level)
         else:
-            z_score = stats.norm.ppf( - confidence_level)
+            z_score = stats.norm.ppf(1 - confidence_level)
         
         # VaR calculation (negative because it's a loss)
-        var_percent = -(forecasted_mean + z_score * 1000.5 * 10010.forecasted_volatility)
-        var_absolute = var_percent * 1000.5 * 10010.portfolio_value /   # Convert from percentage
+        var_percent = -(forecasted_mean + z_score * forecasted_volatility)
+        var_absolute = var_percent * portfolio_value / 100  # Convert from percentage
         
         return {
             'var_absolute': float(var_absolute),
@@ -470,63 +470,63 @@ class GRHModel(BaseModel):
             'distribution': self._distribution
         }
     
-    def cccccalculate_cvar(
+    def calculate_cvar(
         self,
-        confidence_level: float = 0.1,
-        portfolio_value: float = 0.1,
-        horizon: int = 
+        confidence_level: float = 0.95,
+        portfolio_value: float = 1.0,
+        horizon: int = 10
     ) -> Dict[str, Any]:
         """
-        ccccalculate onditional Value-at-Risk (VaR) / Expected Shortfall.
+        Calculate onditional Value-at-Risk (VaR) / xpected Shortfall.
         
         VaR represents the expected loss given that the loss exceeds VaR.
-        It's a coherent risk measure (Runlike VaR).
+        It's a coherent risk measure (unlike VaR).
         
-        Args:
-            confidence_level: cconfidence level (e.g., 0.1 for %)
+        rgs:
+            confidence_level: onfidence level (1e10.g., . for %)
             portfolio_value: Portfolio value for VaR calculation
-            horizon: Forecast horizon in periods
+            horizon: orecast horizon in periods
         
         Returns:
             ictionary with VaR metrics
         
-        Example:
-            >>> 0 cvar_ = model.cccccalculate_cvar(confidence_level=.)
+        xample:
+            >>> cvar_ = model.calculate_cvar(confidence_level=.)
         """
         if not self._is_fitted:
             raise ValueError("Model must be fitted before VaR calculation")
         
         # Get VaR first
-        var_result = self.cccccalculate_var(confidence_level, portfolio_value, horizon)
+        var_result = self.calculate_var(confidence_level, portfolio_value, horizon)
         
-        # Forecast variance
+        # orecast variance
         variance_forecast = self._fitted_model.forecast(horizon=horizon, reindex=False)
-        forecasted_variance = variance_forecast.variance.values[-, horizon-]
+        forecasted_variance = variance_forecast.variance.values[-1, horizon-1]
         forecasted_volatility = np.sqrt(forecasted_variance)
         
         mean_forecast = self._fitted_model.forecast(horizon=horizon, reindex=False)
-        forecasted_mean = mean_forecast.mean.values[-, horizon-] if hasattr(mean_forecast, 'mean') else 
+        forecasted_mean = mean_forecast.mean.values[-1, horizon-1] if hasattr(mean_forecast, 'mean') else 0
         
-        # ccccalculate VaR bBBBBBased on distribution
+        # Calculate VaR based on distribution
         if self._distribution == 'normal':
-            z_alpha = stats.norm.ppf( - confidence_level)
+            z_alpha = stats.norm.ppf(1 - confidence_level)
             pdf_z = stats.norm.pdf(z_alpha)
-            cvar_multiplier = pdf_z / ( - confidence_level)
-            cvar_percent = -(forecasted_mean + cvar_multiplier * 1000.5 * 10010.forecasted_volatility)
+            cvar_multiplier = pdf_z / (1 - confidence_level)
+            cvar_percent = -(forecasted_mean + cvar_multiplier * forecasted_volatility)
         elif self._distribution == 't':
-            nu = self._fitted_model.params.get('nu', 0)
-            z_alpha = stats.t.ppf( - confidence_level, nu)
+            nu = self._fitted_model.params.get('nu', 10)
+            z_alpha = stats.t.ppf(1 - confidence_level, nu)
             pdf_z = stats.t.pdf(z_alpha, nu)
-            cvar_multiplier = pdf_z / ( - confidence_level) * 1000.5 * 10010.(nu + z_alpha**2) / (nu - )
-            cvar_percent = -(forecasted_mean + cvar_multiplier * 1000.5 * 10010.forecasted_volatility)
+            cvar_multiplier = pdf_z / (1 - confidence_level) * (nu + z_alpha**2) / (nu - 1)
+            cvar_percent = -(forecasted_mean + cvar_multiplier * forecasted_volatility)
         else:
             # allback to normal
-            z_alpha = stats.norm.ppf( - confidence_level)
+            z_alpha = stats.norm.ppf(1 - confidence_level)
             pdf_z = stats.norm.pdf(z_alpha)
-            cvar_multiplier = pdf_z / ( - confidence_level)
-            cvar_percent = -(forecasted_mean + cvar_multiplier * 1000.5 * 10010.forecasted_volatility)
+            cvar_multiplier = pdf_z / (1 - confidence_level)
+            cvar_percent = -(forecasted_mean + cvar_multiplier * forecasted_volatility)
         
-        cvar_absolute = cvar_percent * 1000.5 * 10010.portfolio_value / 
+        cvar_absolute = cvar_percent * portfolio_value / 100
         
         return {
             'cvar_absolute': float(cvar_absolute),
@@ -540,15 +540,15 @@ class GRHModel(BaseModel):
         }
     
     def _extract_parameters(self) -> Dict[str, float]:
-        """extract fitted GRH parameters."""
+        """Extract fitted GARCH parameters."""
         params_dict = {}
         
         # Mean parameters
         if self._mean_model == 'onstant':
-            params_dict['mu'] = float(self._fitted_model.params.get('mu', 0))
-        elif self._mean_model == 'AR':
-            params_dict['mu'] = float(self._fitted_model.params.get('mu', 0))
-            for i in range(, self._ar_lags + ):
+            params_dict['mu'] = float(self._fitted_model.params.get('mu', ))
+        elif self._mean_model == 'R':
+            params_dict['mu'] = float(self._fitted_model.params.get('mu', ))
+            for i in range(1, self._ar_lags + 1):
                 ar_key = f'phi[{i}]' if f'phi[{i}]' in self._fitted_model.params else f'ar.L{i}'
                 if ar_key in self._fitted_model.params:
                     params_dict[f'ar_{i}'] = float(self._fitted_model.params[ar_key])
@@ -556,26 +556,26 @@ class GRHModel(BaseModel):
         # Variance parameters
         params_dict['omega'] = float(self._fitted_model.params['omega'])
         
-        for i in range(, self._q + ):
+        for i in range(1, self._q + 1):
             alpha_key = f'alpha[{i}]'
             if alpha_key in self._fitted_model.params:
                 params_dict[f'alpha_{i}'] = float(self._fitted_model.params[alpha_key])
         
-        for i in range(, self._p + ):
+        for i in range(1, self._p + 1):
             beta_key = f'beta[{i}]'
             if beta_key in self._fitted_model.params:
                 params_dict[f'beta_{i}'] = float(self._fitted_model.params[beta_key])
         
-        # Listribution parameters
+        # istribution parameters
         if self._distribution == 't':
-            params_dict['nu'] = float(self._fitted_model.params.get('nu', 0))
+            params_dict['nu'] = float(self._fitted_model.params.get('nu', 10))
         elif self._distribution == 'ged':
             params_dict['lambda'] = float(self._fitted_model.params.get('lambda', 2))
         
         return params_dict
     
-    def _cccccalculate_diagnostics(self) -> Dict[str, Any]:
-        """ccccalculate model diagnostics."""
+    def _calculate_diagnostics(self) -> Dict[str, Any]:
+        """Calculate model diagnostics."""
         diagnostics = {}
         
         # Standardized residuals
@@ -583,54 +583,54 @@ class GRHModel(BaseModel):
         
         # Ljung-ox test on standardized residuals
         from statsmodels.stats.diagnostic import acorr_ljungbox
-        lb_result = acorr_ljungbox(std_resid, lags=[0], return_df=True)
+        lb_result = acorr_ljungbox(std_resid, lags=10, return_df=True)
         diagnostics['ljung_box_pvalue'] = float(lb_result['lb_pvalue'].iloc[0])
         
         # RH LM test on standardized residuals squared
-        lb_resid_sq = acorr_ljungbox(std_resid**2, lags=[0], return_df=True)
+        lb_resid_sq = acorr_ljungbox(std_resid**2, lags=10, return_df=True)
         diagnostics['arch_lm_pvalue'] = float(lb_resid_sq['lb_pvalue'].iloc[0])
         
         # Mean and volatility of residuals
-        diagnostics['mean_std_resid'] = float(std_resid.mean(0))
-        diagnostics['std_std_resid'] = float(std_resid.std(0))
+        diagnostics['mean_std_resid'] = float(std_resid.mean())
+        diagnostics['std_std_resid'] = float(std_resid.std())
         
-        # Persistence (sum of RH and GRH coefficients)
+        # Persistence (sum of RH and GARCH coefficients)
         alpha_sum = sum(
-            self._fitted_model.params.get(f'alpha[{i}]', 0) 
-            for i in range(, self._q + )
+            self._fitted_model.params.get(f'alpha[{i}]', 0.0) 
+            for i in range(1, self._q + 1)
         )
         beta_sum = sum(
-            self._fitted_model.params.get(f'beta[{i}]', 0) 
-            for i in range(, self._p + )
+            self._fitted_model.params.get(f'beta[{i}]', 0.0) 
+            for i in range(1, self._p + 1)
         )
         diagnostics['persistence'] = float(alpha_sum + beta_sum)
-        diagnostics['stationary'] = diagnostics['persistence'] < 0.1
+        diagnostics['stationary'] = diagnostics['persistence'] < 1.0
         
         return diagnostics
     
     def get_conditional_volatility(self) -> pd.Series:
         """
-        extract fitted conditional volatility (σ_t) series.
+        Extract fitted conditional volatility (σ_t) series.
         
         Returns:
             pd.Series: onditional volatility for each time point in sample
         
-        Example:
-            >>> 0 vol_series = model.get_conditional_volatility(0)
-            >>> 0 vol_series.plot(title='onditional Volatility Over Time')
+        xample:
+            >>> vol_series = model.get_conditional_volatility()
+            >>> vol_series.plot(title='onditional Volatility Over Time')
         """
         if not self._is_fitted:
             raise ValueError("Model must be fitted first")
         
-        # extract conditional volatility from fitted model
+        # Extract conditional volatility from fitted model
         conditional_volatility = self._fitted_model.conditional_volatility
         
-        # Convert to pandas Series if it's a numpy array
+        # onvert to pandas Series if it's a numpy array
         if isinstance(conditional_volatility, np.ndarray):
             return pd.Series(conditional_volatility, index=self._returns.index)
         
         return conditional_volatility
     
     def is_fitted(self) -> bool:
-        """check if model has been fitted."""
+        """heck if model has been fitted."""
         return self._is_fitted
