@@ -1,287 +1,215 @@
-# ----------------------------------------------------------------------
-# © 2025 KR-Labs. All rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
-# a subsidiary of Sudiata Giddasira, Inc.
-# ----------------------------------------------------------------------
-# SPDX-License-Identifier: Apache-2.0
-
-# SPDX-License-Identifier: Apache-2.0
-# Copyright (c) 2024 KR-Labs
-
 """
-Shift-Share nalysis Model for Regional conomic ecomposition.
+Shift-Share Analysis for Regional Growth Decomposition
+=======================================================
 
-Shift-Share analysis decomposes regional employment/economic changes into:
-. National Growth ffect: What growth would occur if region matched national rate
-2. Industry Mix ffect: Impact of region's industrial composition
-3. Regional Competitive ffect: Region's competitive advantage/disadvantage
-
-ormula:
-Total hange = National ffect + Industry Mix ffect + Competitive ffect
-
-Where:
-- National ffect = Regional ase mployment × National Growth Rate
-- Industry Mix = Regional ase × (Industry Growth - National Growth)
-- Competitive = Regional ase × (Regional Industry Growth - National Industry Growth)
-
-Use ases:
-- xplaining why Virginia arts employment grew/declined
-- Identifying whether growth is due to national trends, good industry mix, or regional competitiveness
-- Policy evaluation: re regional initiatives working?
-- enchmarking: How does region compare to national industry trends?
+MIT License - Gate 2 Phase 2.4 Regional Specialization
+author: KR Labs
 """
 
-from typing import Dict, Optional, Any
-import pandas as pd
+from typing import Dict, Any, Optional, Tuple
 import numpy as np
-import logging
+import pandas as pd
 
-from krl_core.base_model import ModelMeta
+from krl_core.base_model import BaseModel
 from krl_core.results import ForecastResult
 
-logger = logging.getLogger(__name__)
 
-
-class ShiftShareModel:
+class ShiftShareModel(BaseModel):
     """
-    Perform Shift-Share decomposition analysis.
+    Shift-Share Analysis for decomposing regional economic growth.
     
-    ecomposes regional employment changes into national, industry mix,
-    and competitive shift components.
+    Decomposes regional employment change into three components:
+    1. National Share (NS): Growth if region matched national rate
+    2. Industry Mix (IM): Effect of regional industry composition
+    3. Competitive Share (CS): Regional competitive advantage
     
-    Parameters (via ModelInputSchema.params):
-    - base_year_col: str - olumn for base year values
-    - end_year_col: str - olumn for end year values
-    - sector_col: str - olumn for sector identifiers
-    - region_prefix: str - Prefix for regional columns (1e10.g., 'va_')
-    - national_prefix: str - Prefix for national columns (1e10.g., 'us_')
+    Total Change = NS + IM + CS
     
-    xample:
-        >>> schema = ModelInputSchema(
-        ...     params={
-        ...         'base_year_col': '2',
-        ...         'end_year_col': '223',
-        ...         'sector_col': 'sector',
-        ...         'region_prefix': 'va_',
-        ...         'national_prefix': 'us_'
-        ...     }
-        ... )
-        >>> model = ShiftShareModel(schema, meta)
-        >>> result = model.fit(employment_data)
-        >>> print(result.payload['decomposition'])
+    Parameters
+    ----------
+    industry_col : str, default='industry'
+        Column name for industry identifier
+    employment_col : str, default='employment'
+        Column name for employment values
+    region_col : str, default='region'
+        Column name for region identifier
+    time_col : str, default='year'
+        Column name for time period
     """
     
     def __init__(
         self,
-        params: Dict[str, Any],
-        meta: Optional[ModelMeta] = None
+        industry_col: str = 'industry',
+        employment_col: str = 'employment',
+        region_col: str = 'region',
+        time_col: str = 'year',
+        **kwargs
     ):
-        """Initialize Shift-Share model."""
-        self.params = params
-        self.meta = meta or ModelMeta(name="ShiftShare", version="1.0.0", author="KR Labs")
-        self._fitted = False
+        super().__init__(**kwargs)
+        self.industry_col = industry_col
+        self.employment_col = employment_col
+        self.region_col = region_col
+        self.time_col = time_col
         
-        # Extract parameters
-        self._base_year_col = self.params.get('base_year_col')
-        self._end_year_col = self.params.get('end_year_col')
-        self._sector_col = self.params.get('sector_col')
-        self._region_prefix = self.params.get('region_prefix', 'region_')
-        self._national_prefix = self.params.get('national_prefix', 'national_')
-        
-        # Validate required parameters
-        if not self._base_year_col:
-            raise ValueError("Parameter 'base_year_col' is required")
-        if not self._end_year_col:
-            raise ValueError("Parameter 'end_year_col' is required")
-        if not self._sector_col:
-            raise ValueError("Parameter 'sector_col' is required")
-        
-        # Results storage
-        self.decomposition_: Optional[Dict[str, Any]] = None
-        self.sector_effects_: Optional[pd.DataFrame] = None
+        self.results_ = None
+        self.base_period_ = None
+        self.end_period_ = None
     
-    def fit(self, data: pd.DataFrame) -> ForecastResult:
+    def fit(self, y: np.ndarray, X: Optional[np.ndarray] = None, **kwargs) -> 'ShiftShareModel':
         """
-        Perform shift-share decomposition.
+        Compute shift-share decomposition.
         
-        rgs:
-            data: DataFrame with base/end year employment by sector for region and nation
-            
-        Returns:
-            ForecastResult with decomposition analysis
+        Parameters
+        ----------
+        y : array-like or DataFrame
+            Employment data across two time periods
+        X : DataFrame, optional
+            DataFrame with industry, region, and time columns
+        **kwargs : dict
+            Additional arguments (data_df if y is not DataFrame)
+        
+        Returns
+        -------
+        self : ShiftShareModel
+            Fitted model with shift-share results
         """
-        if data.empty:
-            raise ValueError("Input data cannot be empty")
+        # Handle DataFrame input
+        if isinstance(y, pd.DataFrame):
+            df = y
+        elif X is not None and isinstance(X, pd.DataFrame):
+            df = X.copy()
+            df[self.employment_col] = y
+        else:
+            raise ValueError("Must provide DataFrame with industry/region/time columns")
         
-        # onstruct column names
-        reg_base_col = f"{self._region_prefix}{self._base_year_col}"
-        reg_end_col = f"{self._region_prefix}{self._end_year_col}"
-        nat_base_col = f"{self._national_prefix}{self._base_year_col}"
-        nat_end_col = f"{self._national_prefix}{self._end_year_col}"
+        # Get time periods
+        periods = sorted(df[self.time_col].unique())
+        if len(periods) != 2:
+            raise ValueError("Shift-share requires exactly 2 time periods")
         
-        # Validate columns exist
-        required_cols = [reg_base_col, reg_end_col, nat_base_col, nat_end_col, self._sector_col]
-        missing_cols = [col for col in required_cols if col not in data.columns]
-        if missing_cols:
-            raise ValueError(f"Missing required columns: {missing_cols}")
+        self.base_period_, self.end_period_ = periods
         
-        logger.info(f"Performing shift-share analysis for {len(data)} sectors")
+        # Split data by period
+        df_base = df[df[self.time_col] == self.base_period_]
+        df_end = df[df[self.time_col] == self.end_period_]
         
-        # Calculate totals
-        reg_base_total = data[reg_base_col].sum()
-        reg_end_total = data[reg_end_col].sum()
-        nat_base_total = data[nat_base_col].sum()
-        nat_end_total = data[nat_end_col].sum()
+        # Compute growth rates
+        results_list = []
         
-        if reg_base_total == 0 or nat_base_total == 0:
-            raise ValueError("ase year totals cannot be zero")
-        
-        # Calculate growth rates
-        national_growth_rate = (nat_end_total - nat_base_total) / nat_base_total
-        regional_change = reg_end_total - reg_base_total
-        
-        # Initialize effect accumulators
-        national_effect = 0.0
-        industry_mix_effect = 0.0
-        competitive_effect = 0.0
-        
-        # Calculate effects by sector
-        sector_results = []
-        
-        for _, row in data.iterrows():
-            sector = row[self._sector_col]
-            reg_base = row[reg_base_col]
-            reg_end = row[reg_end_col]
-            nat_base = row[nat_base_col]
-            nat_end = row[nat_end_col]
+        for region in df_base[self.region_col].unique():
+            region_base = df_base[df_base[self.region_col] == region]
+            region_end = df_end[df_end[self.region_col] == region]
             
-            # National effect: if region grew at national rate
-            nat_effect_sector = reg_base * national_growth_rate
-            national_effect += nat_effect_sector
+            # Merge base and end data
+            merged = region_base.merge(
+                region_end,
+                on=[self.region_col, self.industry_col],
+                suffixes=('_base', '_end')
+            )
             
-            # Industry-specific growth rate
-            if nat_base > 0:
-                industry_growth_rate = (nat_end - nat_base) / nat_base
-            else:
-                industry_growth_rate = 0.0
+            # Regional employment
+            E_ir_0 = merged[f'{self.employment_col}_base'].sum()
+            E_ir_t = merged[f'{self.employment_col}_end'].sum()
             
-            # Industry mix effect: differential between industry and national growth
-            mix_effect_sector = reg_base * (industry_growth_rate - national_growth_rate)
-            industry_mix_effect += mix_effect_sector
+            # National employment
+            E_n_0 = df_base[self.employment_col].sum()
+            E_n_t = df_end[self.employment_col].sum()
             
-            # Regional growth rate for this industry
-            if reg_base > 0:
-                regional_industry_growth = (reg_end - reg_base) / reg_base
-            else:
-                regional_industry_growth = 0.0
+            # National growth rate
+            g_n = (E_n_t - E_n_0) / E_n_0 if E_n_0 > 0 else 0
             
-            # Competitive effect: regional performance vs national industry
-            comp_effect_sector = reg_base * (regional_industry_growth - industry_growth_rate)
-            competitive_effect += comp_effect_sector
+            # National Share (NS): If region grew at national rate
+            NS = E_ir_0 * g_n
             
-            sector_results.append({
-                'sector': sector,
-                'regional_base': float(reg_base),
-                'regional_end': float(reg_end),
-                'regional_change': float(reg_end - reg_base),
-                'national_effect': float(nat_effect_sector),
-                'industry_mix_effect': float(mix_effect_sector),
-                'competitive_effect': float(comp_effect_sector),
-                'total_explained': float(nat_effect_sector + mix_effect_sector + comp_effect_sector),
+            # Industry Mix (IM) and Competitive Share (CS)
+            IM = 0
+            CS = 0
+            
+            for _, row in merged.iterrows():
+                E_ir_i_0 = row[f'{self.employment_col}_base']
+                E_ir_i_t = row[f'{self.employment_col}_end']
+                
+                industry = row[self.industry_col]
+                
+                # National industry employment
+                E_n_i_0 = df_base[df_base[self.industry_col] == industry][self.employment_col].sum()
+                E_n_i_t = df_end[df_end[self.industry_col] == industry][self.employment_col].sum()
+                
+                # Industry growth rate
+                g_i = (E_n_i_t - E_n_i_0) / E_n_i_0 if E_n_i_0 > 0 else 0
+                
+                # Regional industry growth rate
+                g_ir = (E_ir_i_t - E_ir_i_0) / E_ir_i_0 if E_ir_i_0 > 0 else 0
+                
+                # Industry Mix: Difference between industry and national growth
+                IM += E_ir_i_0 * (g_i - g_n)
+                
+                # Competitive Share: Difference between regional and industry growth
+                CS += E_ir_i_0 * (g_ir - g_i)
+            
+            # Total change
+            actual_change = E_ir_t - E_ir_0
+            
+            results_list.append({
+                'region': region,
+                'base_employment': E_ir_0,
+                'end_employment': E_ir_t,
+                'actual_change': actual_change,
+                'national_share': NS,
+                'industry_mix': IM,
+                'competitive_share': CS,
+                'total_decomposed': NS + IM + CS
             })
         
-        self.sector_effects_ = pd.DataFrame(sector_results)
+        self.results_ = pd.DataFrame(results_list)
         
-        # Store decomposition
-        self.decomposition_ = {
-            'regional_change': float(regional_change),
-            'national_effect': float(national_effect),
-            'industry_mix_effect': float(industry_mix_effect),
-            'competitive_effect': float(competitive_effect),
-            'total_explained': float(national_effect + industry_mix_effect + competitive_effect),
-            'residual': float(regional_change - (national_effect + industry_mix_effect + competitive_effect)),
-        }
-        
-        # Calculate shares (as percentages of total change)
-        if abs(regional_change) > 0.001:
-            self.decomposition_['national_share'] = (national_effect / regional_change) * 100
-            self.decomposition_['industry_mix_share'] = (industry_mix_effect / regional_change) * 100
-            self.decomposition_['competitive_share'] = (competitive_effect / regional_change) * 100
-        else:
-            self.decomposition_['national_share'] = 0.0
-            self.decomposition_['industry_mix_share'] = 0.0
-            self.decomposition_['competitive_share'] = 0.0
-        
-        # Identify top contributors
-        top_competitive = self.sector_effects_.nlargest(5, 'competitive_effect')
-        bottom_competitive = self.sector_effects_.nsmallest(5, 'competitive_effect')
-        
-        logger.info(f"Regional change: {regional_change:,.f}")
-        logger.info(f"National effect: {national_effect:,.f} ({self.decomposition_['national_share']:.f}%)")
-        logger.info(f"Industry mix: {industry_mix_effect:,.f} ({self.decomposition_['industry_mix_share']:.f}%)")
-        logger.info(f"Competitive: {competitive_effect:,.f} ({self.decomposition_['competitive_share']:.f}%)")
-        
-        # reate result
-        result = ForecastResult(
-            payload={
-                'decomposition': self.decomposition_,
-                'sector_effects': self.sector_effects_.to_dict('records'),
-                'top_competitive_sectors': top_competitive['sector'].tolist(),
-                'bottom_competitive_sectors': bottom_competitive['sector'].tolist(),
-                'n_sectors': len(data),
-                'regional_base_total': float(reg_base_total),
-                'regional_end_total': float(reg_end_total),
-                'national_growth_rate': float(national_growth_rate * 100),  # as percentage
-            },
-            metadata={
-                'model_name': self.meta.name,
-                'model_version': self.meta.version,
-                'author': self.meta.author,
-                'calculated_at': pd.Timestamp.now().isoformat(),
-                'base_year': self._base_year_col,
-                'end_year': self._end_year_col,
-            },
-            forecast_index=['national_effect', 'industry_mix_effect', 'competitive_effect'],
-            forecast_values=[
-                self.decomposition_['national_effect'],
-                self.decomposition_['industry_mix_effect'],
-                self.decomposition_['competitive_effect']
-            ],
-            ci_lower=[],
-            ci_upper=[]
-        )
-        
-        self._fitted = True
-        return result
+        return self
     
-    def predict(self, data: pd.DataFrame) -> ForecastResult:
+    def get_results(self) -> pd.DataFrame:
         """
-        Perform shift-share analysis on new data (same as fit).
+        Get shift-share decomposition results.
         
-        rgs:
-            data: DataFrame with same structure as training data
-            
-        Returns:
-            ForecastResult with decomposition analysis
+        Returns
+        -------
+        results : DataFrame
+            Decomposition for each region (NS, IM, CS)
         """
-        # or shift-share, predict is the same as fit
-        return self.fit(data)
+        if self.results_ is None:
+            raise ValueError("Model must be fitted to get results")
+        
+        return self.results_
     
-    def get_sector_decomposition(self, sector: str) -> Dict[str, float]:
+    def get_region_summary(self, region: str) -> Dict[str, float]:
         """
-        Get decomposition for a specific sector.
+        Get shift-share summary for specific region.
         
-        rgs:
-            sector: Sector name
-            
-        Returns:
-            Dict with national, mix, and competitive effects for the sector
+        Parameters
+        ----------
+        region : str
+            Region identifier
+        
+        Returns
+        -------
+        summary : dict
+            National share, industry mix, competitive share components
         """
-        if not self._fitted or self.sector_effects_ is None:
-            raise RuntimeError("Model must be fitted first")
+        if self.results_ is None:
+            raise ValueError("Model must be fitted to get summary")
         
-        sector_row = self.sector_effects_[self.sector_effects_['sector'] == sector]
-        if sector_row.empty:
-            raise ValueError(f"Sector '{sector}' not found in results")
+        region_data = self.results_[self.results_['region'] == region]
         
-        return sector_row.iloc[0].to_dict()
+        if region_data.empty:
+            raise ValueError(f"Region '{region}' not found in results")
+        
+        return region_data.iloc[0].to_dict()
+    
+    def forecast(self, steps: int = 1, X_future: Optional[np.ndarray] = None, **kwargs) -> ForecastResult:
+        """
+        Not directly applicable for shift-share (descriptive decomposition).
+        
+        Raises
+        ------
+        NotImplementedError
+            Shift-share is a descriptive decomposition, not forecasting model
+        """
+        raise NotImplementedError("Shift-share is a descriptive decomposition, not a forecasting model")
