@@ -61,7 +61,7 @@ Our models support research, governance, and education by standardizing open met
 | **Econometrics** | VAR, Cointegration, Structural Breaks | Studying policy impacts and long-term relationships |
 | **Regional Analysis** | Location Quotient, Shift-Share | Understanding regional economic specialization |
 | **Anomaly Detection** | STL Decomposition, Isolation Forest | Identifying shocks and unusual patterns in public data |
-| **Planned Extensions** | Causal Inference, Bayesian Hierarchies, Network Models | Future expansion to deepen insight and scalability |
+| **Extensions** | Causal Inference, Bayesian Hierarchies, Network Models | Enterprise Applications |
 
 ---
 
@@ -183,10 +183,10 @@ The Model Zoo evolves through the **KR-Labs Gate Framework**, ensuring transpare
 
 | Gate | Description | Status |
 |------|--------------|---------|
-| **Gate 1 – Foundation** | Time series & econometric core | Open |
-| **Gate 2 – Domain Models** | Regional & anomaly detection | Open |
-| **Gate 3 – Ensembles** | Meta-models and hybrid systems | Enterprise |
-| **Gate 4 – Advanced Extensions** | Causal inference, Bayesian, network models | Enterprise |
+| **Gate 1 – Foundation** | Time series & econometric core | Open-Source |
+| **Gate 2 – Domain Models** | Regional & anomaly detection | Open-Source |
+| **Gate 3 – Ensembles** | Meta-models and hybrid systems | Enterprise App|
+| **Gate 4 – Advanced Extensions** | Causal inference, Bayesian, network models | Enterprise App |
 
 Each Gate reflects a maturity milestone balancing innovation, stability, and community feedback.
 
@@ -247,7 +247,7 @@ KR-Labs™ and KRL Model Zoo™ are trademarks of **Quipu Research Labs, LLC**, 
 If you use the KRL Model Zoo in research or analysis, please cite:
 
 ```bibtex
-@software{krlmodelzoo2025,
+@software{krl-model-zoo,
   author = {Deloatch, Brandon C.},
   title = {KRL Model Zoo: Open-Source Socioeconomic Modeling Framework},
   year = {2025},
@@ -270,8 +270,21 @@ If you use the KRL Model Zoo in research or analysis, please cite:
 <div align="center">
   <img src="https://raw.githubusercontent.com/KR-Labs/krl-model-zoo/main/assets/images/KRLabs_WebLogo.png" alt="KR-Labs" width="150" onerror="this.style.display='none'">
   
-  **KR-Labs™ | Building Open Intelligence for the Public Good**  
-  Version 1.0.0 • [Apache 2.0 License](./LICENSE)  
+  **KR-Labs™ | Building Open Intelligence for the Public Good**
+  
+  Version 1.0.0 • [Apache 2.0 License](./LICENSE)
+  
 </div>
+
+---
+
+## Legal & Trademark Notice
+
+© 2025 KR-Labs. All rights reserved.
+
+**KR-Labs™** and **KRL Model Zoo™** are trademarks of Quipu Research Labs, LLC, a subsidiary of Sudiata Giddasira, Inc.
+
+**Software License:** [Apache 2.0](./LICENSE) – Free for commercial and academic use  
+**Documentation License:** [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 
 ---
