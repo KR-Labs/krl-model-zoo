@@ -191,3 +191,13 @@ var_analysis.png
 # Egg info (build artifacts)
 *.egg-info/
 krl_model_zoo_core.egg-info/
+
+# Internal documentation and audit files (not for public repo)
+*COMPLIANCE_REPORT*.md
+*AUDIT*.md
+*INTERNAL*.md
+*PRIVATE*.md
+final_fix.py
+*_fix_*.py
+SECURITY_IMPLEMENTATION_AUDIT.md
+GATE_REBUILD_COMPLIANCE_REPORT.md
