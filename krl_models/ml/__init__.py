@@ -16,10 +16,14 @@ Provides ML regression models for economic forecasting and prediction.
 
 from krl_models.ml.random_forest import RandomForestModel
 from krl_models.ml.xgboost_model import XGBoostModel
-from krl_models.ml.regularized_regression import RegularizedRegressionModel
+from krl_models.ml.regularized_regression import RegularizedRegression
+
+# Alias for backwards compatibility
+RegularizedRegressionModel = RegularizedRegression
 
 __all__ = [
     'RandomForestModel',
     'XGBoostModel',
-    'RegularizedRegressionModel',
+    'RegularizedRegression',
+    'RegularizedRegressionModel',  # Backwards compatibility
 ]
