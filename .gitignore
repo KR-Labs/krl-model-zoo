@@ -81,3 +81,23 @@ data/raw/*
 data/interim/*
 data/processed/*
 !data/.gitkeep
+
+# Internal development files (keep local only)
+DEVELOPMENT_ROADMAP.md
+GATE1_COMPLETION_REPORT.md
+GATE2_PROGRESS_REPORT.md
+GITHUB_PUBLICATION_AUDIT.md
+ML_MODELS_UPDATE_COMPLETE.md
+MULTI_TASK_COMPLETION_REPORT.md
+OPEN_VS_PROPRIETARY_STRATEGY.md
+PHASE_2.5_COMPLETION_NOTES.md
+PUBLICATION_READY_FINAL.md
+PUBLIC_RELEASE_CHECKLIST.md
+PUBLIC_REPO_STRUCTURE_PLAN.md
+arch_and_model_drafting
+krl_model_full_develop_notes
+add_spdx_headers.py
+fix_emoji_damage.py
+model_runs.db
+cointegration_analysis.png
+var_analysis.png
