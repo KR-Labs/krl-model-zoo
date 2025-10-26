@@ -211,3 +211,15 @@ GATE_REBUILD_COMPLIANCE_REPORT.md
 .github/TOPICS.md
 .github/PYPI_DEPLOYMENT_GUIDE.md
 .github/RELEASE_NOTES_v*.md
+
+# Repository governance files (keep local only - not for public repo)
+.github/CODEOWNERS
+.github/REPOSITORY_PROTECTION_SETUP.md
+.github/GOVERNANCE_SETUP_COMPLETE.md
+.github/ISSUE_TEMPLATE/bug_report.md
+.github/ISSUE_TEMPLATE/feature_request.md
+.github/ISSUE_TEMPLATE/question.md
+.github/ISSUE_TEMPLATE/documentation.md
+.github/ISSUE_TEMPLATE/config.yml
+SECURITY.md
+SUPPORT.md
