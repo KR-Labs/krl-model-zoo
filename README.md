@@ -4,8 +4,9 @@
   # KR-Labs Model Zoo
   **Open Models. Trusted Intelligence. Shared Progress.**
   
+  [![PyPI version](https://img.shields.io/pypi/v/krl-model-zoo.svg)](https://pypi.org/project/krl-model-zoo/)
+  [![PyPI downloads](https://img.shields.io/pypi/dm/krl-model-zoo.svg)](https://pypi.org/project/krl-model-zoo/)
   [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-  [![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/KR-Labs/krl-model-zoo/releases)
   [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
   [![Documentation](https://img.shields.io/badge/docs-readthedocs-brightgreen.svg)](https://krl-model-zoo.readthedocs.io)
   [![Status](https://img.shields.io/badge/status-production%20ready-success.svg)](https://github.com/KR-Labs/krl-model-zoo)
@@ -96,14 +97,38 @@ Each model is field-tested, policy-relevant, and community-accessible.
 ## Quick Start
 
 ### Installation
+
+**Install from PyPI** (recommended):
 ```bash
-# Install Model Zoo
+pip install krl-model-zoo
+```
+
+**Install with optional dependencies**:
+```bash
+# For development
+pip install krl-model-zoo[dev]
+
+# For testing
+pip install krl-model-zoo[test]
+
+# For documentation
+pip install krl-model-zoo[docs]
+
+# All optional dependencies
+pip install krl-model-zoo[all]
+```
+
+**Install from source**:
+```bash
 git clone https://github.com/KR-Labs/krl-model-zoo.git
 cd krl-model-zoo
-make install-dev
+pip install -e .
+```
 
-# Optional: Install Data Connectors for seamless data access
-pip install krl-data-connectors
+**Complete ecosystem setup**:
+```bash
+# Install Model Zoo + Data Connectors for seamless data access
+pip install krl-model-zoo krl-data-connectors
 ```
 
 ### Complete Workflow Example
