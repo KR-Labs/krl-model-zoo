@@ -329,6 +329,25 @@ Before submitting, ensure:
 
 ##  Security Guidelines
 
+### Copyright and Intellectual Property
+
+All contributions must include proper copyright headers:
+
+```python
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+```
+
+**The pre-commit hooks will automatically add these headers**, but you can also run manually:
+
+```bash
+python scripts/security/add_copyright_headers.py
+```
+
 ### Never Commit Sensitive Data
 
 -  API keys, passwords, tokens

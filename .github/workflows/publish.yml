@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# a subsidiary of Sudiata Giddasira, Inc.
+# ----------------------------------------------------------------------
+# SPDX-License-Identifier: Apache-2.0
+
 name: Publish to PyPI
 
 on:
@@ -21,6 +28,16 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install build twine
+    
+    - name: Inject build watermark
+      run: |
+        python scripts/security/inject_watermark.py \
+          --build-id "${{ github.run_id }}-${{ github.run_number }}" \
+          --commit-sha "${{ github.sha }}" \
+          --repo "${{ github.repository }}" \
+          --compute-checksum \
+          --repo-path .
+      continue-on-error: true
     
     - name: Build package
       run: python -m build

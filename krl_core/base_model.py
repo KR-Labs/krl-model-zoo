@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------
-# Copyright (c) 2024 KR-Labs. All rights reserved.
+# © 2025 KR-Labs. All rights reserved.
 # KR-Labs™ is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------

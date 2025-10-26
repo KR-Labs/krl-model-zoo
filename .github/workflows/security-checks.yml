@@ -14,6 +14,25 @@ on:
     branches: [main]
 
 jobs:
+  copyright-verification:
+    name: Copyright Header Verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Verify copyright headers
+        run: |
+          python scripts/security/verify_copyright_headers.py --repo .
+          
+      - name: Check trademark notices
+        run: |
+          python scripts/security/check_trademarks.py --repo .
+  
   secret-scanning:
     name: Secret Detection
     runs-on: ubuntu-latest
