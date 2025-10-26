@@ -201,3 +201,11 @@ final_fix.py
 *_fix_*.py
 SECURITY_IMPLEMENTATION_AUDIT.md
 GATE_REBUILD_COMPLIANCE_REPORT.md
+
+# GitHub repository optimization files (keep local only)
+.github/GITHUB_ABOUT.md
+.github/OPTIMIZATION_CHECKLIST.md
+.github/QUICK_SETUP.md
+.github/REPOSITORY_SETTINGS.md
+.github/SOCIAL_PREVIEW.md
+.github/TOPICS.md
