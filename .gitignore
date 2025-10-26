@@ -150,11 +150,28 @@ add_spdx_headers.py
 fix_emoji_damage.py
 restore_corrupted_text.py
 
+# Corruption fix scripts (keep local only)
+fix_corruption.py
+fix_all_corruption.py
+fix_ternary.py
+final_fix.py
+comprehensive_fix.py
+ultimate_corruption_fix.py
+
+# Corruption reports and summaries (keep local only)
+CORRUPTION_FIX_SUMMARY.md
+CORRUPTION_RECOVERY_REPORT.md
+COMPLETE_REBUILD_REPORT.md
+
 # Backup files
 *.backup
+*.bak
 README.md.backup
 **/*.backup
 **/*.py.backup
+**/*.py.bak
+krl_core/*.bak
+krl_core/*_corrupt.py.bak
 
 # Local database files
 model_runs.db
