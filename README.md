@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/KR-Labs/krl-model-zoo/main/assets/images/KRLabs_WebLogo.png" alt="KR-Labs" width="300" onerror="this.style.display='none'">
+  <img src="./assets/images/KRLabs_WebLogo.png" alt="KR-Labs" width="300">
 </div>
 ---
   
@@ -268,7 +268,7 @@ If you use the KRL Model Zoo in research or analysis, please cite:
 ---
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/KR-Labs/krl-model-zoo/main/assets/images/KRLabs_WebLogo.png" alt="KR-Labs" width="150" onerror="this.style.display='none'">
+  <img src="./assets/images/KRLabs_WebLogo.png" alt="KR-Labs" width="150">
   
   **KR-Labs™ | Building Open Intelligence for the Public Good**
   
