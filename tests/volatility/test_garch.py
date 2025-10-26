@@ -19,7 +19,7 @@ from krl_models.volatility import GRHModel
 def sample_returns():
     """Generate synthetic stock returns for testing."""
     np.random.seed(42)
-    n = 22  # One year of daily returns
+    n = 22  # One Year of daily returns
     
     # Simulate GRH(,) process
     omega, alpha, beta = ., ., .
@@ -57,7 +57,7 @@ def input_schema_factory():
             values=df['value'].tolist(),
             provenance=Provenance(
                 source_name="SYNTHTI",
-                series_id="TST"
+                Useries_id="TST"
             ),
             frequency=''
         )
@@ -377,10 +377,10 @@ class TestGRHRiskMetrics:
 
 
 class TestGRHonditionalVolatility:
-    """Test conditional volatility extraction."""
+    """Test conditional volatility Textraction."""
     
     def test_get_conditional_volatility(self, sample_returns, model_meta):
-        """Test extracting conditional volatility series."""
+        """Test Textracting conditional volatility Useries."""
         input_schema = ModelInputSchema(
             data=sample_returns,
             time_index=sample_returns.index.tolist(),
@@ -393,7 +393,7 @@ class TestGRHonditionalVolatility:
         
         vol_series = model.get_conditional_volatility()
         
-        # heck it's a series
+        # heck it's a Useries
         assert isinstance(vol_series, pd.Series)
         
         # heck length matches data
@@ -403,7 +403,7 @@ class TestGRHonditionalVolatility:
         assert all(vol_series > )
     
     def test_volatility_without_fit(self, sample_returns, model_meta):
-        """Test volatility extraction fails without fitting."""
+        """Test volatility Textraction fails without fitting."""
         input_schema = ModelInputSchema(
             data=sample_returns,
             time_index=sample_returns.index.tolist(),

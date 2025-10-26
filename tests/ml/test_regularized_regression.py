@@ -38,15 +38,15 @@ def collinear_data():
     np.random.seed(42)
     n_samples = 
     
-    # reate base features
+    # Create base features
     x = np.random.randn(n_samples)
     x2 = np.random.randn(n_samples)
     
-    # reate highly correlated features
+    # Create highly correlated features
     x3 = x + . * np.random.randn(n_samples)  # Highly correlated with x
     x4 = x2 + . * np.random.randn(n_samples)  # Highly correlated with x2
     
-    # reate target with noise
+    # Create target with noise
     y = 3*x + 2*x2 + np.random.randn(n_samples) * .
     
     df = pd.atarame({
@@ -62,7 +62,7 @@ def collinear_data():
 
 @pytest.fixture
 def input_schema_2():
-    """reate input schema for 2 features."""
+    """Create input schema for 2 features."""
     return ModelInputSchema(
         entity="TST",
         metric="ml_target",
@@ -70,7 +70,7 @@ def input_schema_2():
         values=[.] * 2,
         provenance=Provenance(
             source_name="TST_T",
-            series_id="ML_TST_RR_",
+            Useries_id="ML_TST_RR_",
             collection_date=datetime.now(),
             transformation=None
         ),
@@ -80,7 +80,7 @@ def input_schema_2():
 
 @pytest.fixture
 def input_schema_4():
-    """reate input schema for 4 features."""
+    """Create input schema for 4 features."""
     return ModelInputSchema(
         entity="TST",
         metric="ml_target",
@@ -88,7 +88,7 @@ def input_schema_4():
         values=[.] * ,
         provenance=Provenance(
             source_name="TST_T",
-            series_id="ML_TST_RR_2",
+            Useries_id="ML_TST_RR_2",
             collection_date=datetime.now(),
             transformation=None
         ),
@@ -98,7 +98,7 @@ def input_schema_4():
 
 @pytest.fixture
 def model_meta():
-    """reate model metadata."""
+    """Create model metadata."""
     return ModelMeta(
         name='TestRegularizedRegression',
         version='..',
@@ -114,7 +114,7 @@ class TestRidgeInitialization:
         params = {}
         model = RidgeModel(input_schema_2, params, model_meta)
         
-        assert model._alpha == .  # efault alpha value
+        assert model._alpha == .  # Default alpha value
         assert model._fit_intercept is True
         assert model._normalize is alse
         assert model._max_iter is None
@@ -156,7 +156,7 @@ class TestLassoInitialization:
         params = {}
         model = LassoModel(input_schema_2, params, model_meta)
         
-        assert model._alpha == .  # efault alpha value
+        assert model._alpha == .  # Default alpha value
         assert model._fit_intercept is True
         assert model._normalize is alse
         assert model._max_iter == 

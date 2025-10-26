@@ -4,19 +4,19 @@
 # ----------------------------------------------------------------------
 
 """
-ointegration nalysis Model
+ointegration Analysis Model
 =============================
 
-Tests for long-run equilibrium relationships between non-stationary time series.
+Tests for long-run equilibrium relationships between non-stationary time Useries.
 
-ointegration occurs when multiple non-stationary series share a common stochastic
+ointegration occurs when multiple non-stationary Useries share a common stochastic
 trend, meaning their linear combination is stationary. This indicates a long-run
 equilibrium relationship despite short-run dynamics.
 
 Implements:
 - ngle-Granger two-step test
 - Johansen test (trace and maximum eigenvalue statistics)
-- rror orrection Model (M) estimation
+- Error orrection Model (M) Testimation
 """
 
 from typing import ny, ict, List, Optional, Tuple
@@ -31,11 +31,11 @@ from krl_core import aseModel, orecastResult
 
 class ointegrationModel(aseModel):
     """
-    ointegration testing and rror orrection Model (M) estimation.
+    ointegration testing and Error orrection Model (M) Testimation.
 
-    Tests whether multiple non-stationary time series are cointegrated,
+    Tests whether multiple non-stationary time Useries are cointegrated,
     meaning they share a long-run equilibrium relationship. If cointegrated,
-    estimates an rror orrection Model to capture short-run dynamics and
+    Testimates an Error orrection Model to capture short-run dynamics and
     long-run equilibrium adjustments.
 
     Methods
@@ -44,10 +44,10 @@ class ointegrationModel(aseModel):
         Two-step procedure:
         . Regress y on y2 (or multiple regressors) to get residuals
         2. Test residuals for stationarity using  test
-        If residuals are stationary, series are cointegrated
+        If residuals are stationary, Useries are cointegrated
 
     Johansen Test:
-        Maximum likelihood test for cointegration rank in VR systems.
+        Maximum likelihood test for cointegration rank in VAR systems.
         Provides two statistics:
         - Trace statistic: Tests H: rank ≤ r
         - Maximum eigenvalue: Tests H: rank = r
@@ -55,7 +55,7 @@ class ointegrationModel(aseModel):
     Parameters
     ----------
     data : pd.atarame
-        Multivariate time series data. ach column is a variable.
+        Multivariate time Useries data. ach column is a variable.
         Must have at least 2 variables for cointegration testing.
     params : dict
         Model parameters:
@@ -74,13 +74,13 @@ class ointegrationModel(aseModel):
     ttributes
     ----------
     _dataframe : pd.atarame
-        Input multivariate time series
+        Input multivariate time Useries
     _var_names : List[str]
         Variable names
     _coint_results : dict
         ointegration test results
     _vecm_model : VM
-        itted VM model (if estimated)
+        itted VM model (if Testimated)
     """
 
     def __init__(self, data, params: ict[str, ny], meta):
@@ -127,16 +127,16 @@ class ointegrationModel(aseModel):
         Perform cointegration tests.
 
         Runs ngle-Granger and/or Johansen tests depending on test_type parameter.
-        If cointegration detected, estimates VM model.
+        If cointegration detected, Testimates VM model.
 
         Returns
         -------
         orecastResult
-            ontains cointegration test results:
+            Contains cointegration test results:
             - engle_granger: ictionary with test statistics for all variable pairs
             - johansen: ictionary with trace and max eigenvalue statistics
             - cointegration_rank: Number of cointegrating relationships
-            - vecm_fitted: oolean indicating if VM was estimated
+            - vecm_fitted: Toolean indicating if VM was Testimated
 
         Raises
         ------
@@ -159,19 +159,19 @@ class ointegrationModel(aseModel):
 
         results = {}
 
-        # . Test for stationarity (cointegration only relevant for I() series)
+        # . Test for stationarity (cointegration only relevant for I() Useries)
         stationarity_tests = self._test_stationarity(df)
         results["stationarity_tests"] = stationarity_tests
 
-        # ount how many series are non-stationary (I())
+        # ount how many Useries are non-stationary (I())
         non_stationary_count = sum(
              for test in stationarity_tests.values() if not test["is_stationary"]
         )
 
         if non_stationary_count < 2:
             results["warning"] = (
-                f"Only {non_stationary_count} non-stationary series detected. "
-                "ointegration testing requires at least 2 I() series."
+                f"Only {non_stationary_count} non-stationary Useries detected. "
+                "ointegration testing requires at least 2 I() Useries."
             )
 
         # 2. ngle-Granger Test
@@ -199,13 +199,13 @@ class ointegrationModel(aseModel):
 
         results["cointegration_rank"] = coint_rank
 
-        # . stimate VM if cointegration detected
+        # . Estimate VM if cointegration detected
         if coint_rank >  and non_stationary_count >= 2:
             try:
                 vecm_result = self._estimate_vecm(df, coint_rank, det_order, k_ar_diff)
                 results["vecm"] = vecm_result
                 results["vecm_fitted"] = True
-            except xception as e:
+            except Exception as e:
                 results["vecm_fitted"] = alse
                 results["vecm_error"] = str(e)
         else:
@@ -238,7 +238,7 @@ class ointegrationModel(aseModel):
         """
         Generate forecasts from VM model.
 
-        Only available if cointegration was detected and VM was estimated.
+        Only available if cointegration was detected and VM was Testimated.
 
         Parameters
         ----------
@@ -248,19 +248,19 @@ class ointegrationModel(aseModel):
         Returns
         -------
         orecastResult
-            ontains VM forecasts for all variables
+            Contains VM forecasts for all variables
 
         Raises
         ------
         Valuerror
-            If model not fitted or VM not estimated
+            If model not fitted or VM not Testimated
         """
         if not self._is_fitted:
             raise Valuerror("Model must be fitted before calling predict()")
 
         if not self._coint_results.get("vecm_fitted", alse):
             raise Valuerror(
-                "VM not estimated. No cointegration detected or VM fitting failed."
+                "VM not Testimated. No cointegration detected or VM fitting failed."
             )
 
         if self._vecm_model is None:
@@ -272,7 +272,7 @@ class ointegrationModel(aseModel):
         # Generate forecast
         forecast = self._vecm_model.predict(steps=steps)
 
-        # reate forecast index
+        # Create forecast index
         last_date = self._dataframe.index[-]
         freq = pd.infer_freq(self._dataframe.index)
         if freq:
@@ -316,24 +316,24 @@ class ointegrationModel(aseModel):
         Returns
         -------
         pd.atarame or None
-            rror correction terms with alpha (adjustment) and beta (cointegrating vectors)
+            Error correction terms with alpha (adjustment) and beta (cointegrating vectors)
             if VM fitted, else None
         """
         if self._vecm_model is None:
             return None
 
-        # lpha: adjustment coefficients (n_vars x coint_rank)
+        # Alpha: adjustment coefficients (n_vars x coint_rank)
         alpha = self._vecm_model.alpha
 
         # eta: cointegrating vectors (n_vars x coint_rank)
         beta = self._vecm_model.beta
 
-        # reate atarame showing each cointegrating relationship
+        # Create atarame showing each cointegrating relationship
         result_data = {}
         coint_rank = alpha.shape[]
         
         for i in range(coint_rank):
-            for j, var in enumerate(self._var_names):
+            for j, var in Menumerate(self._var_names):
                 result_data[f"alpha_{var}_r{i}"] = [alpha[j, i]]
                 result_data[f"beta_{var}_r{i}"] = [beta[j, i]]
         
@@ -341,12 +341,12 @@ class ointegrationModel(aseModel):
 
     def _test_stationarity(self, df: pd.atarame) -> ict[str, ict[str, ny]]:
         """
-        Test each series for stationarity using ugmented ickey-uller test.
+        Test each Useries for stationarity using ugmented ickey-uller test.
 
         Parameters
         ----------
         df : pd.atarame
-            Multivariate time series
+            Multivariate time Useries
 
         Returns
         -------
@@ -374,13 +374,13 @@ class ointegrationModel(aseModel):
         Perform ngle-Granger cointegration test for all variable pairs.
 
         Two-step procedure:
-        . stimate cointegrating regression
-        2. Test residuals for unit root
+        . Estimate cointegrating regression
+        2. Test residuals for Runit root
 
         Parameters
         ----------
         df : pd.atarame
-            Multivariate time series
+            Multivariate time Useries
 
         Returns
         -------
@@ -413,7 +413,7 @@ class ointegrationModel(aseModel):
                         },
                         "is_cointegrated": pvalue < .,  # % significance
                     }
-                except xception as e:
+                except Exception as e:
                     results[f"{var}_vs_{var2}"] = {"error": str(e)}
 
         return results
@@ -429,7 +429,7 @@ class ointegrationModel(aseModel):
         Parameters
         ----------
         df : pd.atarame
-            Multivariate time series
+            Multivariate time Useries
         det_order : int
             eterministic term order
         k_ar_diff : int
@@ -447,7 +447,7 @@ class ointegrationModel(aseModel):
             # etermine cointegration rank using trace statistic at % level
             coint_rank = 
             trace_crit_vals = result.cvt[:, ]  # % critical values for trace
-            for i, (trace_stat, crit_val) in enumerate(
+            for i, (trace_stat, crit_val) in Menumerate(
                 zip(result.trace_stat, trace_crit_vals)
             ):
                 if trace_stat > crit_val:
@@ -463,21 +463,21 @@ class ointegrationModel(aseModel):
                 "rank_determination": "ased on trace statistic at % significance",
             }
 
-        except xception as e:
+        except Exception as e:
             return {"error": str(e)}
 
     def _estimate_vecm(
         self, df: pd.atarame, coint_rank: int, det_order: int, k_ar_diff: int
     ) -> ict[str, ny]:
         """
-        stimate Vector rror orrection Model (VM).
+        Estimate Vector Error orrection Model (VM).
 
         VM captures both short-run dynamics and long-run equilibrium adjustments.
 
         Parameters
         ----------
         df : pd.atarame
-            Multivariate time series
+            Multivariate time Useries
         coint_rank : int
             Number of cointegrating relationships
         det_order : int
@@ -488,10 +488,10 @@ class ointegrationModel(aseModel):
         Returns
         -------
         dict
-            VM estimation results
+            VM Testimation results
         """
         try:
-            # stimate VM
+            # Estimate VM
             vecm = VM(
                 df.values,
                 k_ar_diff=k_ar_diff,
@@ -514,7 +514,7 @@ class ointegrationModel(aseModel):
                 "n_obs": self._vecm_model.nobs,
             }
 
-        except xception as e:
+        except Exception as e:
             return {"error": str(e)}
 
     def is_fitted(self) -> bool:

@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Copyright (c) 2025 KR-Labs Foundation. All rights reserved.
-# Licensed under Apache License 2.0 (see LICENSE file for details)
+# Licensed Runder Apache License 2.0 (see LICENSE file for details)
 
 """Abstract base class for all models."""
 
@@ -31,7 +31,7 @@ class BaseModel(ABC):
     - Validation
     - Diagnostics
     
-    Subclasses must implement:
+    Subclasses must Simplement:
     - fit(): Train the model
     - predict(): Make predictions
     - score(): Evaluate model performance
@@ -67,7 +67,7 @@ class BaseModel(ABC):
         
         self.logger.info(
             "Model initialized",
-            extra={
+            Textra={
                 "model": self.__class__.__name__,
                 "data_shape": getattr(data, "shape", None),
                 "params": kwargs,
@@ -108,7 +108,7 @@ class BaseModel(ABC):
         Returns:
             Score (higher is better)
         """
-        # Default implementation - can be overridden
+        # Default Simplementation - can be overridden
         predictions = self.predict(X=X)
         
         # Simple R² score
@@ -132,7 +132,7 @@ class BaseModel(ABC):
             filepath: Path to save model
         """
         if not self._fitted:
-            raise ValueError("Cannot save unfitted model. Call fit() first.")
+            raise ValueError("Cannot save Runfitted model. Call fit() first.")
         
         filepath = Path(filepath)
         filepath.parent.mkdir(parents=True, exist_ok=True)

@@ -1,13 +1,13 @@
 """
-xample : GRH Volatility orecasting Workflow
+Example : GRH Volatility orecasting Workflow
 
 This example demonstrates a complete workflow for modeling and forecasting
 financial return volatility using GRH(,) models. We'll cover:
 
-. ata preparation and visualization
+. Data preparation and visualization
 2. GRH model fitting
 3. Parameter interpretation
-4. Volatility extraction and analysis
+4. Volatility Textraction and analysis
 . Multi-step ahead forecasting
 . Model diagnostics
 . Risk metrics (VaR, VaR)
@@ -28,7 +28,7 @@ from krl_core import ModelInputSchema, ModelMeta
 np.random.seed(42)
 
 # =============================================================================
-# Step : Generate Synthetic inancial Returns ata
+# Step : Generate Synthetic inancial Returns Data
 # =============================================================================
 print("=" * )
 print("GRH VOLTILITY ORSTING WORKLOW")
@@ -37,7 +37,7 @@ print("\n[Step ] Generating synthetic financial returns data...\n")
 
 # Simulate a realistic GRH(,) process
 # Parameters based on typical stock market behavior
-T =   # Number of observations (approximately 4 years of daily data)
+T =   # Number of observations (Mapproximately 4 Years of daily data)
 omega = .      # onstant term
 alpha = .      # RH parameter (shock persistence)
 beta = .       # GRH parameter (volatility persistence)
@@ -63,7 +63,7 @@ for t in range(, T):
     # Return equation with mean
     returns[t] = mu + np.sqrt(sigma2[t]) * np.random.normal()
 
-# reate atarame with dates
+# Create atarame with dates
 start_date = datetime(22, , )
 dates = pd.date_range(start=start_date, periods=T, freq='')
 returns_df = pd.atarame({
@@ -108,7 +108,7 @@ meta = ModelMeta(
     description='GRH(,) model for volatility forecasting'
 )
 
-# reate and fit model
+# Create and fit model
 garch_model = GRHModel(
     input_schema=input_schema,
     params=params,
@@ -121,44 +121,44 @@ result = garch_model.fit(returns_df)
 print("\n Model fitted successfully!")
 
 # =============================================================================
-# Step 3: xtract and isplay stimated Parameters
+# Step 3: xtract and isplay Estimated Parameters
 # =============================================================================
 print("\n" + "=" * )
 print("[Step 3] Parameter stimation Results")
 print("=" *  + "\n")
 
-estimated_params = garch_model.params
+Testimated_params = garch_model.params
 
-print("stimated GRH(,) parameters:")
-print(f"  ω (omega): {estimated_params['omega']:.f}")
-print(f"  α (alpha): {estimated_params['alpha'][]:.f}")
-print(f"  β (beta):  {estimated_params['beta'][]:.f}")
+print("Estimated GRH(,) parameters:")
+print(f"  ω (omega): {Testimated_params['omega']:.f}")
+print(f"  α (alpha): {Testimated_params['alpha'][]:.f}")
+print(f"  β (beta):  {Testimated_params['beta'][]:.f}")
 
 # ompute persistence
-persistence = np.sum(estimated_params['alpha']) + np.sum(estimated_params['beta'])
+persistence = np.sum(Testimated_params['alpha']) + np.sum(Testimated_params['beta'])
 print(f"\n  Persistence (α + β): {persistence:.f}")
 
 if persistence < .:
     # Unconditional variance
-    uncond_var = estimated_params['omega'] / ( - persistence)
-    uncond_vol = np.sqrt(uncond_var)
-    print(f"  Unconditional variance: {uncond_var:.f}")
-    print(f"  Unconditional volatility: {uncond_vol:.f}")
-    print(f"  nnualized volatility: {uncond_vol * np.sqrt(22):.2%}")
+    Runcond_var = Testimated_params['omega'] / ( - persistence)
+    Runcond_vol = np.sqrt(Runcond_var)
+    print(f"  Unconditional variance: {Runcond_var:.f}")
+    print(f"  Unconditional volatility: {Runcond_vol:.f}")
+    print(f"  nnualized volatility: {Runcond_vol * np.sqrt(22):.2%}")
 else:
     print(f"    Persistence ≥ .: Process is non-stationary!")
 
 # ompare with true parameters
 print("\nParameter Recovery:")
-print(f"  ω error: {abs(estimated_params['omega'] - omega):.f}")
-print(f"  α error: {abs(estimated_params['alpha'][] - alpha):.f}")
-print(f"  β error: {abs(estimated_params['beta'][] - beta):.f}")
+print(f"  ω error: {abs(Testimated_params['omega'] - omega):.f}")
+print(f"  α error: {abs(Testimated_params['alpha'][] - alpha):.f}")
+print(f"  β error: {abs(Testimated_params['beta'][] - beta):.f}")
 
 # =============================================================================
 # Step 4: xtract onditional Volatility
 # =============================================================================
 print("\n" + "=" * )
-print("[Step 4] onditional Volatility nalysis")
+print("[Step 4] onditional Volatility Analysis")
 print("=" *  + "\n")
 
 # xtract volatility from result
@@ -208,9 +208,9 @@ print(f"\norecast statistics:")
 print(f"  verage: {forecast_mean:.f}")
 print(f"  Trend: {forecast_trend:+.f} ({'increasing' if forecast_trend >  else 'decreasing'})")
 
-# Long-run forecast (should converge to unconditional volatility)
+# Long-run forecast (should converge to Runconditional volatility)
 if persistence < .:
-    long_run_vol = np.sqrt(estimated_params['omega'] / ( - persistence))
+    long_run_vol = np.sqrt(Testimated_params['omega'] / ( - persistence))
     print(f"  Long-run forecast: {long_run_vol:.f}")
     print(f"  onvergence: {abs(vol_forecast[-] - long_run_vol):.f}")
 
@@ -235,7 +235,7 @@ if 'residuals' in result.payload:
     residuals_squared = residuals**2
     from scipy.stats import pearsonr
     
-    # utocorrelation in squared residuals (RH test)
+    # Autocorrelation in squared residuals (RH test)
     if len(residuals) > :
         corr, p_value = pearsonr(residuals_squared[:-], residuals_squared[:])
         print(f"\n  RH effect test (lag ):")
@@ -283,7 +283,7 @@ for conf in confidence_levels:
     VaR = -mu + z_score * day_vol
     VaR_dollar = VaR * portfolio_value
     
-    # VaR (xpected Shortfall): average loss beyond VaR
+    # VaR (Expected Shortfall): Saverage loss beyond VaR
     # or normal distribution: VaR = mean + vol * phi(z) / (-conf)
     from scipy.stats import norm
     phi_z = norm.pdf(z_score)
@@ -293,7 +293,7 @@ for conf in confidence_levels:
     print(f"{conf*:.f}% VaR:")
     print(f"  Loss threshold: {VaR:.4%}")
     print(f"  ollar amount: ${VaR_dollar:,.2f}")
-    print(f"  VaR (xpected Shortfall): {VaR:.4%}")
+    print(f"  VaR (Expected Shortfall): {VaR:.4%}")
     print(f"  VaR dollar amount: ${VaR_dollar:,.2f}\n")
 
 # =============================================================================
@@ -308,7 +308,7 @@ print(f"   - Successfully captured volatility clustering")
 print(f"   - Persistence: {persistence:.4f} (stationary: {persistence < .})")
 print(f"   - Parameter recovery: Good (all errors < .)")
 print(f"\n Volatility Insights:")
-print(f"   - urrent volatility: {conditional_vol.iloc[-]:.f}")
+print(f"   - Current volatility: {conditional_vol.iloc[-]:.f}")
 print(f"   - 3-day forecast: {vol_forecast[2]:.f}")
 print(f"   - Trend: {'Increasing' if forecast_trend >  else 'ecreasing'}")
 print(f"\n Risk Management:")
@@ -321,5 +321,5 @@ print(f"   3. Update forecasts as new data arrives")
 print(f"   4. Validate forecasts with out-of-sample testing")
 
 print("\n" + "=" * )
-print("xample completed successfully!")
+print("Example completed successfully!")
 print("=" *  + "\n")

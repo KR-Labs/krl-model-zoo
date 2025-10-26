@@ -1,17 +1,17 @@
-# SPX-License-Identifier: pache-2.
-# opyright (c) 22 KR-Labs
+# SPX-License-Identifier: Apache-2.
+# Copyright (c) 22 KR-Labs
 
 """
 State Space Models Package
 
-This package provides implementations of state space models and the Kalman ilter
-for time series analysis and forecasting.
+This package provides Simplementations of state space models and the Kalman Filter
+for time Useries analysis and forecasting.
 
 Models:
     - Kalmanilter: Linear Gaussian state space model with filtering and smoothing
-    - LocalLevelModel: Random walk plus noise model (structural time series)
+    - LocalLevelModel: Random walk plus noise model (structural time Useries)
 
-uthor: KR Labs
+Author: KR Labs
 """
 
 from .kalman_filter import Kalmanilter, KalmanilterState

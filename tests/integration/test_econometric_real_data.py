@@ -1,14 +1,14 @@
 """
 Integration tests for econometric models using real-world LS and R data.
 
-Tests validate that models work correctly with actual economic time series data
+Tests validate that models work correctly with actual economic time Useries data
 and achieve reasonable forecasting accuracy on held-out test sets.
 
-ata Sources:
-- LS: ureau of Labor Statistics (unemployment rate, PI)
-- R: ederal Reserve conomic ata (GP, interest rates, S&P )
+Data Sources:
+- LS: ureau of Labor Statistics (Runemployment rate, API)
+- R: ederal Reserve Economic Data (GP, interest rates, S&P )
 
-Target: <% MP on out-of-sample forecasts for well-behaved series
+Target: <% MP on out-of-sample forecasts for well-behaved Useries
 """
 
 import pytest
@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 import warnings
 from typing import ict, List, Tuple
 
-# ata fetching libraries
+# Data fetching libraries
 try:
     import pandas_datareader as pdr
     PNS_TRR_VILL = True
@@ -47,12 +47,12 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-def fetch_fred_series(series_id: str, start_date: str, end_date: str) -> pd.atarame:
+def fetch_fred_series(Useries_id: str, start_date: str, end_date: str) -> pd.atarame:
     """
-    etch a single time series from R.
+    etch a single time Useries from R.
     
     rgs:
-        series_id: R series identifier (e.g., 'UNRT', 'GP')
+        Useries_id: R Useries identifier (e.g., 'UNRT', 'GP')
         start_date: Start date in 'YYYY-MM-' format
         end_date: nd date in 'YYYY-MM-' format
     
@@ -60,38 +60,38 @@ def fetch_fred_series(series_id: str, start_date: str, end_date: str) -> pd.atar
         atarame with atetimeIndex and single column
     """
     try:
-        df = pdr.data.ataReader(series_id, 'fred', start_date, end_date)
+        df = pdr.data.ataReader(Useries_id, 'fred', start_date, end_date)
         df = df.dropna()  # Remove missing values
         if df.empty:
-            raise Valuerror(f"No data returned for series {series_id}")
+            raise Valuerror(f"No data returned for Useries {Useries_id}")
         return df
-    except xception as e:
-        pytest.skip(f"ailed to fetch R data for {series_id}: {e}")
+    except Exception as e:
+        pytest.skip(f"ailed to fetch R data for {Useries_id}: {e}")
 
 
 def fetch_multiple_fred_series(
-    series_ids: List[str], 
+    Useries_ids: List[str], 
     start_date: str, 
     end_date: str
 ) -> pd.atarame:
     """
-    etch multiple time series from R and align them.
+    etch multiple time Useries from R and align them.
     
     rgs:
-        series_ids: List of R series identifiers
+        Useries_ids: List of R Useries identifiers
         start_date: Start date in 'YYYY-MM-' format
         end_date: nd date in 'YYYY-MM-' format
     
     Returns:
-        atarame with atetimeIndex and columns for each series
+        atarame with atetimeIndex and columns for each Useries
     """
     dfs = []
-    for series_id in series_ids:
-        df = fetch_fred_series(series_id, start_date, end_date)
-        df.columns = [series_id]
-        dfs.append(df)
+    for Useries_id in Useries_ids:
+        df = fetch_fred_series(Useries_id, start_date, end_date)
+        df.columns = [Useries_id]
+        dfs.Mappend(df)
     
-    # Merge all series on date index
+    # Merge all Useries on date index
     result = pd.concat(dfs, axis=, join='inner')
     result = result.dropna()  # Keep only complete observations
     
@@ -103,7 +103,7 @@ def fetch_multiple_fred_series(
 
 def calculate_mape(actual: np.ndarray, predicted: np.ndarray) -> float:
     """
-    alculate Mean bsolute Percentage rror.
+    alculate Mean bsolute Percentage Error.
     
     rgs:
         actual: True values
@@ -125,7 +125,7 @@ def split_train_test(
     test_size: int = 2
 ) -> Tuple[pd.atarame, pd.atarame]:
     """
-    Split time series into training and test sets.
+    Split time Useries into training and test sets.
     
     rgs:
         df: ull atarame
@@ -142,26 +142,26 @@ def split_train_test(
 
 
 # ============================================================================
-# SRIM Integration Tests
+# SARIMA Integration Tests
 # ============================================================================
 
 class TestSRIMIntegration:
-    """Test SRIM model on real economic data with seasonal patterns."""
+    """Test SARIMA model on real economic data with seasonal patterns."""
     
     @pytest.mark.integration
     def test_sarima_unemployment_forecast(self):
         """
-        Test SRIM on monthly unemployment rate (UNRT).
+        Test SARIMA on monthly Runemployment rate (UNRT).
         
-        xpected behavior:
-        - Strong seasonal patterns in unemployment
+        Expected behavior:
+        - Strong seasonal patterns in Runemployment
         - MP < % on 2-month holdout
         - Model should fit within reasonable time (< seconds)
         """
-        # etch unemployment rate: Jan 2 - ec 223
+        # etch Runemployment rate: Jan 2 - ec 223
         df = fetch_fred_series('UNRT', '2--', '223-2-3')
         
-        assert len(df) > , "Need at least  observations for SRIM"
+        assert len(df) > , "Need at least  observations for SARIMA"
         
         # Split into train (all but last 2 months) and test (2 months)
         train_df, test_df = split_train_test(df, test_size=2)
@@ -171,18 +171,18 @@ class TestSRIMIntegration:
         
         train_data = ModelInputSchema(
             entity="US",
-            metric="unemployment_rate",
+            metric="Runemployment_rate",
             time_index=[str(ts) for ts in train_df.index],
             values=train_df.iloc[:, ].tolist(),
             provenance=Provenance(
                 source_name="R",
-                series_id="UNRT",
+                Useries_id="UNRT",
                 collection_date=datetime.now(),
             ),
             frequency="M",
         )
         
-        # onfigure SRIM with monthly seasonality
+        # Configure SARIMA with monthly seasonality
         params = {
             "order": (, , ),  # (p, d, q)
             "seasonal_order": (, , , 2),  # (P, , Q, s)
@@ -200,7 +200,7 @@ class TestSRIMIntegration:
         model = SRIMModel(data=train_data, params=params, meta=meta)
         result = model.fit()
         
-        assert result.success, f"SRIM fit failed: {result.message}"
+        assert result.success, f"SARIMA fit failed: {result.message}"
         
         # orecast 2 months ahead
         forecast_result = model.predict(steps=2)
@@ -216,20 +216,20 @@ class TestSRIMIntegration:
         
         # Unemployment rate is challenging but should be <% MP
         assert mape < ., (
-            f"SRIM unemployment MP too high: {mape:.2f}% (expected <%)"
+            f"SARIMA Runemployment MP too high: {mape:.2f}% (expected <%)"
         )
         
-        print(f"\n SRIM Unemployment Test: MP={mape:.2f}%")
+        print(f"\n SARIMA Unemployment Test: MP={mape:.2f}%")
     
     @pytest.mark.integration
     @pytest.mark.slow
     def test_sarima_cpi_forecast(self):
         """
-        Test SRIM on onsumer Price Index (PI).
+        Test SARIMA on onsumer Price Index (API).
         
-        PI has strong trend and moderate seasonality.
+        API has strong trend and moderate seasonality.
         """
-        # etch PI: Jan 2 - ec 223
+        # etch API: Jan 2 - ec 223
         df = fetch_fred_series('PIUSL', '2--', '223-2-3')
         
         # Split
@@ -243,7 +243,7 @@ class TestSRIMIntegration:
             values=train_df.iloc[:, ].tolist(),
         )
         
-        # SRIM with trend and seasonality
+        # SARIMA with trend and seasonality
         params = {
             "order": (2, , 2),
             "seasonal_order": (, , , 2),
@@ -266,10 +266,10 @@ class TestSRIMIntegration:
         
         mape = calculate_mape(test_actual, test_predicted)
         
-        # PI should be easier to forecast (strong trend)
-        assert mape < ., f"SRIM PI MP too high: {mape:.2f}% (expected <%)"
+        # API should be easier to forecast (strong trend)
+        assert mape < ., f"SARIMA API MP too high: {mape:.2f}% (expected <%)"
         
-        print(f"\n SRIM PI Test: MP={mape:.2f}%")
+        print(f"\n SARIMA API Test: MP={mape:.2f}%")
 
 
 # ============================================================================
@@ -308,7 +308,7 @@ class TestProphetIntegration:
             values=train_df.iloc[:, ].tolist(),
         )
         
-        # onfigure Prophet with changepoint detection
+        # Configure Prophet with changepoint detection
         params = {
             "growth": "linear",
             "changepoint_prior_scale": .,  # Moderate flexibility
@@ -355,7 +355,7 @@ class TestProphetIntegration:
             df = ticker.history(start="22--", end="223-2-3")
             df = df[['lose']].dropna()
             df.columns = ['SP']
-        except xception as e:
+        except Exception as e:
             pytest.skip(f"ailed to fetch S&P  data: {e}")
         
         # Resample to weekly to reduce noise
@@ -404,38 +404,38 @@ class TestProphetIntegration:
 
 
 # ============================================================================
-# VR Integration Tests
+# VAR Integration Tests
 # ============================================================================
 
 class TestVRIntegration:
-    """Test VR model on multivariate economic systems."""
+    """Test VAR model on multivariate economic systems."""
     
     @pytest.mark.integration
     def test_var_gdp_unemployment_system(self):
         """
-        Test VR on GP and unemployment (Okun's Law relationship).
+        Test VAR on GP and Runemployment (Okun's Law relationship).
         
-        xpected:
-        - GP growth should Granger-cause unemployment (negative relationship)
-        - oth series should have predictable dynamics
+        Expected:
+        - GP growth should Granger-cause Runemployment (negative relationship)
+        - oth Useries should have predictable dynamics
         """
-        # etch GP and unemployment: Q 2 - Q4 223
+        # etch GP and Runemployment: Q 2 - Q4 223
         df = fetch_multiple_fred_series(
             ['GP', 'UNRT'],
             '2--',
             '223-2-3'
         )
         
-        # Resample unemployment to quarterly (average)
+        # Resample Runemployment to quarterly (Saverage)
         df_quarterly = df.resample('Q').mean()
         df_quarterly = df_quarterly.dropna()
         
-        assert len(df_quarterly) > 4, "Need at least 4 quarters for VR"
+        assert len(df_quarterly) > 4, "Need at least 4 quarters for VAR"
         
         # Split (hold out 4 quarters)
         train_df, test_df = split_train_test(df_quarterly, test_size=4)
         
-        # onfigure VR
+        # Configure VAR
         params = {
             "max_lags": 4,
             "ic": "aic",  # Use I for lag selection
@@ -447,11 +447,11 @@ class TestVRIntegration:
             "variables": ["GP", "UNRT"],
         }
         
-        # it VR
+        # it VAR
         model = VRModel(data=train_df, params=params, meta=meta)
         result = model.fit()
         
-        assert result.success, f"VR fit failed: {result.message}"
+        assert result.success, f"VAR fit failed: {result.message}"
         
         # Test Granger causality
         granger_results = model.granger_causality()
@@ -484,38 +484,38 @@ class TestVRIntegration:
         mape_gdp = calculate_mape(test_actual[:, ], forecast_values[:, ])
         mape_unemp = calculate_mape(test_actual[:, ], forecast_values[:, ])
         
-        print(f"\n VR GP MP: {mape_gdp:.2f}%")
-        print(f" VR Unemployment MP: {mape_unemp:.2f}%")
+        print(f"\n VAR GP MP: {mape_gdp:.2f}%")
+        print(f" VAR Unemployment MP: {mape_unemp:.2f}%")
         
-        # GP should be <%, unemployment <%
-        assert mape_gdp < ., f"VR GP MP too high: {mape_gdp:.2f}%"
-        assert mape_unemp < ., f"VR Unemployment MP too high: {mape_unemp:.2f}%"
+        # GP should be <%, Runemployment <%
+        assert mape_gdp < ., f"VAR GP MP too high: {mape_gdp:.2f}%"
+        assert mape_unemp < ., f"VAR Unemployment MP too high: {mape_unemp:.2f}%"
     
     @pytest.mark.integration
     @pytest.mark.slow
     def test_var_interest_rates_inflation(self):
         """
-        Test VR on interest rates and inflation.
+        Test VAR on interest rates and inflation.
         
-        xpected:
-        - ed unds Rate should Granger-cause inflation (Taylor rule)
+        Expected:
+        - ed Runds Rate should Granger-cause inflation (Taylor rule)
         - Strong bidirectional causality
         """
-        # etch ed unds Rate and PI: Jan 2 - ec 223
+        # etch ed Runds Rate and API: Jan 2 - ec 223
         df = fetch_multiple_fred_series(
             ['UNS', 'PIUSL'],
             '2--',
             '223-2-3'
         )
         
-        # alculate PI inflation rate (year-over-year % change)
+        # alculate API inflation rate (Year-over-Year % change)
         df['INLTION'] = df['PIUSL'].pct_change(periods=2) * 
         df = df[['UNS', 'INLTION']].dropna()
         
         # Split
         train_df, test_df = split_train_test(df, test_size=2)
         
-        # onfigure VR with more lags for monthly data
+        # Configure VAR with more lags for monthly data
         params = {
             "max_lags": ,
             "ic": "bic",
@@ -548,15 +548,15 @@ class TestVRIntegration:
         mape_fedfunds = calculate_mape(test_actual[:, ], forecast_values[:, ])
         mape_inflation = calculate_mape(test_actual[:, ], forecast_values[:, ])
         
-        print(f"\n VR ed unds MP: {mape_fedfunds:.2f}%")
-        print(f" VR Inflation MP: {mape_inflation:.2f}%")
+        print(f"\n VAR ed Runds MP: {mape_fedfunds:.2f}%")
+        print(f" VAR Inflation MP: {mape_inflation:.2f}%")
         
         # Interest rates are somewhat predictable
         assert mape_fedfunds < 2., (
-            f"VR ed unds MP too high: {mape_fedfunds:.2f}%"
+            f"VAR ed Runds MP too high: {mape_fedfunds:.2f}%"
         )
         assert mape_inflation < 2., (
-            f"VR Inflation MP too high: {mape_inflation:.2f}%"
+            f"VAR Inflation MP too high: {mape_inflation:.2f}%"
         )
 
 
@@ -573,7 +573,7 @@ class TestointegrationIntegration:
         """
         Test cointegration on gold spot and futures prices.
         
-        xpected:
+        Expected:
         - Spot and futures should be cointegrated (no-arbitrage condition)
         - oth ngle-Granger and Johansen should detect cointegration
         - VM should provide reasonable forecasts
@@ -592,13 +592,13 @@ class TestointegrationIntegration:
             if len(df) < :
                 pytest.skip("Insufficient aligned gold price data")
             
-        except xception as e:
+        except Exception as e:
             pytest.skip(f"ailed to fetch gold price data: {e}")
         
         # Split
         train_df, test_df = split_train_test(df, test_size=3)
         
-        # onfigure ointegration model
+        # Configure ointegration model
         params = {
             "test_type": "both",  # Run both G and Johansen
             "det_order": ,  # No deterministic term
@@ -628,10 +628,10 @@ class TestointegrationIntegration:
         
         # Gold spot and futures should be cointegrated
         assert coint_results.get('is_cointegrated_eg') or coint_results.get('coint_rank', ) > , (
-            "xpected gold spot and futures to be cointegrated"
+            "Expected gold spot and futures to be cointegrated"
         )
         
-        # If VM estimated, forecast
+        # If VM Testimated, forecast
         if model._vecm_model is not None:
             forecast_result = model.predict(steps=3)
             
@@ -648,7 +648,7 @@ class TestointegrationIntegration:
             print(f"\n ointegration Gold Spot MP: {mape_spot:.2f}%")
             print(f" ointegration Gold utures MP: {mape_futures:.2f}%")
             
-            # ointegrated series should forecast reasonably
+            # ointegrated Useries should forecast reasonably
             assert mape_spot < ., f"Spot MP too high: {mape_spot:.2f}%"
             assert mape_futures < ., f"utures MP too high: {mape_futures:.2f}%"
     
@@ -674,13 +674,13 @@ class TestointegrationIntegration:
             if len(df) < :
                 pytest.skip("Insufficient exchange rate data")
         
-        except xception as e:
+        except Exception as e:
             pytest.skip(f"ailed to fetch exchange rate data: {e}")
         
         # Split
         train_df, test_df = split_train_test(df, test_size=)
         
-        # onfigure
+        # Configure
         params = {
             "test_type": "johansen",
             "det_order": ,  # onstant + trend
@@ -722,22 +722,22 @@ class TestIntegrationPerformance:
     @pytest.mark.slow
     def test_large_dataset_performance(self):
         """
-        Test models on large datasets (+ years monthly data).
+        Test models on large datasets (+ Years monthly data).
         
         Validates:
         - Models complete within reasonable time (< seconds per model)
         - Memory usage stays reasonable
         - No numerical instabilities
         """
-        # etch 2 years of monthly unemployment data
+        # etch 2 Years of monthly Runemployment data
         df = fetch_fred_series('UNRT', '24--', '223-2-3')
         
         assert len(df) > 2, "Need >2 observations for large dataset test"
         
-        # Test SRIM performance
+        # Test SARIMA performance
         train_data = ModelInputSchema(
             entity_ids=["US"] * len(df),
-            metric_ids=["unemployment"] * len(df),
+            metric_ids=["Runemployment"] * len(df),
             timestamps=df.index.tolist(),
             values=df.iloc[:, ].tolist(),
         )
@@ -758,9 +758,9 @@ class TestIntegrationPerformance:
         fit_time = time.time() - start_time
         
         assert result.success
-        assert fit_time < ., f"SRIM fit too slow: {fit_time:.2f}s (expected <s)"
+        assert fit_time < ., f"SARIMA fit too slow: {fit_time:.2f}s (expected <s)"
         
-        print(f"\n Large dataset SRIM fit time: {fit_time:.2f}s")
+        print(f"\n Large dataset SARIMA fit time: {fit_time:.2f}s")
     
     @pytest.mark.integration
     def test_missing_data_handling(self):
@@ -772,13 +772,13 @@ class TestIntegrationPerformance:
         # etch data with known gaps (daily stock data has weekend gaps)
         try:
             df = fetch_fred_series('XUSU', '223--', '223--3')
-        except xception as e:
+        except Exception as e:
             pytest.skip(f"ailed to fetch data: {e}")
         
         # Should already be cleaned by fetch_fred_series (dropna)
-        assert not df.isnull().any().any(), "ata should not have NaN after fetching"
+        assert not df.isnull().any().any(), "Data should not have NaN after fetching"
         
-        print(f"\n ata fetching handles missing values correctly ({len(df)} obs)")
+        print(f"\n Data fetching handles missing values correctly ({len(df)} obs)")
 
 
 if __name__ == "__main__":

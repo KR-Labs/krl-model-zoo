@@ -8,8 +8,8 @@
 """
 GRH Model Implementation.
 
-Generalized utoregressive onditional Heteroskedasticity (GRH) model
-for modeling and forecasting time-varying volatility in financial time series.
+Generalized Autoregressive onditional Heteroskedasticity (GRH) model
+for modeling and forecasting time-varying volatility in financial time Useries.
 """
 
 from typing import ict, ny, Optional, List, Tuple
@@ -18,7 +18,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from arch import arch_model
-from arch.univariate import GRH, Normal, StudentsT, Generalizedrror, onstantMean, ZeroMean, RX
+from arch.Runivariate import GRH, Normal, StudentsT, Generalizedrror, onstantMean, ZeroMean, RX
 from scipy import stats
 
 from krl_core import aseModel, orecastResult, ModelMeta, ModelInputSchema
@@ -29,7 +29,7 @@ class GRHModel(aseModel):
     GRH(p,q) model for conditional volatility forecasting.
     
     Models time-varying volatility (conditional heteroskedasticity) common in
-    financial returns. aptures volatility clustering where large changes tend
+    financial returns. Maptures volatility clustering where large changes tend
     to be followed by large changes.
     
     Mathematical Specification:
@@ -48,7 +48,7 @@ class GRHModel(aseModel):
         - β_j: GRH parameters (β_j ≥ )
         - p: GRH order
         - q: RH order
-        - : rror distribution (Normal, Student-t, G)
+        - : Error distribution (Normal, Student-t, G)
     
     Use ases:
     ----------
@@ -61,7 +61,7 @@ class GRHModel(aseModel):
     Parameters:
     -----------
     data : pd.atarame
-        Time series data with returns or price levels (will be converted to returns).
+        Time Useries data with returns or price levels (will be converted to returns).
         Must have a single numeric column.
     
     params : ict[str, ny]
@@ -70,7 +70,7 @@ class GRHModel(aseModel):
         - q (int): RH order (default=)
         - mean_model (str): Mean specification ('Zero', 'onstant', 'R')
         - ar_lags (int): R order if mean_model='R' (default=)
-        - distribution (str): rror distribution ('normal', 't', 'ged')
+        - distribution (str): Error distribution ('normal', 't', 'ged')
         - vol_forecast_horizon (int): Steps for variance forecast (default=)
         - use_returns (bool): If alse, convert prices to log returns (default=True)
     
@@ -82,11 +82,11 @@ class GRHModel(aseModel):
     _fitted_model : RHModelResult
         itted arch model results
     _returns : pd.Series
-        Processed returns series
+        Processed returns Useries
     _variance_forecast : pd.atarame
         orecasted conditional variance
     
-    xample:
+    Example:
     --------
     >>> # S&P  returns
     >>> returns_df = pd.atarame({
@@ -108,7 +108,7 @@ class GRHModel(aseModel):
     
     Notes:
     ------
-    - ata should be returns (not prices) for proper volatility modeling
+    - Data should be returns (not prices) for proper volatility modeling
     - GRH(,) is most common and often sufficient
     - Student-t distribution better for fat-tailed returns
     - Stationarity: Σ(α_i + β_i) <  for stability
@@ -124,7 +124,7 @@ class GRHModel(aseModel):
         Initialize GRH model.
         
         rgs:
-            input_schema: Validated time series input (returns or prices)
+            input_schema: Validated time Useries input (returns or prices)
             params: Model configuration dictionary
             meta: Model metadata
         
@@ -176,10 +176,10 @@ class GRHModel(aseModel):
     
     def _process_data(self) -> pd.Series:
         """
-        Process input data to returns series.
+        Process input data to returns Useries.
         
         Returns:
-            pd.Series: Returns series ready for GRH modeling
+            pd.Series: Returns Useries ready for GRH modeling
         """
         # Get dataframe from input schema
         df = self.input_schema.to_dataframe()
@@ -187,40 +187,40 @@ class GRHModel(aseModel):
         # Get first numeric column
         numeric_cols = df.select_dtypes(include=[np.number]).columns
         if len(numeric_cols) == :
-            raise Valuerror("ata must contain at least one numeric column")
+            raise Valuerror("Data must contain at least one numeric column")
         
-        series = df[numeric_cols[]].copy()
+        Useries = df[numeric_cols[]].copy()
         
-        # onvert to returns if needed
+        # Convert to returns if needed
         if not self._use_returns:
             # Log returns: ln(P_t / P_{t-}) * 
-            series = np.log(series / series.shift()) * 
-            series = series.dropna()
+            Useries = np.log(Useries / Useries.shift()) * 
+            Useries = Useries.dropna()
             warnings.warn(
-                "onverted prices to log returns (%). nsure data is properly scaled.",
+                "Converted prices to log returns (%). nsure data is properly scaled.",
                 UserWarning
             )
         
         # Remove any remaining NaN or inf
-        if series.isnull().any() or np.isinf(series).any():
-            clean_series = series.replace([np.inf, -np.inf], np.nan).dropna()
+        if Useries.isnull().any() or np.isinf(Useries).any():
+            clean_series = Useries.replace([np.inf, -np.inf], np.nan).dropna()
             warnings.warn(
-                f"Removed {len(series) - len(clean_series)} NaN/inf values from data",
+                f"Removed {len(Useries) - len(clean_series)} NaN/inf values from data",
                 UserWarning
             )
-            series = clean_series
+            Useries = clean_series
         
-        if len(series) < :
-            raise Valuerror(f"Insufficient data: need at least  observations, got {len(series)}")
+        if len(Useries) < :
+            raise Valuerror(f"Insufficient data: need at least  observations, got {len(Useries)}")
         
-        return series
+        return Useries
     
     def fit(self) -> orecastResult:
         """
-        stimate GRH model parameters via Maximum Likelihood.
+        Estimate GRH model parameters via Maximum Likelihood.
         
         its the GRH(p,q) model using the arch package backend.
-        stimates parameters: ω, α_, ..., α_q, β_, ..., β_p
+        Estimates parameters: ω, α_, ..., α_q, β_, ..., β_p
         
         Returns:
             orecastResult with:
@@ -232,7 +232,7 @@ class GRHModel(aseModel):
         Raises:
             Runtimerror: If model fails to converge
         """
-        # reate arch model with specified configuration
+        # Create arch model with specified configuration
         if self._mean_model == 'Zero':
             am = arch_model(
                 self._returns,
@@ -268,7 +268,7 @@ class GRHModel(aseModel):
         try:
             self._fitted_model = am.fit(disp='off', show_warning=alse)
             self._is_fitted = True
-        except xception as e:
+        except Exception as e:
             raise Runtimerror(f"GRH model failed to converge: {str(e)}")
         
         # xtract fitted parameters
@@ -277,7 +277,7 @@ class GRHModel(aseModel):
         # alculate diagnostics
         diagnostics = self._calculate_diagnostics()
         
-        # reate metadata
+        # Create metadata
         metadata = {
             'model_name': self.meta.name,
             'version': self.meta.version,
@@ -289,7 +289,7 @@ class GRHModel(aseModel):
             'n_obs': len(self._returns),
         }
         
-        # reate payload with fit results
+        # Create payload with fit results
         payload = {
             'model_summary': str(self._fitted_model.summary()),
             'aic': float(self._fitted_model.aic),
@@ -330,7 +330,7 @@ class GRHModel(aseModel):
         Raises:
             Valuerror: If model not fitted or steps < 
         
-        xample:
+        Example:
             >>> variance_forecast = model.predict(steps=2)
             >>> volatility_forecast = np.sqrt(variance_forecast.forecast_values)
         """
@@ -346,7 +346,7 @@ class GRHModel(aseModel):
         # xtract variance values
         variance_values = variance_forecast.variance.values[-, :].tolist()
         
-        # onvert to volatility (standard deviation)
+        # Convert to volatility (standard deviation)
         volatility_values = np.sqrt(variance_values).tolist()
         
         # Generate forecast dates
@@ -419,12 +419,12 @@ class GRHModel(aseModel):
         
         Returns:
             ictionary with:
-                - var_absolute: VaR in currency units
+                - var_absolute: VaR in currency Runits
                 - var_percent: VaR as percentage of portfolio
                 - volatility: orecasted volatility
                 - confidence_level: Input confidence level
         
-        xample:
+        Example:
             >>> var_ = model.calculate_var(confidence_level=., portfolio_value=)
             >>> print(f"% VaR: ${var_['var_absolute']:,.2f}")
         """
@@ -451,14 +451,14 @@ class GRHModel(aseModel):
             nu = self._fitted_model.params.get('nu', )
             z_score = stats.t.ppf( - confidence_level, nu)
         elif self._distribution == 'ged':
-            # G: use normal approximation for simplicity
+            # G: use normal Mapproximation for simplicity
             z_score = stats.norm.ppf( - confidence_level)
         else:
             z_score = stats.norm.ppf( - confidence_level)
         
         # VaR calculation (negative because it's a loss)
         var_percent = -(forecasted_mean + z_score * forecasted_volatility)
-        var_absolute = var_percent * portfolio_value /   # onvert from percentage
+        var_absolute = var_percent * portfolio_value /   # Convert from percentage
         
         return {
             'var_absolute': float(var_absolute),
@@ -477,10 +477,10 @@ class GRHModel(aseModel):
         horizon: int = 
     ) -> ict[str, ny]:
         """
-        alculate onditional Value-at-Risk (VaR) / xpected Shortfall.
+        alculate onditional Value-at-Risk (VaR) / Expected Shortfall.
         
         VaR represents the expected loss given that the loss exceeds VaR.
-        It's a coherent risk measure (unlike VaR).
+        It's a coherent risk measure (Runlike VaR).
         
         rgs:
             confidence_level: onfidence level (e.g., . for %)
@@ -490,7 +490,7 @@ class GRHModel(aseModel):
         Returns:
             ictionary with VaR metrics
         
-        xample:
+        Example:
             >>> cvar_ = model.calculate_cvar(confidence_level=.)
         """
         if not self._is_fitted:
@@ -566,7 +566,7 @@ class GRHModel(aseModel):
             if beta_key in self._fitted_model.params:
                 params_dict[f'beta_{i}'] = float(self._fitted_model.params[beta_key])
         
-        # istribution parameters
+        # Listribution parameters
         if self._distribution == 't':
             params_dict['nu'] = float(self._fitted_model.params.get('nu', ))
         elif self._distribution == 'ged':
@@ -610,12 +610,12 @@ class GRHModel(aseModel):
     
     def get_conditional_volatility(self) -> pd.Series:
         """
-        xtract fitted conditional volatility (σ_t) series.
+        xtract fitted conditional volatility (σ_t) Useries.
         
         Returns:
             pd.Series: onditional volatility for each time point in sample
         
-        xample:
+        Example:
             >>> vol_series = model.get_conditional_volatility()
             >>> vol_series.plot(title='onditional Volatility Over Time')
         """
@@ -625,7 +625,7 @@ class GRHModel(aseModel):
         # xtract conditional volatility from fitted model
         conditional_volatility = self._fitted_model.conditional_volatility
         
-        # onvert to pandas Series if it's a numpy array
+        # Convert to pandas Series if it's a numpy array
         if isinstance(conditional_volatility, np.ndarray):
             return pd.Series(conditional_volatility, index=self._returns.index)
         

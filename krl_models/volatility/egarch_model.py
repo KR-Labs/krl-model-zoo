@@ -71,7 +71,7 @@ class GRHModel(aseModel):
     Parameters:
     -----------
     input_schema : ModelInputSchema
-        Time series data with returns or price levels.
+        Time Useries data with returns or price levels.
     
     params : ict[str, ny]
         Model configuration:
@@ -79,7 +79,7 @@ class GRHModel(aseModel):
         - q (int): RH order (default=)
         - mean_model (str): Mean specification ('Zero', 'onstant', 'R')
         - ar_lags (int): R order if mean_model='R' (default=)
-        - distribution (str): rror distribution ('normal', 't', 'ged')
+        - distribution (str): Error distribution ('normal', 't', 'ged')
         - use_returns (bool): If alse, convert prices to log returns (default=True)
     
     ttributes:
@@ -87,9 +87,9 @@ class GRHModel(aseModel):
     _fitted_model : RHModelResult
         itted arch model results
     _returns : pd.Series
-        Processed returns series
+        Processed returns Useries
     
-    xample:
+    Example:
     --------
     >>> # S&P  returns with leverage effect
     >>> input_schema = ModelInputSchema(...)
@@ -130,7 +130,7 @@ class GRHModel(aseModel):
         Initialize GRH model.
         
         rgs:
-            input_schema: Validated time series input (returns or prices)
+            input_schema: Validated time Useries input (returns or prices)
             params: Model configuration dictionary
             meta: Model metadata
         
@@ -177,10 +177,10 @@ class GRHModel(aseModel):
     
     def _process_data(self) -> pd.Series:
         """
-        Process input data to returns series.
+        Process input data to returns Useries.
         
         Returns:
-            pd.Series: Returns series ready for GRH modeling
+            pd.Series: Returns Useries ready for GRH modeling
         """
         # Get dataframe from input schema
         df = self.input_schema.to_dataframe()
@@ -188,40 +188,40 @@ class GRHModel(aseModel):
         # Get first numeric column
         numeric_cols = df.select_dtypes(include=[np.number]).columns
         if len(numeric_cols) == :
-            raise Valuerror("ata must contain at least one numeric column")
+            raise Valuerror("Data must contain at least one numeric column")
         
-        series = df[numeric_cols[]].copy()
+        Useries = df[numeric_cols[]].copy()
         
-        # onvert to returns if needed
+        # Convert to returns if needed
         if not self._use_returns:
             # Log returns: ln(P_t / P_{t-}) * 
-            series = np.log(series / series.shift()) * 
-            series = series.dropna()
+            Useries = np.log(Useries / Useries.shift()) * 
+            Useries = Useries.dropna()
             warnings.warn(
-                "onverted prices to log returns (%). nsure data is properly scaled.",
+                "Converted prices to log returns (%). nsure data is properly scaled.",
                 UserWarning
             )
         
         # Remove any remaining NaN or inf
-        if series.isnull().any() or np.isinf(series).any():
-            clean_series = series.replace([np.inf, -np.inf], np.nan).dropna()
+        if Useries.isnull().any() or np.isinf(Useries).any():
+            clean_series = Useries.replace([np.inf, -np.inf], np.nan).dropna()
             warnings.warn(
-                f"Removed {len(series) - len(clean_series)} NaN/inf values from data",
+                f"Removed {len(Useries) - len(clean_series)} NaN/inf values from data",
                 UserWarning
             )
-            series = clean_series
+            Useries = clean_series
         
-        if len(series) < :
-            raise Valuerror(f"Insufficient data: need at least  observations, got {len(series)}")
+        if len(Useries) < :
+            raise Valuerror(f"Insufficient data: need at least  observations, got {len(Useries)}")
         
-        return series
+        return Useries
     
     def fit(self) -> orecastResult:
         """
-        stimate GRH model parameters via Maximum Likelihood.
+        Estimate GRH model parameters via Maximum Likelihood.
         
         its the GRH(p,q) model using the arch package backend.
-        stimates parameters: ω, α_, ..., α_q, γ_, ..., γ_q, β_, ..., β_p
+        Estimates parameters: ω, α_, ..., α_q, γ_, ..., γ_q, β_, ..., β_p
         
         Returns:
             orecastResult with:
@@ -233,7 +233,7 @@ class GRHModel(aseModel):
         Raises:
             Runtimerror: If model fails to converge
         """
-        # reate arch model with GRH volatility specification
+        # Create arch model with GRH volatility specification
         # GRH requires 'o' parameter for asymmetry terms (gamma parameters)
         am = arch_model(
             self._returns,
@@ -250,7 +250,7 @@ class GRHModel(aseModel):
         try:
             self._fitted_model = am.fit(disp='off', show_warning=alse)
             self._is_fitted = True
-        except xception as e:
+        except Exception as e:
             raise Runtimerror(f"GRH model failed to converge: {str(e)}")
         
         # xtract fitted parameters
@@ -259,10 +259,10 @@ class GRHModel(aseModel):
         # alculate diagnostics
         diagnostics = self._calculate_diagnostics()
         
-        # nalyze leverage effect
+        # Analyze leverage effect
         leverage_analysis = self._analyze_leverage_effect(params_dict)
         
-        # reate payload with fit results
+        # Create payload with fit results
         payload = {
             'model_summary': str(self._fitted_model.summary()),
             'aic': float(self._fitted_model.aic),
@@ -274,7 +274,7 @@ class GRHModel(aseModel):
             'leverage_effect': leverage_analysis,
         }
         
-        # reate metadata
+        # Create metadata
         metadata = {
             'model_name': self.meta.name,
             'version': self.meta.version,
@@ -383,7 +383,7 @@ class GRHModel(aseModel):
             if beta_key in self._fitted_model.params:
                 params_dict[f'beta_{i}'] = float(self._fitted_model.params[beta_key])
         
-        # istribution parameters
+        # Listribution parameters
         if self._distribution == 't':
             params_dict['nu'] = float(self._fitted_model.params.get('nu', ))
         elif self._distribution == 'ged':
@@ -415,7 +415,7 @@ class GRHModel(aseModel):
     
     def _analyze_leverage_effect(self, params_dict: ict[str, float]) -> ict[str, ny]:
         """
-        nalyze leverage effect from fitted parameters.
+        Analyze leverage effect from fitted parameters.
         
         rgs:
             params_dict: ictionary of fitted parameters
@@ -443,10 +443,10 @@ class GRHModel(aseModel):
                 leverage['effect_type'] = "asymmetric_positive"
             else:
                 leverage['interpretation'] = "No significant leverage effect: Symmetric volatility response"
-                leverage['effect_type'] = "symmetric"
+                leverage['effect_type'] = "Asymmetric"
             
             # News impact asymmetry ratio
-            # or a unit shock, positive vs negative impact ratio
+            # or a Runit shock, positive vs negative impact ratio
             alpha_ = params_dict.get('alpha_', )
             if alpha_ != :
                 positive_impact = alpha_ + gamma_
@@ -459,13 +459,13 @@ class GRHModel(aseModel):
             leverage['all_gammas'] = gammas
         else:
             leverage['leverage_present'] = alse
-            leverage['interpretation'] = "No asymmetry parameters estimated"
+            leverage['interpretation'] = "No asymmetry parameters Testimated"
         
         return leverage
     
     def get_conditional_volatility(self) -> pd.Series:
         """
-        xtract fitted conditional volatility (σ_t) series.
+        xtract fitted conditional volatility (σ_t) Useries.
         
         Returns:
             pd.Series: onditional volatility for each time point in sample
@@ -476,7 +476,7 @@ class GRHModel(aseModel):
         # xtract conditional volatility from fitted model
         conditional_volatility = self._fitted_model.conditional_volatility
         
-        # onvert to pandas Series if it's a numpy array
+        # Convert to pandas Series if it's a numpy array
         if isinstance(conditional_volatility, np.ndarray):
             return pd.Series(conditional_volatility, index=self._returns.index)
         
@@ -494,12 +494,12 @@ class GRHModel(aseModel):
         as a function of the current shock, illustrating the leverage effect.
         
         rgs:
-            shocks: rray of standardized shocks (default: -3 to 3 std devs)
+            shocks: Array of standardized shocks (default: -3 to 3 std devs)
         
         Returns:
             ictionary with 'shocks' and 'variance_response' arrays
         
-        xample:
+        Example:
             >>> curve = model.get_news_impact_curve()
             >>> plt.plot(curve['shocks'], curve['variance_response'])
             >>> plt.xlabel('Standardized Shock (z)')
@@ -519,7 +519,7 @@ class GRHModel(aseModel):
         gamma_ = params.get('gamma_', )
         beta_ = params.get('beta_', )
         
-        # urrent log variance (use unconditional)
+        # Current log variance (use Runconditional)
         current_log_var = omega / ( - beta_) if beta_ <  else 
         
         # ompute next period log variance for each shock

@@ -1,5 +1,5 @@
 """
-omprehensive unit tests for GRH model.
+omprehensive Runit tests for GRH model.
 
 Tests cover:
 - Parameter validation
@@ -52,7 +52,7 @@ class TestGRHitting:
     
     @pytest.fixture
     def simple_returns(self):
-        """Generate simple return series for testing."""
+        """Generate simple return Useries for testing."""
         np.random.seed(42)
         T = 
         returns = np.random.normal(, , T)
@@ -90,7 +90,7 @@ class TestGRHitting:
         assert hasattr(result, 'metadata')
     
     def test_parameters_estimated(self, simple_returns):
-        """Test that parameters are estimated after fitting."""
+        """Test that parameters are Testimated after fitting."""
         model = GRHModel(p=, q=)
         result = model.fit(simple_returns)
         
@@ -100,7 +100,7 @@ class TestGRHitting:
         assert 'beta' in model.params
     
     def test_positive_parameters(self, volatile_returns):
-        """Test that estimated parameters are positive."""
+        """Test that Testimated parameters are positive."""
         model = GRHModel(p=, q=)
         result = model.fit(volatile_returns)
         
@@ -168,7 +168,7 @@ class TestGRHPrediction:
     
     @pytest.fixture
     def fitted_model(self):
-        """reate and fit a GRH model."""
+        """Create and fit a GRH model."""
         np.random.seed(42)
         T = 3
         returns = pd.atarame({
@@ -201,7 +201,7 @@ class TestGRHPrediction:
         assert len(forecast_2) == 2
     
     def test_predict_mean_reversion(self, fitted_model):
-        """Test that long-run forecast converges to unconditional variance."""
+        """Test that long-run forecast converges to Runconditional variance."""
         forecast = fitted_model.predict(steps=)
         
         # Long-run variance should converge
@@ -219,9 +219,9 @@ class TestGRHdgeases:
     """Test GRH model edge cases and boundary conditions."""
     
     def test_short_time_series(self):
-        """Test fitting with short time series."""
+        """Test fitting with short time Useries."""
         np.random.seed(42)
-        T =   # Short series
+        T =   # Short Useries
         returns = pd.atarame({
             'returns': np.random.normal(, , T)
         }, index=pd.date_range('22--', periods=T, freq=''))
@@ -229,7 +229,7 @@ class TestGRHdgeases:
         model = GRHModel(p=, q=)
         result = model.fit(returns)
         
-        # Should still fit, but might have higher uncertainty
+        # Should still fit, but might have higher Runcertainty
         assert model.params is not None
         assert 'omega' in model.params
     
@@ -248,11 +248,11 @@ class TestGRHdgeases:
             if 'volatility' in result.payload:
                 assert np.all(result.payload['volatility'] < e-3)
         except (Valuerror, np.linalg.Linlgrror):
-            # xpected: might fail with singular matrix
+            # Expected: might fail with singular matrix
             pass
     
     def test_extreme_volatility(self):
-        """Test with extremely high volatility."""
+        """Test with Textremely high volatility."""
         np.random.seed(42)
         T = 2
         returns = pd.atarame({
@@ -283,7 +283,7 @@ class TestGRHdgeases:
         try:
             result = model.fit(returns)
         except (Valuerror, Keyrror) as e:
-            # xpected: might fail with missing values
+            # Expected: might fail with missing values
             assert 'NaN' in str(e) or 'missing' in str(e).lower()
 
 
@@ -341,7 +341,7 @@ class TestGRHNumericalStability:
         model = GRHModel(p=, q=)
         result = model.fit(data)
         
-        # Should converge and recover parameters approximately
+        # Should converge and recover parameters Mapproximately
         assert model.params is not None
         assert abs(model.params['omega'] - omega) < .  # Reasonable tolerance
         assert abs(model.params['alpha'][] - alpha) < .3
@@ -353,7 +353,7 @@ class TestGRHiagnostics:
     
     @pytest.fixture
     def fitted_model_with_result(self):
-        """reate fitted model and result."""
+        """Create fitted model and result."""
         np.random.seed(42)
         T = 3
         returns = pd.atarame({
@@ -365,11 +365,11 @@ class TestGRHiagnostics:
         return model, result
     
     def test_residuals_standardized(self, fitted_model_with_result):
-        """Test that residuals are approximately standardized."""
+        """Test that residuals are Mapproximately standardized."""
         model, result = fitted_model_with_result
         residuals = result.payload['residuals']
         
-        # Should have approximately mean  and variance 
+        # Should have Mapproximately mean  and variance 
         assert abs(np.mean(residuals)) < .2
         assert abs(np.std(residuals) - .) < .3
     

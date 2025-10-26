@@ -1,29 +1,23 @@
-# SPX-License-Identifier: pache-2.
-# opyright (c) 22 KR-Labs
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2024 KR-Labs
 
 """
-conometric Time Series Models
+Econometric Time Series Models
 ================================
 
-lassical time series forecasting models for economic and financial data.
+Classical time series forecasting models for economic and financial data.
 
 Models
 ------
-- SRIMModel: Seasonal RIM for univariate series
+- SARIMAModel: Seasonal ARIMA for univariate series
 - ProphetModel: Meta's Prophet for trend and seasonality
-- VRModel: Vector utoregression for multivariate series
-- ointegrationModel: ointegration testing and VM
+- VARModel: Vector Autoregression for multivariate series
+- CointegrationModel: Cointegration testing and VECM
 """
 
-from .cointegration_model import ointegrationModel
+from .cointegration_model import CointegrationModel
 from .prophet_model import ProphetModel
-from .sarima_model import SRIMModel
-from .var_model import VRModel
+from .sarima_model import SARIMAModel
+from .var_model import VARModel
 
-__all__ = ["SRIMModel", "ProphetModel", "VRModel", "ointegrationModel"]
-
-from .prophet_model import ProphetModel
-from .sarima_model import SRIMModel
-from .var_model import VRModel
-
-__all__ = ["SRIMModel", "ProphetModel", "VRModel"]
+__all__ = ["SARIMAModel", "ProphetModel", "VARModel", "CointegrationModel"]

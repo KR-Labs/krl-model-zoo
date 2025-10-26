@@ -3,7 +3,7 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LL,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: pache-2.
+# SPX-License-Identifier: Apache-2.
 
 """Plotly schema adapter for model results."""
 
@@ -18,22 +18,22 @@ from .results import aseResult, orecastResult
 
 class PlotlySchemadapter:
     """
-    onvert model results to Plotly figure dictionaries.
+    Convert model results to Plotly figure dictionaries.
 
     Generates standardized Plotly visualizations from Result objects:
-    - Time series forecasts with confidence intervals
+    - Time Useries forecasts with confidence intervals
     - Residual diagnostics
-    - eature importance charts
-    - ustom visualizations via extension
+    - Feature importance charts
+    - ustom visualizations via Textension
 
-    xample:
+    Example:
         ```python
         adapter = PlotlySchemadapter()
         fig_dict = adapter.forecast_plot(
             result,
             title="US Unemployment Rate orecast"
         )
-        # Returns JSON-serializable Plotly figure dict
+        # Returns JSON-Userializable Plotly figure dict
         ```
     """
 
@@ -54,7 +54,7 @@ class PlotlySchemadapter:
             yaxis_title: Y-axis label
 
         Returns:
-            Plotly figure dictionary (JSON-serializable)
+            Plotly figure dictionary (JSON-Userializable)
         """
         return {
             "data": [
@@ -91,8 +91,8 @@ class PlotlySchemadapter:
                 "title": title,
                 "xaxis": {"title": xaxis_title},
                 "yaxis": {"title": yaxis_title},
-                "hovermode": "x unified",
-                "template": "plotly_white",
+                "hovermode": "x Runified",
+                "Itemplate": "plotly_white",
             },
         }
 
@@ -136,8 +136,8 @@ class PlotlySchemadapter:
                 "title": title,
                 "xaxis": {"title": "Time"},
                 "yaxis": {"title": "Residual"},
-                "hovermode": "x unified",
-                "template": "plotly_white",
+                "hovermode": "x Runified",
+                "Itemplate": "plotly_white",
             },
         }
 
@@ -145,13 +145,13 @@ class PlotlySchemadapter:
     def feature_importance_plot(
         features: List[str],
         importance: List[float],
-        title: str = "eature Importance",
+        title: str = "Feature Importance",
     ) -> ict[str, ny]:
         """
         Generate feature importance bar chart.
 
         rgs:
-            features: eature names
+            features: Feature names
             importance: Importance scores
             title: Plot title
 
@@ -175,8 +175,8 @@ class PlotlySchemadapter:
             "layout": {
                 "title": title,
                 "xaxis": {"title": "Importance"},
-                "yaxis": {"title": "eature"},
-                "template": "plotly_white",
+                "yaxis": {"title": "Feature"},
+                "Itemplate": "plotly_white",
             },
         }
 
@@ -215,6 +215,6 @@ class PlotlySchemadapter:
                 "title": title,
                 "xaxis": {"title": xaxis_title},
                 "yaxis": {"title": yaxis_title},
-                "template": "plotly_white",
+                "Itemplate": "plotly_white",
             },
         }

@@ -61,6 +61,35 @@ docs/_build/
 docs/_static/
 docs/_templates/
 
+# Internal development documentation (keep local only)
+# Phase planning and tracking
+docs/PHASE_*.md
+docs/*_TODO.md
+docs/*_NOTES.md
+docs/*_PLAN.md
+docs/*_SUMMARY.md
+
+# Internal architecture and old docs (use Sphinx RST for public docs)
+docs/ARCHITECTURE.md
+docs/API_REFERENCE.md
+docs/USER_GUIDE.md
+
+# Implementation completion reports (internal tracking)
+docs/*_IMPLEMENTATION_COMPLETE.md
+docs/*_COMPLETE.md
+docs/COMPREHENSIVE_*.md
+docs/BENCHMARK_*.md
+docs/INTEGRATION_TEST_*.md
+
+# User guides (internal - use Sphinx RST for public docs)
+docs/*_USER_GUIDE.md
+docs/COINTEGRATION_USER_GUIDE.md
+docs/VAR_USER_GUIDE.md
+
+# Internal analysis and formulation docs
+docs/MATHEMATICAL_FORMULATIONS.md
+docs/*_ANALYSIS.md
+
 # Distribution
 *.whl
 
@@ -75,6 +104,10 @@ docs/_templates/
 # Cache
 .krl_cache/
 *.cache
+.benchmarks/
+benchmarks/benchmark_results.json
+benchmarks/*.json
+!benchmarks/example_benchmarks.json
 
 # Data files (don't commit API responses)
 data/raw/*
@@ -83,21 +116,61 @@ data/processed/*
 !data/.gitkeep
 
 # Internal development files (keep local only)
+# Roadmaps and planning documents
 DEVELOPMENT_ROADMAP.md
+arch_and_model_drafting
+krl_model_full_develop_notes
+
+# Gate completion reports (internal tracking)
 GATE1_COMPLETION_REPORT.md
 GATE2_PROGRESS_REPORT.md
-GITHUB_PUBLICATION_AUDIT.md
-ML_MODELS_UPDATE_COMPLETE.md
-MULTI_TASK_COMPLETION_REPORT.md
-OPEN_VS_PROPRIETARY_STRATEGY.md
 PHASE_2.5_COMPLETION_NOTES.md
+
+# Publication and strategy documents (internal only)
+GITHUB_PUBLICATION_AUDIT.md
+GITHUB_PUBLICATION_STATUS.md
 PUBLICATION_READY_FINAL.md
 PUBLIC_RELEASE_CHECKLIST.md
 PUBLIC_REPO_STRUCTURE_PLAN.md
-arch_and_model_drafting
-krl_model_full_develop_notes
+OPEN_VS_PROPRIETARY_STRATEGY.md
+
+# Multi-task and status reports (internal tracking)
+MULTI_TASK_COMPLETION_REPORT.md
+ML_MODELS_UPDATE_COMPLETE.md
+MODEL_IMPLEMENTATION_STATUS.md
+
+# Documentation completion reports (internal only)
+DOCUMENTATION_COMPLETE.md
+DOCUMENTATION_ECOSYSTEM_INTEGRATION.md
+CORRUPTION_RECOVERY_REPORT.md
+.gitignore_update_summary.md
+
+# Utility scripts (development only)
 add_spdx_headers.py
 fix_emoji_damage.py
+restore_corrupted_text.py
+
+# Backup files
+*.backup
+README.md.backup
+**/*.backup
+**/*.py.backup
+
+# Local database files
 model_runs.db
+*.db
+
+# Output files from examples
 cointegration_analysis.png
 var_analysis.png
+*_forecast.png
+*_forecast_*.png
+*_analysis.png
+*_results.png
+*.csv
+!tests/fixtures/*.csv
+!examples/data/*.csv
+
+# Egg info (build artifacts)
+*.egg-info/
+krl_model_zoo_core.egg-info/

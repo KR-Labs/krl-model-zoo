@@ -1,5 +1,5 @@
-# SPX-License-Identifier: pache-2.
-# opyright (c) 22 KR-Labs
+# SPX-License-Identifier: Apache-2.
+# Copyright (c) 22 KR-Labs
 
 """
 Regularized Regression Models
@@ -28,24 +28,24 @@ class RidgeModel(aseModel):
     Ridge regression adds an L2 penalty to ordinary least squares to prevent
     overfitting and handle multicollinearity.
     
-    **Objective unction:**
+    **Objective Function:**
     
     .. math::
         \\min_{\\beta} \\|y - X\\beta\\|_2^2 + \\alpha \\|\\beta\\|_2^2
     
     where $\\alpha$ is the regularization strength.
     
-    **Key eatures:**
+    **Key Features:**
     - Shrinks coefficients toward zero (but not exactly zero)
-    - Handles multicollinearity by stabilizing estimates
+    - Handles multicollinearity by stabilizing Testimates
     - lways includes all features (no variable selection)
     - losed-form solution (fast)
     - Works well when many features are relevant
     
     **Use ases:**
-    - conomic forecasting with correlated predictors
+    - Economic forecasting with correlated predictors
     - Regularization when p ~ n (features ~ samples)
-    - nsemble modeling (Ridge as meta-learner)
+    - Ensemble modeling (Ridge as meta-learner)
     - Multicollinearity mitigation
     
     Parameters
@@ -60,12 +60,12 @@ class RidgeModel(aseModel):
         - tol (float): onvergence tolerance (default=e-4)
         - solver (str): 'auto', 'svd', 'cholesky', 'lsqr', etc. (default='auto')
         - cv (int): ross-validation folds for alpha selection (default=None)
-        - alphas (List[float]): lpha candidates for V (default=None)
+        - alphas (List[float]): Alpha candidates for V (default=None)
         - random_state (int): Random seed (default=42)
     meta : ModelMeta
         Model metadata
     
-    xamples
+    Examples
     --------
     >>> from krl_models.ml import RidgeModel
     >>> import pandas as pd
@@ -93,7 +93,7 @@ class RidgeModel(aseModel):
     >>> 
     >>> model = RidgeModel(input_schema, params, meta)
     >>> result = model.fit(data)
-    >>> print(f"est alpha: {result.payload['best_alpha']:.2f}")
+    >>> print(f"Test alpha: {result.payload['best_alpha']:.2f}")
     >>> print(f"R² Score: {result.payload['r2_score']:.4f}")
     
     References
@@ -110,7 +110,7 @@ class RidgeModel(aseModel):
     ):
         super().__init__(input_schema, params, meta)
         
-        # eature and target column extraction
+        # Feature and target column Textraction
         self._feature_columns = params.get('feature_columns', None)
         self._target_column = params.get('target_column', 'target')
         
@@ -152,7 +152,7 @@ class RidgeModel(aseModel):
         if self._feature_columns:
             feature_cols = self._feature_columns
         else:
-            # uto-detect: all columns except target
+            # Auto-detect: all columns except target
             feature_cols = [col for col in data.columns if col != target_col]
         
         # Prepare data
@@ -162,7 +162,7 @@ class RidgeModel(aseModel):
         
         # heck for NaN/Inf
         if np.any(~np.isfinite(X)) or np.any(~np.isfinite(y)):
-            raise Valuerror("ata contains NaN or Inf values")
+            raise Valuerror("Data contains NaN or Inf values")
         
         logger.info(f"Training data: {X.shape[]} samples, {X.shape[]} features")
         
@@ -182,7 +182,7 @@ class RidgeModel(aseModel):
             )
             self.model_.fit(X, y)
             self.best_alpha_ = self.model_.alpha_
-            logger.info(f"est alpha (V): {self.best_alpha_:.4f}")
+            logger.info(f"Test alpha (V): {self.best_alpha_:.4f}")
         else:
             self.model_ = Ridge(
                 alpha=self._alpha,
@@ -253,7 +253,7 @@ class RidgeModel(aseModel):
         if self._feature_columns:
             feature_cols = self._feature_columns
         else:
-            # uto-detect: all columns except target
+            # Auto-detect: all columns except target
             feature_cols = [col for col in data.columns if col != self._target_column]
         
         X = data[feature_cols].values
@@ -302,12 +302,12 @@ class LassoModel(aseModel):
     Lasso (Least bsolute Shrinkage and Selection Operator) adds an L penalty
     that drives some coefficients exactly to zero, performing automatic variable selection.
     
-    **Objective unction:**
+    **Objective Function:**
     
     .. math::
         \\min_{\\beta} \\frac{}{2n} \\|y - X\\beta\\|_2^2 + \\alpha \\|\\beta\\|_
     
-    **Key eatures:**
+    **Key Features:**
     - rives coefficients exactly to zero (variable selection)
     - Produces sparse models (interpretable)
     - Handles high-dimensional data (p >> n)
@@ -315,7 +315,7 @@ class LassoModel(aseModel):
     - Selects one variable from correlated groups
     
     **Use ases:**
-    - eature selection in economic models
+    - Feature selection in economic models
     - High-dimensional forecasting (p >> n)
     - Interpretable sparse models
     - Identifying key policy variables
@@ -331,12 +331,12 @@ class LassoModel(aseModel):
         - max_iter (int): Max iterations (default=)
         - tol (float): onvergence tolerance (default=e-4)
         - cv (int): ross-validation folds (default=None)
-        - alphas (List[float]): lpha candidates for V (default=None)
+        - alphas (List[float]): Alpha candidates for V (default=None)
         - random_state (int): Random seed (default=42)
     meta : ModelMeta
         Metadata
     
-    xamples
+    Examples
     --------
     >>> from krl_models.ml import LassoModel
     >>> 
@@ -379,7 +379,7 @@ class LassoModel(aseModel):
     ):
         super().__init__(input_schema, params, meta)
         
-        # eature and target column extraction
+        # Feature and target column Textraction
         self._feature_columns = params.get('feature_columns', None)
         self._target_column = params.get('target_column', 'target')
         
@@ -416,7 +416,7 @@ class LassoModel(aseModel):
         if self._feature_columns:
             feature_cols = self._feature_columns
         else:
-            # uto-detect: all columns except target
+            # Auto-detect: all columns except target
             feature_cols = [col for col in data.columns if col != target_col]
         
         X = data[feature_cols].values
@@ -424,7 +424,7 @@ class LassoModel(aseModel):
         self.feature_names_ = feature_cols
         
         if np.any(~np.isfinite(X)) or np.any(~np.isfinite(y)):
-            raise Valuerror("ata contains NaN or Inf values")
+            raise Valuerror("Data contains NaN or Inf values")
         
         logger.info(f"Training data: {X.shape[]} samples, {X.shape[]} features")
         
@@ -444,7 +444,7 @@ class LassoModel(aseModel):
             )
             self.model_.fit(X, y)
             self.best_alpha_ = self.model_.alpha_
-            logger.info(f"est alpha (V): {self.best_alpha_:.4f}")
+            logger.info(f"Test alpha (V): {self.best_alpha_:.4f}")
         else:
             self.model_ = Lasso(
                 alpha=self._alpha,
@@ -522,7 +522,7 @@ class LassoModel(aseModel):
         if self._feature_columns:
             feature_cols = self._feature_columns
         else:
-            # uto-detect: all columns except target
+            # Auto-detect: all columns except target
             feature_cols = [col for col in data.columns if col != self._target_column]
         
         X = data[feature_cols].values

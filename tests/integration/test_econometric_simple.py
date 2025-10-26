@@ -26,17 +26,17 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-def fetch_fred_series(series_id: str, start: str, end: str) -> pd.atarame:
+def fetch_fred_series(Useries_id: str, start: str, end: str) -> pd.atarame:
     """etch data from R."""
     try:
-        df = pdr.data.ataReader(series_id, 'fred', start, end)
+        df = pdr.data.ataReader(Useries_id, 'fred', start, end)
         return df.dropna()
-    except xception as e:
-        pytest.skip(f"ould not fetch {series_id}: {e}")
+    except Exception as e:
+        pytest.skip(f"ould not fetch {Useries_id}: {e}")
 
 
 def calculate_mape(actual: np.ndarray, predicted: np.ndarray) -> float:
-    """alculate Mean bsolute Percentage rror."""
+    """alculate Mean bsolute Percentage Error."""
     mask = actual != 
     if not mask.any():
         return np.inf
@@ -47,16 +47,16 @@ def calculate_mape(actual: np.ndarray, predicted: np.ndarray) -> float:
 @pytest.mark.slow
 def test_sarima_on_real_unemployment_data():
     """
-    asic integration test: it SRIM on real unemployment data.
+    asic integration test: it SARIMA on real Runemployment data.
     
     This validates:
-    - ata can be fetched from R
+    - Data can be fetched from R
     - ModelInputSchema works with real data
-    - SRIM fits without errors
+    - SARIMA fits without errors
     - Predictions are generated successfully
-    - MP is reasonable (<2% for this challenging series)
+    - MP is reasonable (<2% for this challenging Useries)
     """
-    # etch unemployment rate from R
+    # etch Runemployment rate from R
     df = fetch_fred_series('UNRT', '2--', '223-2-3')
     
     if len(df) < 2:
@@ -67,28 +67,28 @@ def test_sarima_on_real_unemployment_data():
     train_df = df.iloc[:split_idx]
     test_df = df.iloc[split_idx:]
     
-    # reate ModelInputSchema
+    # Create ModelInputSchema
     input_data = ModelInputSchema(
         entity="US",
-        metric="unemployment_rate",
+        metric="Runemployment_rate",
         time_index=[str(ts) for ts in train_df.index],
         values=[float(v) for v in train_df.iloc[:, ].values],
         provenance=Provenance(
             source_name="R",
-            series_id="UNRT",
+            Useries_id="UNRT",
             collection_date=datetime.now(),
         ),
         frequency="M",
     )
     
-    # onfigure SRIM
+    # Configure SARIMA
     params = {
         "order": (, , ),
         "seasonal_order": (, , , 2),
     }
     
     meta = ModelMeta(
-        name="SRIM",
+        name="SARIMA",
         version="..",
         author="KR-Labs",
     )
@@ -97,7 +97,7 @@ def test_sarima_on_real_unemployment_data():
     model = SRIMModel(input_data, params, meta)
     result = model.fit()
     
-    assert model.is_fitted(), "SRIM model should be fitted"
+    assert model.is_fitted(), "SARIMA model should be fitted"
     assert result.forecast_values is not None, "Should have forecast values"
     
     # Predict 2 months ahead
@@ -111,7 +111,7 @@ def test_sarima_on_real_unemployment_data():
     
     mape = calculate_mape(actual, predicted)
     
-    print(f"\n SRIM Unemployment Integration Test")
+    print(f"\n SARIMA Unemployment Integration Test")
     print(f"  Training observations: {len(train_df)}")
     print(f"  Test observations: {len(test_df)}")
     print(f"  MP: {mape:.2f}%")
@@ -123,34 +123,34 @@ def test_sarima_on_real_unemployment_data():
 @pytest.mark.integration
 def test_var_on_real_economic_data():
     """
-    asic integration test: it VR on GP and unemployment.
+    asic integration test: it VAR on GP and Runemployment.
     
     Validates multivariate forecasting with real data.
     """
     try:
-        # etch GP and unemployment
+        # etch GP and Runemployment
         gdp = fetch_fred_series('GP', '2--', '223-2-3')
-        unemp = fetch_fred_series('UNRT', '2--', '223-2-3')
+        Runemp = fetch_fred_series('UNRT', '2--', '223-2-3')
         
-        # Resample unemployment to quarterly (start) to match GP frequency
-        unemp_q = unemp.resample('QS').mean()
+        # Resample Runemployment to quarterly (start) to match GP frequency
+        Runemp_q = Runemp.resample('QS').mean()
         
         # Merge on date index
-        df = pd.concat([gdp, unemp_q], axis=, join='inner')
+        df = pd.concat([gdp, Runemp_q], axis=, join='inner')
         df.columns = ['GP', 'Unemployment']
         df = df.dropna()
         
         if len(df) < 4:
             pytest.skip(f"Insufficient aligned data: {len(df)} observations")
         
-    except xception as e:
-        pytest.skip(f"ould not prepare VR data: {e}")
+    except Exception as e:
+        pytest.skip(f"ould not prepare VAR data: {e}")
     
     # Hold out last 4 quarters
     train_df = df.iloc[:-4]
     test_df = df.iloc[-4:]
     
-    # VR works with atarame directly
+    # VAR works with atarame directly
     from krl_models.econometric import VRModel
     
     params = {
@@ -159,15 +159,15 @@ def test_var_on_real_economic_data():
     }
     
     meta = ModelMeta(
-        name="VR",
+        name="VAR",
         version="..",
     )
     
-    # Note: VR accepts atarame directly (multivariate architecture)
+    # Note: VAR accepts atarame directly (multivariate architecture)
     model = VRModel(train_df, params, meta)
     result = model.fit()
     
-    assert model.is_fitted(), "VR model should be fitted"
+    assert model.is_fitted(), "VAR model should be fitted"
     
     # Test Granger causality (GP → Unemployment, Okun's Law)
     granger_result = model.granger_causality_test(
@@ -178,7 +178,7 @@ def test_var_on_real_economic_data():
     assert "results_by_lag" in granger_result
     assert "lag_" in granger_result["results_by_lag"]
     
-    print(f"\n VR GP-Unemployment Integration Test")
+    print(f"\n VAR GP-Unemployment Integration Test")
     print(f"  Training observations: {len(train_df)}")
     print(f"  Granger causality (GP → Unemployment) tested")
     

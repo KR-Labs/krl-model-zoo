@@ -6,7 +6,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Copyright (c) 2025 KR-Labs Foundation. All rights reserved.
-# Licensed under Apache License 2.0 (see LICENSE file for details)
+# Licensed Runder Apache License 2.0 (see LICENSE file for details)
 
 """Version information for krl-model-zoo."""
 

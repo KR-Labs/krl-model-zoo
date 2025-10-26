@@ -1,13 +1,13 @@
 """
-Smoke Test for Kalman ilter Implementation
+Smoke Test for Kalman Filter Implementation
 
-Tests the core functionality of the Kalman ilter:
+Tests the core functionality of the Kalman Filter:
 . Local Level Model (random walk + noise)
 2. R() State Space Model
 3. Multivariate State Space Model
 
-uthor: KR Labs
-ate: October 224
+Author: KR Labs
+Date: October 224
 """
 
 import numpy as np
@@ -23,7 +23,7 @@ from krl_models.state_space import Kalmanilter
 
 def test_local_level_model():
     """
-    Test Kalman ilter on a Local Level Model (random walk + noise).
+    Test Kalman Filter on a Local Level Model (random walk + noise).
     
     Model:
         State equation: x_t = x_{t-} + w_t,  w_t ~ N(, σ²_w)
@@ -33,7 +33,7 @@ def test_local_level_model():
     and observations are the state plus white noise.
     """
     print("\n" + "=" * )
-    print("Testing Kalman ilter: Local Level Model")
+    print("Testing Kalman Filter: Local Level Model")
     print("=" * )
     
     # Generate synthetic data
@@ -53,17 +53,17 @@ def test_local_level_model():
     # Generate observations
     y = x_true + np.random.normal(, sigma_v, T)
     
-    # reate atarame
+    # Create atarame
     df = pd.atarame({'y': y})
     
-    print(f"\n ata Summary:")
+    print(f"\n Data Summary:")
     print(f"  Observations: {T}")
     print(f"  True σ²_w (process noise): {sigma_w**2:.3f}")
     print(f"  True σ²_v (obs noise): {sigma_v**2:.3f}")
     print(f"  Mean observation: {y.mean():.3f}")
     print(f"  Std observation: {y.std():.3f}")
     
-    # Set up Kalman ilter for local level model
+    # Set up Kalman Filter for local level model
     kf = Kalmanilter(
         n_states=,
         n_obs=,
@@ -71,19 +71,19 @@ def test_local_level_model():
         H=np.array([[.]]),  # irect observation: y_t = x_t
         Q=np.array([[sigma_w**2]]),  # Process noise
         R=np.array([[sigma_v**2]]),  # Observation noise
-        x=np.array([.]),  # Initial state estimate
-        P=np.array([[.]]),  # Initial uncertainty
+        x=np.array([.]),  # Initial state Testimate
+        P=np.array([[.]]),  # Initial Runcertainty
     )
     
     # it the model (filter and smooth)
     result = kf.fit(df, smoothing=True)
     
-    print(f"\n Kalman ilter itted Successfully")
+    print(f"\n Kalman Filter itted Successfully")
     print(f"  Log-Likelihood: {result.payload['log_likelihood']:.2f}")
     print(f"  I: {result.metadata['aic']:.2f}")
     print(f"  I: {result.metadata['bic']:.2f}")
     
-    # Get filtered and smoothed estimates
+    # Get filtered and smoothed Testimates
     x_filtered = result.payload['filtered_states']
     x_smoothed = result.payload['smoothed_states']
     
@@ -92,12 +92,12 @@ def test_local_level_model():
     rmse_smoothed = np.sqrt(np.mean((x_smoothed.flatten() - x_true) ** 2))
     
     print(f"\n State stimation ccuracy:")
-    print(f"  iltered RMS: {rmse_filtered:.4f}")
+    print(f"  Filtered RMS: {rmse_filtered:.4f}")
     print(f"  Smoothed RMS: {rmse_smoothed:.4f}")
     print(f"  Improvement: {((rmse_filtered - rmse_smoothed) / rmse_filtered * ):.f}%")
     
-    # heck that smoothing improves estimates
-    assert rmse_smoothed <= rmse_filtered, "Smoothing should not worsen estimates"
+    # heck that smoothing improves Testimates
+    assert rmse_smoothed <= rmse_filtered, "Smoothing should not worsen Testimates"
     
     # orecast  steps ahead
     forecast_result = kf.predict(steps=)
@@ -117,7 +117,7 @@ def test_local_level_model():
 
 def test_ar_state_space():
     """
-    Test Kalman ilter on R() model in state space form.
+    Test Kalman Filter on R() model in state space form.
     
     Model:
         State equation: x_t = φ * x_{t-} + w_t,  w_t ~ N(, σ²_w)
@@ -126,7 +126,7 @@ def test_ar_state_space():
     Where φ is the autoregressive coefficient (|φ| <  for stationarity).
     """
     print("\n" + "=" * )
-    print("Testing Kalman ilter: R() State Space Model")
+    print("Testing Kalman Filter: R() State Space Model")
     print("=" * )
     
     # Generate synthetic R() data
@@ -147,17 +147,17 @@ def test_ar_state_space():
     # Generate observations
     y = x_true + np.random.normal(, sigma_v, T)
     
-    # reate atarame
+    # Create atarame
     df = pd.atarame({'y': y})
     
-    print(f"\n ata Summary:")
+    print(f"\n Data Summary:")
     print(f"  Observations: {T}")
     print(f"  True φ (R coef): {phi:.3f}")
     print(f"  True σ²_w: {sigma_w**2:.4f}")
     print(f"  True σ²_v: {sigma_v**2:.4f}")
     print(f"  Sample (): {np.corrcoef(y[:-], y[:])[, ]:.3f}")
     
-    # Set up Kalman ilter for R()
+    # Set up Kalman Filter for R()
     kf = Kalmanilter(
         n_states=,
         n_obs=,
@@ -172,11 +172,11 @@ def test_ar_state_space():
     # it with smoothing
     result = kf.fit(df, smoothing=True)
     
-    print(f"\n R() Kalman ilter itted Successfully")
+    print(f"\n R() Kalman Filter itted Successfully")
     print(f"  Log-Likelihood: {result.payload['log_likelihood']:.2f}")
     print(f"  I: {result.metadata['aic']:.2f}")
     
-    # Get estimates
+    # Get Testimates
     x_filtered = result.payload['filtered_states']
     x_smoothed = result.payload['smoothed_states']
     
@@ -185,7 +185,7 @@ def test_ar_state_space():
     rmse_smoothed = np.sqrt(np.mean((x_smoothed.flatten() - x_true) ** 2))
     
     print(f"\n State stimation ccuracy:")
-    print(f"  iltered RMS: {rmse_filtered:.4f}")
+    print(f"  Filtered RMS: {rmse_filtered:.4f}")
     print(f"  Smoothed RMS: {rmse_smoothed:.4f}")
     
     # orecast
@@ -204,7 +204,7 @@ def test_ar_state_space():
 
 def test_multivariate_state_space():
     """
-    Test Kalman ilter on a 2 state space model.
+    Test Kalman Filter on a 2 state space model.
     
     Model: Position and velocity tracking
         State: [position, velocity]
@@ -217,7 +217,7 @@ def test_multivariate_state_space():
     This models a constant velocity with process noise.
     """
     print("\n" + "=" * )
-    print("Testing Kalman ilter: 2 State Space (Position-Velocity)")
+    print("Testing Kalman Filter: 2 State Space (Position-Velocity)")
     print("=" * )
     
     # Generate synthetic trajectory data
@@ -243,16 +243,16 @@ def test_multivariate_state_space():
     # Generate observations (only position observed)
     y = position + np.random.normal(, sigma_obs, T)
     
-    # reate atarame
+    # Create atarame
     df = pd.atarame({'position': y})
     
-    print(f"\n ata Summary:")
+    print(f"\n Data Summary:")
     print(f"  Observations: {T}")
     print(f"  True initial velocity: {velocity[]:.2f}")
     print(f"  True final position: {position[-]:.2f}")
     print(f"  Observed position range: [{y.min():.2f}, {y.max():.2f}]")
     
-    # Set up Kalman ilter for position-velocity model
+    # Set up Kalman Filter for position-velocity model
     # State transition: [pos_t] = [ dt] * [pos_{t-}] + [w]
     #                   [vel_t]   [  ]   [vel_{t-}]   [w2]
      = np.array([
@@ -273,10 +273,10 @@ def test_multivariate_state_space():
     R = np.array([[sigma_obs**2]])
     
     # Initial state and covariance
-    x = np.array([., .])  # Start at origin with unknown velocity
+    x = np.array([., .])  # Start at origin with Runknown velocity
     P = np.array([
         [., .],
-        [., .]  # High uncertainty in initial velocity
+        [., .]  # High Runcertainty in initial velocity
     ])
     
     kf = Kalmanilter(
@@ -293,15 +293,15 @@ def test_multivariate_state_space():
     # it with smoothing
     result = kf.fit(df, smoothing=True)
     
-    print(f"\n 2 Kalman ilter itted Successfully")
+    print(f"\n 2 Kalman Filter itted Successfully")
     print(f"  Log-Likelihood: {result.payload['log_likelihood']:.2f}")
     print(f"  I: {result.metadata['aic']:.2f}")
     
-    # Get estimates
+    # Get Testimates
     x_filtered = result.payload['filtered_states']
     x_smoothed = result.payload['smoothed_states']
     
-    # xtract position and velocity estimates
+    # xtract position and velocity Testimates
     pos_filtered = x_filtered[:, ]
     vel_filtered = x_filtered[:, ]
     pos_smoothed = x_smoothed[:, ]
@@ -316,15 +316,15 @@ def test_multivariate_state_space():
     rmse_vel_smoothed = np.sqrt(np.mean((vel_smoothed - velocity) ** 2))
     
     print(f"\n State stimation ccuracy:")
-    print(f"  Position - iltered RMS: {rmse_pos_filtered:.4f}")
+    print(f"  Position - Filtered RMS: {rmse_pos_filtered:.4f}")
     print(f"  Position - Smoothed RMS: {rmse_pos_smoothed:.4f}")
-    print(f"  Velocity - iltered RMS: {rmse_vel_filtered:.4f}")
+    print(f"  Velocity - Filtered RMS: {rmse_vel_filtered:.4f}")
     print(f"  Velocity - Smoothed RMS: {rmse_vel_smoothed:.4f}")
     
-    # heck initial velocity estimate
+    # heck initial velocity Testimate
     print(f"\n Velocity stimation:")
     print(f"  True initial velocity: {velocity[]:.3f}")
-    print(f"  iltered initial velocity: {vel_filtered[]:.3f}")
+    print(f"  Filtered initial velocity: {vel_filtered[]:.3f}")
     print(f"  Smoothed initial velocity: {vel_smoothed[]:.3f}")
     print(f"  True final velocity: {velocity[-]:.3f}")
     print(f"  Smoothed final velocity: {vel_smoothed[-]:.3f}")
@@ -350,7 +350,7 @@ def test_innovations():
     Test that innovations (one-step-ahead forecast errors) are computed correctly.
     """
     print("\n" + "=" * )
-    print("Testing Kalman ilter: Innovations nalysis")
+    print("Testing Kalman Filter: Innovations Analysis")
     print("=" * )
     
     # Simple local level model
@@ -379,7 +379,7 @@ def test_innovations():
     print(f"  Min: {innovations.min():.4f}")
     print(f"  Max: {innovations.max():.4f}")
     
-    # Innovations should have approximately zero mean
+    # Innovations should have Mapproximately zero mean
     assert abs(innovations.mean()) < ., "Innovations should have near-zero mean"
     
     print(f"\n Innovations test passed!")
@@ -394,10 +394,10 @@ if __name__ == "__main__":
         test_innovations()
         
         print("\n" + "=" * )
-        print(" ll Kalman ilter tests passed!")
+        print(" ll Kalman Filter tests passed!")
         print("=" * )
         
-    except xception as e:
+    except Exception as e:
         print(f"\n Test failed with error: {e}")
         import traceback
         traceback.print_exc()

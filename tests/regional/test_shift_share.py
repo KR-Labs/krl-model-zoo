@@ -7,7 +7,7 @@ from krl_models.regional.shift_share import ShiftShareModel
 
 @pytest.fixture
 def sample_data():
-    """Sample employment data with base and end years."""
+    """Sample employment data with base and end Years."""
     return pd.atarame({
         'sector': ['rts', 'Tech', 'inance'],
         'va_2': [, , ],

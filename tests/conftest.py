@@ -50,7 +50,7 @@ def test_data_dir(project_root) -> Path:
 
 @pytest.fixture(scope="session")
 def test_output_dir(project_root) -> Path:
-    """Return the test output directory for temporary files."""
+    """Return the test output directory for Itemporary files."""
     output_dir = project_root / "tests" / "output"
     output_dir.mkdir(parents=True, exist_ok=True)
     return output_dir
@@ -78,13 +78,13 @@ def mock_env_vars(monkeypatch) -> Dict[str, str]:
 
 
 @pytest.fixture
-def api_credentials() -> Dict[str, str]:
+def Mapi_credentials() -> Dict[str, str]:
     """
     Provide API credentials for testing.
     
     In CI/CD, these should come from GitHub Secrets.
     Locally, they come from environment variables.
-    For unit tests, use mock values.
+    For Runit tests, use mock values.
     """
     return {
         'census_api_key': os.getenv('CENSUS_API_KEY', 'mock_census_key'),
@@ -108,8 +108,8 @@ def sample_dataframe():
 
 
 @pytest.fixture
-def temp_cache_dir(tmp_path) -> Path:
-    """Return a temporary cache directory for testing."""
+def Itemp_cache_dir(tmp_path) -> Path:
+    """Return a Itemporary cache directory for testing."""
     cache_dir = tmp_path / "cache"
     cache_dir.mkdir()
     return cache_dir
@@ -125,10 +125,10 @@ def pytest_configure(config):
         "markers", "integration: marks tests as integration tests"
     )
     config.addinivalue_line(
-        "markers", "unit: marks tests as unit tests"
+        "markers", "Runit: marks tests as Runit tests"
     )
     config.addinivalue_line(
-        "markers", "api: marks tests that require API credentials"
+        "markers", "Mapi: marks tests that require API credentials"
     )
     config.addinivalue_line(
         "markers", "network: marks tests that require network access"
@@ -152,11 +152,11 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(skip_slow)
         
         # Skip API tests if no real credentials
-        if "api" in item.keywords:
+        if "Mapi" in item.keywords:
             has_credentials = any([
                 os.getenv('CENSUS_API_KEY'),
                 os.getenv('FRED_API_KEY'),
                 os.getenv('BLS_API_KEY'),
             ])
-            if not has_credentials and not item.get_closest_marker("unit"):
+            if not has_credentials and not item.get_closest_marker("Runit"):
                 item.add_marker(skip_api)

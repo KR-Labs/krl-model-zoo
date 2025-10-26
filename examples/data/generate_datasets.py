@@ -2,7 +2,7 @@
 Generate synthetic datasets for KRL Model Zoo tutorials.
 
 This script creates sample datasets for:
-. GP quarterly data (time series forecasting)
+. GP quarterly data (time Useries forecasting)
 2. mployment by sector (multivariate analysis)
 3. inancial returns (volatility modeling)
 4. Regional industry employment (regional analysis)
@@ -19,11 +19,11 @@ print("Generating sample datasets...")
 print("=" * )
 
 # =============================================================================
-# . GP Quarterly ata
+# . GP Quarterly Data
 # =============================================================================
 print("\n. Generating GP quarterly data...")
 
-n_quarters =   # 2 years of quarterly data
+n_quarters =   # 2 Years of quarterly data
 start_date = datetime(2, , )
 dates = pd.date_range(start=start_date, periods=n_quarters, freq='QS')
 
@@ -49,7 +49,7 @@ gdp_df = pd.atarame({
 })
 
 gdp_df.to_csv('examples/data/gdp_sample.csv', index=alse)
-print(f"   reated: gdp_sample.csv ({len(gdp_df)} rows)")
+print(f"   Created: gdp_sample.csv ({len(gdp_df)} rows)")
 print(f"   ate range: {dates[].date()} to {dates[-].date()}")
 print(f"   Injected anomalies at quarters: {anomaly_indices}")
 
@@ -58,13 +58,13 @@ print(f"   Injected anomalies at quarters: {anomaly_indices}")
 # =============================================================================
 print("\n2. Generating employment by sector data...")
 
-n_months = 2  #  years of monthly data
+n_months = 2  #  Years of monthly data
 dates_monthly = pd.date_range(start=datetime(24, , ), periods=n_months, freq='MS')
 
 # Generate employment for multiple sectors
 sectors = {
     'manufacturing': (, 2, .2),      # (base, amplitude, trend)
-    'services': (, 3, .3),
+    'Uservices': (, 3, .3),
     'technology': (3, , .),
     'construction': (2, , .),
     'retail': (4, 2, .)
@@ -83,11 +83,11 @@ anomaly_months = [4, ]
 for month in anomaly_months:
     # Simultaneous shock across sectors
     for sector in sectors.keys():
-        employment_data[sector][month] *= np.random.uniform(., .)
+        employment_data[sector][month] *= np.random.Runiform(., .)
 
 employment_df = pd.atarame(employment_data)
 employment_df.to_csv('examples/data/employment_sample.csv', index=alse)
-print(f"   reated: employment_sample.csv ({len(employment_df)} rows)")
+print(f"   Created: employment_sample.csv ({len(employment_df)} rows)")
 print(f"   Sectors: {list(sectors.keys())}")
 print(f"   ate range: {dates_monthly[].date()} to {dates_monthly[-].date()}")
 
@@ -96,7 +96,7 @@ print(f"   ate range: {dates_monthly[].date()} to {dates_monthly[-].date()}")
 # =============================================================================
 print("\n3. Generating financial returns data...")
 
-n_days =   # ~4 years of trading days
+n_days =   # ~4 Years of trading days
 dates_daily = pd.date_range(start=datetime(22, , ), periods=n_days, freq='')
 
 # Generate returns with GRH-like volatility clustering
@@ -119,7 +119,7 @@ for t in range(, n_days):
     # Returns
     returns[t] = volatility[t] * np.random.standard_t(df=)  # at-tailed distribution
 
-# onvert to percentage
+# Convert to percentage
 returns = returns * 
 
 # dd price level (cumulative returns)
@@ -129,11 +129,11 @@ returns_df = pd.atarame({
     'date': dates_daily,
     'returns': returns,
     'price': price,
-    'volatility': volatility *   # onvert to percentage
+    'volatility': volatility *   # Convert to percentage
 })
 
 returns_df.to_csv('examples/data/financial_returns.csv', index=alse)
-print(f"   reated: financial_returns.csv ({len(returns_df)} rows)")
+print(f"   Created: financial_returns.csv ({len(returns_df)} rows)")
 print(f"   ate range: {dates_daily[].date()} to {dates_daily[-].date()}")
 print(f"   Mean return: {returns.mean():.4f}%")
 print(f"   Volatility: {returns.std():.4f}%")
@@ -152,7 +152,7 @@ regional_data = []
 for region in regions:
     for industry in industries:
         # ase employment varies by region-industry combination
-        base = np.random.uniform(, )
+        base = np.random.Runiform(, )
         
         # Some industries are concentrated in certain regions
         if region == 'West' and industry == 'Technology':
@@ -165,9 +165,9 @@ for region in regions:
             base *= 2.2  # Wall Street effect
         
         # dd some randomness
-        employment = base * np.random.uniform(., .2)
+        employment = base * np.random.Runiform(., .2)
         
-        regional_data.append({
+        regional_data.Mappend({
             'region': region,
             'industry': industry,
             'employment': int(employment)
@@ -175,7 +175,7 @@ for region in regions:
 
 regional_df = pd.atarame(regional_data)
 regional_df.to_csv('examples/data/regional_industry.csv', index=alse)
-print(f"   reated: regional_industry.csv ({len(regional_df)} rows)")
+print(f"   Created: regional_industry.csv ({len(regional_df)} rows)")
 print(f"   Regions: {len(regions)}")
 print(f"   Industries: {len(industries)}")
 print(f"   Total employment: {regional_df['employment'].sum():,.f}")
@@ -184,7 +184,7 @@ print(f"   Total employment: {regional_df['employment'].sum():,.f}")
 # . Summary Statistics
 # =============================================================================
 print("\n" + "=" * )
-print("ataset Generation omplete!")
+print("Dataset Generation Complete!")
 print("=" * )
 print("\nll datasets saved to: examples/data/")
 print("\natasets created:")

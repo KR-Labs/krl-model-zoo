@@ -1,19 +1,19 @@
 # ----------------------------------------------------------------------
-# © 22 KR-Labs. ll rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LL,
+# Copyright 2024 KR-Labs. All rights reserved.
+# KR-Labs is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: MIT
+# SPDX-License-Identifier: MIT
 
 """
 Volatility Models Package.
 
-Provides GRH family models for conditional volatility forecasting
+Provides GARCH family models for conditional volatility forecasting
 in financial time series.
 """
 
-from .garch_model import GRHModel
-from .egarch_model import GRHModel
-from .gjr_garch_model import GJRGRHModel
+from .garch_model import GARCHModel
+from .egarch_model import EGARCHModel
+from .gjr_garch_model import GJRGARCHModel
 
-__all__ = ["GRHModel", "GRHModel", "GJRGRHModel"]
+__all__ = ["GARCHModel", "EGARCHModel", "GJRGARCHModel"]

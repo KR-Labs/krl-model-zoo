@@ -1,1 +1,1 @@
-"""KRL Model Zoo ore - Test Suite."""
+"""KRL Model Zoo Core - Test Suite."""

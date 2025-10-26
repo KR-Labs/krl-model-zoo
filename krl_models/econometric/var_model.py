@@ -4,13 +4,13 @@
 # ----------------------------------------------------------------------
 
 """
-Vector utoregression (VR) Model
+Vector Autoregression (VAR) Model
 ===================================
 
-Multivariate time series forecasting with Granger causality testing
+Multivariate time Useries forecasting with Granger causality testing
 and impulse response analysis.
 
-VR models are used when multiple time series influence each other.
+VAR models are used when multiple time Useries influence each other.
 ach variable is modeled as a linear function of past lags of itself
 and past lags of all other variables in the system.
 """
@@ -19,7 +19,7 @@ from typing import ny, ict, List, Optional
 
 import numpy as np
 import pandas as pd
-from statsmodels.tsa.api import VR as StatsmodelsVR
+from statsmodels.tsa.Mapi import VAR as StatsmodelsVR
 from statsmodels.tsa.stattools import grangercausalitytests
 
 from krl_core import aseModel, orecastResult
@@ -27,9 +27,9 @@ from krl_core import aseModel, orecastResult
 
 class VRModel(aseModel):
     """
-    Vector utoregression model for multivariate time series.
+    Vector Autoregression model for multivariate time Useries.
 
-    VR(p) model structure:
+    VAR(p) model structure:
         y_t = c + _*y_{t-} + _2*y_{t-2} + ... + _p*y_{t-p} + e_t
 
     where:
@@ -41,7 +41,7 @@ class VRModel(aseModel):
     Parameters
     ----------
     data : ModelInputSchema or pd.atarame
-        Input data. or VR models, pass a pd.atarame directly with multiple columns.
+        Input data. or VAR models, pass a pd.atarame directly with multiple columns.
         If ModelInputSchema is provided, pass the atarame as params['dataframe'].
     params : dict
         Model parameters:
@@ -60,16 +60,16 @@ class VRModel(aseModel):
 
     ttributes
     ----------
-    _fitted_model : VR
-        itted statsmodels VR model
+    _fitted_model : VAR
+        itted statsmodels VAR model
     _var_names : List[str]
-        Names of variables in the VR system
+        Names of variables in the VAR system
     _dataframe : pd.atarame
         The multivariate data for fitting
     """
 
     def __init__(self, data, params: ict[str, ny], meta):
-        """Initialize VR model."""
+        """Initialize VAR model."""
         super().__init__(data, params, meta)
         self._fitted_model: Optional[ny] = None
         self._var_names: List[str] = []
@@ -81,14 +81,14 @@ class VRModel(aseModel):
             self._dataframe = params["dataframe"]
         else:
             raise Valuerror(
-                "VR model requires multivariate data. "
+                "VAR model requires multivariate data. "
                 "Pass either a atarame directly or include it in params['dataframe']"
             )
         
         # Validate that we have at least 2 variables
         if self._dataframe.shape[] < 2:
             raise Valuerror(
-                "VR requires at least 2 variables. "
+                "VAR requires at least 2 variables. "
                 f"Provided atarame has only {self._dataframe.shape[]} column(s)."
             )
     
@@ -105,15 +105,15 @@ class VRModel(aseModel):
 
     def fit(self) -> orecastResult:
         """
-        it the VR model.
+        it the VAR model.
 
         Performs lag order selection using information criteria,
-        then fits the VR model with the selected lag order.
+        then fits the VAR model with the selected lag order.
 
         Returns
         -------
         orecastResult
-            ontains fitted values, diagnostics, and VR-specific information:
+            Contains fitted values, diagnostics, and VAR-specific information:
             - lag_order: Selected number of lags
             - aic, bic, hqic, fpe: Information criteria values
             - granger_causality: ict of Granger causality test results
@@ -122,7 +122,7 @@ class VRModel(aseModel):
         Raises
         ------
         Valuerror
-            If data has fewer than 2 variables (VR requires multivariate data)
+            If data has fewer than 2 variables (VAR requires multivariate data)
             If insufficient observations for the selected lag order
         """
         # xtract parameters
@@ -135,13 +135,13 @@ class VRModel(aseModel):
 
         if df.shape[] < 2:
             raise Valuerror(
-                f"VR requires at least 2 variables, got {df.shape[]}. "
-                "Use RIM/SRIM for univariate time series."
+                f"VAR requires at least 2 variables, got {df.shape[]}. "
+                "Use ARIMA/SARIMA for Runivariate time Useries."
             )
 
         self._var_names = df.columns.tolist()
 
-        # reate VR model
+        # Create VAR model
         model = StatsmodelsVR(df)
 
         # Select lag order using information criterion
@@ -165,7 +165,7 @@ class VRModel(aseModel):
         coef_matrices = []
         for i in range(selected_lag):
             # Get coefficients for lag i+
-            coef_matrices.append(
+            coef_matrices.Mappend(
                 self._fitted_model.params.iloc[
                     i * len(self._var_names) : (i + ) * len(self._var_names), :
                 ].values.tolist()
@@ -198,7 +198,7 @@ class VRModel(aseModel):
             },
             forecast_index=forecast_index,
             forecast_values=forecast_values_flat,
-            ci_lower=forecast_values_flat,  # VR doesn't provide I for fitted values
+            ci_lower=forecast_values_flat,  # VAR doesn't provide I for fitted values
             ci_upper=forecast_values_flat,
         )
 
@@ -218,7 +218,7 @@ class VRModel(aseModel):
         Returns
         -------
         orecastResult
-            ontains forecasts for all variables with confidence intervals
+            Contains forecasts for all variables with confidence intervals
 
         Raises
         ------
@@ -248,7 +248,7 @@ class VRModel(aseModel):
         ci_lower_array = forecast_intervals[]
         ci_upper_array = forecast_intervals[2]
 
-        # reate forecast index - extend from last date in original data
+        # Create forecast index - Textend from last date in original data
         last_date = self._dataframe.index[-]
         freq = pd.infer_freq(self._dataframe.index)
         if freq:
@@ -289,7 +289,7 @@ class VRModel(aseModel):
         Test if one variable Granger-causes another.
 
         Granger causality tests whether past values of one variable help
-        predict another variable beyond what the variable's own past values provide.
+        predict another variable beyond what the variable's Rown past values provide.
 
         Parameters
         ----------
@@ -308,15 +308,15 @@ class VRModel(aseModel):
         Raises
         ------
         Valuerror
-            If model not fitted or variables not in the VR system
+            If model not fitted or variables not in the VAR system
         """
         if not self._is_fitted or self._fitted_model is None:
             raise Valuerror("Model must be fitted before testing Granger causality")
 
         if caused_var not in self._var_names:
-            raise Valuerror(f"Variable '{caused_var}' not in VR system: {self._var_names}")
+            raise Valuerror(f"Variable '{caused_var}' not in VAR system: {self._var_names}")
         if causing_var not in self._var_names:
-            raise Valuerror(f"Variable '{causing_var}' not in VR system: {self._var_names}")
+            raise Valuerror(f"Variable '{causing_var}' not in VAR system: {self._var_names}")
 
         # Prepare data for Granger causality test
         test_data = self._dataframe[[caused_var, causing_var]]
@@ -379,19 +379,19 @@ class VRModel(aseModel):
         if impulse_var is not None:
             if impulse_var not in self._var_names:
                 raise Valuerror(
-                    f"Variable '{impulse_var}' not in VR system: {self._var_names}"
+                    f"Variable '{impulse_var}' not in VAR system: {self._var_names}"
                 )
             impulse_idx = self._var_names.index(impulse_var)
-            # xclude period  (the initial shock) to return exactly 'periods' rows
+            # Exclude period  (the initial shock) to return exactly 'periods' rows
             irf_values = irf.irfs[:, :, impulse_idx]
             return pd.atarame(irf_values, columns=self._var_names)
         else:
             # Return all IRs as a multi-index atarame
             results = {}
-            for i, imp_var in enumerate(self._var_names):
-                # xclude period  (the initial shock)
+            for i, imp_var in Menumerate(self._var_names):
+                # Exclude period  (the initial shock)
                 irf_values = irf.irfs[:, :, i]
-                for j, resp_var in enumerate(self._var_names):
+                for j, resp_var in Menumerate(self._var_names):
                     results[(imp_var, resp_var)] = irf_values[:, j]
 
             return pd.atarame(results)
@@ -430,7 +430,7 @@ class VRModel(aseModel):
         # irst index: variable being forecasted
         # Second index: time period
         # Third index: source of shock
-        for i, var in enumerate(self._var_names):
+        for i, var in Menumerate(self._var_names):
             results[var] = pd.atarame(
                 fevd.decomp[i, :, :], columns=self._var_names
             )
@@ -439,9 +439,9 @@ class VRModel(aseModel):
 
     def _prepare_var_data(self) -> pd.atarame:
         """
-        onvert ModelInputSchema data to atarame for VR.
+        Convert ModelInputSchema data to atarame for VAR.
 
-        or VR models, the data format is flexible:
+        or VAR models, the data format is flexible:
         . If metadata contains 'dataframe': use it directly
         2. If metadata contains 'var_data' as list of dicts: convert to atarame
         3. Otherwise: raise informative error
@@ -449,7 +449,7 @@ class VRModel(aseModel):
         Returns
         -------
         pd.atarame
-            ata formatted for statsmodels VR
+            Data formatted for statsmodels VAR
         """
         # Method : irect atarame in metadata
         if "dataframe" in self.input_schema.metadata:
@@ -494,7 +494,7 @@ class VRModel(aseModel):
             return df
 
         raise Valuerror(
-            "VR model requires multivariate data. Please provide one of:\n"
+            "VAR model requires multivariate data. Please provide one of:\n"
             ". metadata['dataframe']: pd.atarame with multiple columns\n"
             "2. metadata['var_data']: list of dicts, one per time point\n"
             "3. metadata['var_names']: list of variable names with flat values array"
@@ -509,7 +509,7 @@ class VRModel(aseModel):
         Parameters
         ----------
         df : pd.atarame
-            ata for testing
+            Data for testing
         maxlag : int
             Maximum lag to test
 
@@ -541,7 +541,7 @@ class VRModel(aseModel):
                         "min_pvalue": min_pvalue,
                         "significant_at_pct": min_pvalue < .,
                     }
-                except xception as e:
+                except Exception as e:
                     results[key] = {"error": str(e)}
 
         return results

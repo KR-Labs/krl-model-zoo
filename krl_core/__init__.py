@@ -3,10 +3,10 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LL,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: pache-2.
+# SPX-License-Identifier: Apache-2.
 
 """
-KRL Model Zoo ore - Production model orchestration framework.
+KRL Model Zoo Core - Production model orchestration framework.
 """
 
 from .base_model import aseModel, ModelMeta

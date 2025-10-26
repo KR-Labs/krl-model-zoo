@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-ointegration nalysis xample
+ointegration Analysis Example
 ===============================
 
 emonstrates testing for long-run equilibrium relationships between
-non-stationary time series using ngle-Granger and Johansen tests.
+non-stationary time Useries using ngle-Granger and Johansen tests.
 
 This example uses synthetic financial data (spot and futures prices)
-to showcase cointegration testing and VM estimation.
+to showcase cointegration testing and VM Testimation.
 """
 
 import sys
@@ -56,7 +56,7 @@ def generate_non_cointegrated_assets(n=2, seed=23):
     """
     Generate synthetic non-cointegrated asset prices.
     
-    Two independent random walks representing unrelated assets.
+    Two independent random walks representing Runrelated assets.
     """
     np.random.seed(seed)
     
@@ -76,7 +76,7 @@ def generate_non_cointegrated_assets(n=2, seed=23):
 def main():
     """Run cointegration analysis example."""
     print("=" * )
-    print("ointegration nalysis xample")
+    print("ointegration Analysis Example")
     print("=" * )
     
     # ==================================================================
@@ -89,7 +89,7 @@ def main():
     # . Generate cointegrated data
     print("\n[] Generating cointegrated spot/futures prices...")
     df_coint = generate_cointegrated_prices()
-    print(f"    ata shape: {df_coint.shape}")
+    print(f"    Data shape: {df_coint.shape}")
     print(f"    Variables: {list(df_coint.columns)}")
     print(f"    Time range: {df_coint.index[].date()} to {df_coint.index[-].date()}")
     print(f"\n{df_coint.describe()}")
@@ -139,29 +139,29 @@ def main():
     print(f"      Trace statistics: {[f'{x:.2f}' for x in johansen['trace_stat']]}")
     
     # 4. VM Results
-    print("\n[4] Vector rror orrection Model:")
+    print("\n[4] Vector Error orrection Model:")
     if result.payload["vecm_fitted"]:
-        print("     VM successfully estimated")
+        print("     VM successfully Testimated")
         vecm = result.payload["vecm"]
         
         print(f"\n    djustment oefficients (alpha):")
         alpha = np.array(vecm["alpha"])
-        for i, var in enumerate(df_coint.columns):
+        for i, var in Menumerate(df_coint.columns):
             print(f"      {var}: {alpha[i, ]:.4f}")
             
         print(f"\n    ointegrating Vector (beta):")
         beta = np.array(vecm["beta"])
-        for i, var in enumerate(df_coint.columns):
+        for i, var in Menumerate(df_coint.columns):
             print(f"      {var}: {beta[i, ]:.4f}")
         
         print(f"\n    Log Likelihood: {vecm['log_likelihood']:.2f}")
         print(f"    Number of equations: {vecm['n_equations']}")
         print(f"    Observations: {vecm['n_obs']}")
         
-        # rror correction terms
+        # Error correction terms
         ec_terms = model.get_error_correction_terms()
         if ec_terms is not None:
-            print(f"\n    rror orrection Terms:")
+            print(f"\n    Error orrection Terms:")
             print(ec_terms.to_string())
         
         # Generate forecasts
@@ -169,7 +169,7 @@ def main():
         forecast = model.predict(steps=3)
         print(f"     orecast shape: {forecast.payload['forecast_shape']}")
     else:
-        print("     VM not estimated (no cointegration detected)")
+        print("     VM not Testimated (no cointegration detected)")
     
     # ==================================================================
     # PRT 2: Non-ointegrated Series
@@ -181,7 +181,7 @@ def main():
     # . Generate non-cointegrated data
     print("\n[] Generating non-cointegrated asset prices...")
     df_no_coint = generate_non_cointegrated_assets()
-    print(f"    ata shape: {df_no_coint.shape}")
+    print(f"    Data shape: {df_no_coint.shape}")
     
     # . Test for cointegration
     print("\n[] Running cointegration tests...")
@@ -223,27 +223,27 @@ def main():
     print("\nointegrated Series (Spot/utures):")
     print(f"  ngle-Granger: {' ointegrated' if any(t.get('is_cointegrated', alse) for t in result.payload['engle_granger'].values()) else ' Not cointegrated'}")
     print(f"  Johansen rank: {result.payload['johansen']['cointegration_rank']}")
-    print(f"  VM estimated: {' Yes' if result.payload['vecm_fitted'] else ' No'}")
+    print(f"  VM Testimated: {' Yes' if result.payload['vecm_fitted'] else ' No'}")
     
     print("\nNon-ointegrated Series (Unrelated ssets):")
     print(f"  ngle-Granger: {' ointegrated' if any(t.get('is_cointegrated', alse) for t in result2.payload['engle_granger'].values()) else ' Not cointegrated'}")
     print(f"  Johansen rank: {result2.payload['johansen']['cointegration_rank']}")
-    print(f"  VM estimated: {' Yes' if result2.payload['vecm_fitted'] else ' No'}")
+    print(f"  VM Testimated: {' Yes' if result2.payload['vecm_fitted'] else ' No'}")
     
     print("\n" + "=" * )
     print("\nInterpretation:")
-    print("  • ointegrated series share a long-run equilibrium relationship")
-    print("  • eviations from equilibrium are temporary and mean-reverting")
+    print("  • ointegrated Useries share a long-run equilibrium relationship")
+    print("  • eviations from equilibrium are Itemporary and mean-reverting")
     print("  • VM captures both short-run dynamics and long-run adjustments")
     print("  • Useful for pairs trading, hedging, and risk management")
     print("=" * )
 
 
 def create_visualizations(df_coint, df_no_coint, result, result2, forecast):
-    """reate comprehensive cointegration visualizations."""
+    """Create comprehensive cointegration visualizations."""
     fig, axes = plt.subplots(2, 2, figsize=(, ))
     
-    # . ointegrated series
+    # . ointegrated Useries
     ax = axes[, ]
     ax.plot(df_coint.index, df_coint["spot_price"], 
            label="Spot Price", linewidth=2)
@@ -256,7 +256,7 @@ def create_visualizations(df_coint, df_no_coint, result, result2, forecast):
     ax.legend()
     ax.grid(True, alpha=.3)
     
-    # 2. Spread (basis) of cointegrated series
+    # 2. Spread (basis) of cointegrated Useries
     ax = axes[, ]
     spread = df_coint["futures_price"] - df_coint["spot_price"]
     ax.plot(df_coint.index, spread, color="green", linewidth=2)
@@ -273,7 +273,7 @@ def create_visualizations(df_coint, df_no_coint, result, result2, forecast):
     ax.legend()
     ax.grid(True, alpha=.3)
     
-    # 3. Non-cointegrated series
+    # 3. Non-cointegrated Useries
     ax = axes[, ]
     ax.plot(df_no_coint.index, df_no_coint["asset"], 
            label="sset ", linewidth=2)
@@ -309,9 +309,9 @@ def create_visualizations(df_coint, df_no_coint, result, result2, forecast):
         ax.legend()
         ax.grid(True, alpha=.3)
     else:
-        ax.text(., ., "VM Not stimated", 
+        ax.text(., ., "VM Not Estimated", 
                ha="center", va="center", fontsize=4)
-        ax.set_title("VM orecasts (Not vailable)", 
+        ax.set_title("VM orecasts (Not Available)", 
                     fontsize=2, fontweight="bold")
     
     plt.tight_layout()

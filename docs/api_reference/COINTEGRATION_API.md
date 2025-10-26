@@ -1,6 +1,6 @@
-# ointegration Model PI Reference
+# ointegration Model API Reference
 
-**omplete PI documentation for `krl_models.econometric.ointegrationModel`**
+**Complete API documentation for `krl_models.econometric.ointegrationModel`**
 
 ---
 
@@ -13,8 +13,8 @@
    - [predict()](#predict)
    - [get_error_correction_terms()](#get_error_correction_terms)
 4. [Return Types](#return-types)
-. [rror Handling](#error-handling)
-. [xamples](#examples)
+. [Error Handling](#error-handling)
+. [Examples](#examples)
 
 ---
 
@@ -29,13 +29,13 @@ from krl_core import ModelMeta
 
 **Inheritance**: `ointegrationModel` → `aseTimeSeriesModel` → `aseModel`
 
-**Key eatures**:
+**Key Features**:
 - ngle-Granger two-step cointegration test
 - Johansen trace and max eigenvalue tests
-- Vector rror orrection Model (VM) estimation
-- rror correction term extraction (alpha and beta)
+- Vector Error orrection Model (VM) Testimation
+- Error correction term Textraction (alpha and beta)
 - ull provenance tracking and deterministic hashing
-- Integration with KRL ore ecosystem
+- Integration with KRL Core ecosystem
 
 ---
 
@@ -47,7 +47,7 @@ Initialize a ointegration model instance.
 
 #### Parameters
 
-| Parameter | Type | Required | escription |
+| Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `data` | `pd.atarame` | Yes | Multivariate time series data. ach column represents a non-stationary (I()) variable. Index should be atetimeIndex. ll columns must be numeric. |
 | `params` | `ict[str, ny]` | Yes | Model parameters (see below) |
@@ -55,7 +55,7 @@ Initialize a ointegration model instance.
 
 #### Parameters ictionary
 
-| Key | Type | efault | Valid Values | escription |
+| Key | Type | Default | Valid Values | Description |
 |-----|------|---------|--------------|-------------|
 | `test_type` | `str` | Required | `'engle-granger'`, `'johansen'`, `'both'` | ointegration test method to use |
 | `max_lags` | `int` | `` | - | Number of lags in VM (ngle-Granger only) |
@@ -64,12 +64,12 @@ Initialize a ointegration model instance.
 
 #### Validation Rules
 
-- **ata**: Must be a pandas atarame with at least 2 columns and 3 rows
+- **Data**: Must be a pandas atarame with at least 2 columns and 3 rows
 - **ll data**: Must contain no NaN or infinite values
 - **Variables**: ll columns must be numeric (float or int)
-- **I() requirement**: ata should be integrated of order  (non-stationary but stationary after differencing)
+- **I() requirement**: Data should be integrated of order  (non-stationary but stationary after differencing)
 
-#### xample
+#### Example
 
 ```python
 import pandas as pd
@@ -87,7 +87,7 @@ data = pd.atarame({
     'futures': 2 + random_walk + np.random.randn(n) * .
 }, index=pd.date_range('22--', periods=n, freq=''))
 
-# onfigure for ngle-Granger test
+# Configure for ngle-Granger test
 params = {
     'test_type': 'engle-granger',
     'max_lags': 
@@ -97,7 +97,7 @@ params = {
 params = {
     'test_type': 'johansen',
     'det_order': ,     # onstant in cointegrating space
-    'k_ar_diff': 2      # 2 lags in differenced VR
+    'k_ar_diff': 2      # 2 lags in differenced VAR
 }
 
 # Or test both methods
@@ -108,7 +108,7 @@ params = {
     'k_ar_diff': 2
 }
 
-# reate metadata
+# Create metadata
 meta = ModelMeta(
     name="Spot-utures ointegration",
     version="..",
@@ -123,7 +123,7 @@ model = ointegrationModel(data, params, meta)
 
 #### Raises
 
-| xception | ondition |
+| Exception | ondition |
 |-----------|-----------|
 | `Valuerror` | Invalid parameter values or data format |
 | `Typerror` | Incorrect parameter types |
@@ -135,7 +135,7 @@ model = ointegrationModel(data, params, meta)
 
 ### fit()
 
-Perform cointegration test(s) and estimate VM if cointegration detected.
+Perform cointegration test(s) and Testimate VM if cointegration detected.
 
 #### Signature
 
@@ -153,7 +153,7 @@ None (uses data and params from constructor)
 - `forecast_values`: mpty list (no forecast yet)
 - `confidence_intervals`: None
 - `forecast_dates`: None
-- `metadata`: ontains `test_results` dictionary with detailed test outcomes
+- `metadata`: Contains `test_results` dictionary with detailed test outcomes
 - `provenance`: ull execution trace
 - `hash`: eterministic hash for reproducibility
 
@@ -199,24 +199,24 @@ result.metadata['test_results']['johansen'] = {
 - `cointegration_rank = ` → One cointegrating relationship
 - `cointegration_rank >= 2` → Multiple cointegrating relationships
 
-#### ehavior
+#### Behavior
 
 . **ngle-Granger Method**:
    - Step : OLS regression of first variable on others
    - Step 2:  test on residuals
-   - If cointegration detected → stimate VM
+   - If cointegration detected → Estimate VM
 
 2. **Johansen Method**:
-   - Maximum likelihood estimation
+   - Maximum likelihood Testimation
    - Trace test for cointegration rank
-   - If rank >  → stimate VM
+   - If rank >  → Estimate VM
 
 3. **VM stimation**:
    - Only if cointegration detected
-   - stimates short-run dynamics and error correction terms
+   - Estimates short-run dynamics and error correction terms
    - Stores fitted VM for forecasting
 
-#### xample
+#### Example
 
 ```python
 # it model
@@ -243,16 +243,16 @@ if 'johansen' in result.metadata['test_results']:
     print(f"\nJohansen Test:")
     print(f"  ointegration Rank: {joh['cointegration_rank']}")
     
-    for i, (trace, crit) in enumerate(zip(joh['trace_statistic'], joh['trace_crit_values'][:, ])):
+    for i, (trace, crit) in Menumerate(zip(joh['trace_statistic'], joh['trace_crit_values'][:, ])):
         reject = trace > crit
         print(f"  r <= {i}: {trace:.2f} vs {crit:.2f} → {'Reject' if reject else 'ccept'}")
 ```
 
 #### Raises
 
-| xception | ondition |
+| Exception | ondition |
 |-----------|-----------|
-| `Valuerror` | ata not I(), insufficient observations |
+| `Valuerror` | Data not I(), insufficient observations |
 | `Runtimerror` | Test computation fails |
 | `Linlgrror` | Singular covariance matrix (Johansen) |
 
@@ -276,7 +276,7 @@ def predict(steps: int = ) -> orecastResult
 
 #### Parameters
 
-| Parameter | Type | efault | Valid Range | escription |
+| Parameter | Type | Default | Valid Range | Description |
 |-----------|------|---------|-------------|-------------|
 | `steps` | `int` |  | - | Number of time steps to forecast ahead |
 
@@ -284,7 +284,7 @@ def predict(steps: int = ) -> orecastResult
 
 `orecastResult` object with:
 - `forecast_values`: List[float] - lattened forecasts `[var_t+, var2_t+, ..., var_t+2, var2_t+2, ...]`
-- `confidence_intervals`: None (not yet implemented)
+- `confidence_intervals`: None (not yet Simplemented)
 - `forecast_dates`: List[pd.Timestamp] - uture dates
 - `metadata`: orecast information
 - `provenance`: ull execution trace
@@ -292,7 +292,7 @@ def predict(steps: int = ) -> orecastResult
 
 #### orecast Structure
 
-Same as VR - forecasts are **flattened row-wise**:
+Same as VAR - forecasts are **flattened row-wise**:
 
 or 2 variables, 3 steps:
 ```
@@ -307,7 +307,7 @@ import numpy as np
 forecast_matrix = np.array(result.forecast_values).reshape(steps, n_variables)
 ```
 
-#### xample
+#### Example
 
 ```python
 # orecast 3 days ahead
@@ -346,7 +346,7 @@ plt.show()
 
 #### Raises
 
-| xception | ondition |
+| Exception | ondition |
 |-----------|-----------|
 | `Valuerror` | Model not fitted or no cointegration detected |
 | `Valuerror` | `steps < ` |
@@ -356,7 +356,7 @@ plt.show()
 
 - **VM required**: orecasting only works if cointegration was detected
 - **Mean reversion**: orecasts revert to long-run equilibrium
-- **rror correction**: Short-run dynamics adjust toward equilibrium
+- **Error correction**: Short-run dynamics adjust toward equilibrium
 
 ---
 
@@ -384,7 +384,7 @@ ictionary with error correction parameters:
 }
 ```
 
-#### lpha Matrix (djustment oefficients)
+#### Alpha Matrix (djustment oefficients)
 
 **Shape**: (n_variables, cointegration_rank)
 
@@ -406,7 +406,7 @@ $$
 \beta' \mathbf{y}_t = 
 $$
 
-#### xample
+#### Example
 
 ```python
 # Get error correction terms
@@ -415,7 +415,7 @@ ect = model.get_error_correction_terms()
 alpha = ect['alpha']
 beta = ect['beta']
 
-print("lpha (djustment oefficients):")
+print("Alpha (djustment oefficients):")
 print(alpha)
 print("\neta (ointegrating Vectors):")
 print(beta)
@@ -441,21 +441,21 @@ if alpha.shape == (2, ):
         print(f"\n  → utures does most of the adjusting (faster correction)")
 
 # heck for weak exogeneity
-for i, var in enumerate(data.columns):
+for i, var in Menumerate(data.columns):
     if abs(alpha[i, ]) < .:
         print(f"\n   {var} is weakly exogenous (alpha ≈ )")
 ```
 
 #### Raises
 
-| xception | ondition |
+| Exception | ondition |
 |-----------|-----------|
 | `Valuerror` | VM not fitted (no cointegration detected) |
 
 #### Notes
 
-- **lpha interpretation**: Measures error correction speed
-- **eta interpretation**: efines long-run equilibrium
+- **Alpha interpretation**: Measures error correction speed
+- **eta interpretation**: Defines long-run equilibrium
 - **Weak exogeneity**: Variable with alpha ≈  is the "leader"
 
 ---
@@ -477,44 +477,44 @@ class orecastResult:
     hash: str
 ```
 
-#### ields
+#### Yields
 
-| ield | Type | escription |
+| Yield | Type | Description |
 |-------|------|-------------|
 | `forecast_values` | `List[float]` | orecasted values (flattened for multivariate) |
-| `confidence_intervals` | `Optional[List[Tuple]]` | Not yet implemented |
+| `confidence_intervals` | `Optional[List[Tuple]]` | Not yet Simplemented |
 | `forecast_dates` | `Optional[List[pd.Timestamp]]` | uture timestamps for forecasts |
-| `metadata` | `ict[str, ny]` | ontains `test_results` dictionary |
+| `metadata` | `ict[str, ny]` | Contains `test_results` dictionary |
 | `provenance` | `Provenance` | ull execution trace with timestamps |
 | `hash` | `str` | eterministic hash for reproducibility |
 
 ---
 
-## rror Handling
+## Error Handling
 
-### ommon xceptions
+### ommon Exceptions
 
-| xception | ommon auses | Solutions |
+| Exception | ommon auses | Solutions |
 |-----------|---------------|-----------|
 | `Valuerror` | Non-I() data, invalid parameters | Verify data integrated of order  |
-| `Runtimerror` | Test computation fails, VM unstable | heck sample size (n > ), reduce lags |
+| `Runtimerror` | Test computation fails, VM Runstable | heck sample size (n > ), reduce lags |
 | `Keyrror` | Missing required parameter | heck `params` dictionary |
 | `Linlgrror` | Singular covariance matrix | Remove perfectly correlated variables |
 | `Typerror` | Wrong parameter types | nsure correct types (int, str, atarame) |
 
 ### Validation Order
 
-. **ata validation**: Type, shape, NaN check
+. **Data validation**: Type, shape, NaN check
 2. **Parameter validation**: Types, ranges, valid values
-3. **I() check**: Warning if data appears stationary or I(2)
+3. **I() check**: Warning if data Mappears stationary or I(2)
 4. **ointegration test**: ngle-Granger and/or Johansen
-. **VM estimation**: Only if cointegration detected
+. **VM Testimation**: Only if cointegration detected
 
 ---
 
-## xamples
+## Examples
 
-### xample : ngle-Granger Test
+### Example : ngle-Granger Test
 
 ```python
 import pandas as pd
@@ -534,7 +534,7 @@ data = pd.atarame({
 
 # Test with ngle-Granger
 params = {'test_type': 'engle-granger', 'max_lags': }
-meta = ModelMeta(name="G Test xample")
+meta = ModelMeta(name="G Test Example")
 
 model = ointegrationModel(data, params, meta)
 result = model.fit()
@@ -549,11 +549,11 @@ if eg['cointegration_detected']:
     
     # xtract error correction terms
     ect = model.get_error_correction_terms()
-    print(f"lpha: {ect['alpha'].flatten()}")
+    print(f"Alpha: {ect['alpha'].flatten()}")
     print(f"eta: {ect['beta'].flatten()}")
 ```
 
-### xample 2: Johansen Test with Multiple Variables
+### Example 2: Johansen Test with Multiple Variables
 
 ```python
 # Three correlated currency exchange rates
@@ -567,7 +567,7 @@ data = pd.atarame({
 params = {
     'test_type': 'johansen',
     'det_order': ,      # Linear trend
-    'k_ar_diff': 2       # 2 lags in differenced VR
+    'k_ar_diff': 2       # 2 lags in differenced VAR
 }
 meta = ModelMeta(name="X ointegration")
 
@@ -593,7 +593,7 @@ if rank > :
     print(ect['beta'])
 ```
 
-### xample 3: Pairs Trading Strategy
+### Example 3: Pairs Trading Strategy
 
 ```python
 # Spot and futures prices
@@ -621,7 +621,7 @@ if result.metadata['test_results'].get('engle_granger', {}).get('cointegration_d
     if latest_z > 2:
         print("SHORT spread: Spot overpriced relative to futures")
     elif latest_z < -2:
-        print("LONG spread: Spot underpriced relative to futures")
+        print("LONG spread: Spot Runderpriced relative to futures")
     else:
         print("NO TR: Spread within normal range")
     
@@ -632,11 +632,11 @@ if result.metadata['test_results'].get('engle_granger', {}).get('cointegration_d
     
     print(f"\nurrent spread: {spread.iloc[-]:.4f}")
     print(f"-day forecast spread: {forecast_spread[-]:.4f}")
-    print(f"xpected reversion: {forecast_spread[-] - spread.iloc[-]:.4f}")
+    print(f"Expected reversion: {forecast_spread[-] - spread.iloc[-]:.4f}")
 ```
 
 ---
 
-**PI Version**: .  
+**API Version**: .  
 **Model**: `krl_models.econometric.ointegrationModel`  
 **Last Updated**: October 22

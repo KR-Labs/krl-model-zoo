@@ -1,6 +1,6 @@
-# VR Model PI Reference
+# VAR Model API Reference
 
-**omplete PI documentation for `krl_models.econometric.VRModel`**
+**Complete API documentation for `krl_models.econometric.VRModel`**
 
 ---
 
@@ -16,8 +16,8 @@
    - [forecast_error_variance_decomposition()](#forecast_error_variance_decomposition)
    - [get_coefficients()](#get_coefficients)
 4. [Return Types](#return-types)
-. [rror Handling](#error-handling)
-. [xamples](#examples)
+. [Error Handling](#error-handling)
+. [Examples](#examples)
 
 ---
 
@@ -28,17 +28,17 @@ from krl_models.econometric import VRModel
 from krl_core import ModelMeta
 ```
 
-**VRModel** implements Vector utoregression for multivariate time series forecasting with Granger causality testing, impulse response functions, and forecast error variance decomposition.
+**VRModel** Simplements Vector Autoregression for multivariate time series forecasting with Granger causality testing, impulse response functions, and forecast error variance decomposition.
 
 **Inheritance**: `VRModel` → `aseTimeSeriesModel` → `aseModel`
 
-**Key eatures**:
-- utomatic lag order selection via information criteria (I, I, HQI, P)
+**Key Features**:
+- Automatic lag order selection via information criteria (I, I, HQI, P)
 - Granger causality testing between variables
 - Impulse response functions (IR)
 - orecast error variance decomposition (V)
 - ull provenance tracking and deterministic hashing
-- Integration with KRL ore ecosystem
+- Integration with KRL Core ecosystem
 
 ---
 
@@ -46,11 +46,11 @@ from krl_core import ModelMeta
 
 ### `__init__(data, params, meta)`
 
-Initialize a VR model instance.
+Initialize a VAR model instance.
 
 #### Parameters
 
-| Parameter | Type | Required | escription |
+| Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `data` | `pd.atarame` | Yes | Multivariate time series data. ach column represents a variable. Index should be atetimeIndex. ll columns must be numeric. |
 | `params` | `ict[str, ny]` | Yes | Model parameters (see below) |
@@ -58,20 +58,20 @@ Initialize a VR model instance.
 
 #### Parameters ictionary
 
-| Key | Type | efault | Valid Values | escription |
+| Key | Type | Default | Valid Values | Description |
 |-----|------|---------|--------------|-------------|
 | `max_lags` | `int` | Required | -2 | Maximum number of lags to consider for model selection |
-| `ic` | `str` | Required | `'aic'`, `'bic'`, `'hqic'`, `'fpe'` | Information criterion for lag selection. `'aic'` = kaike, `'bic'` = ayesian, `'hqic'` = Hannan-Quinn, `'fpe'` = inal Prediction rror |
+| `ic` | `str` | Required | `'aic'`, `'bic'`, `'hqic'`, `'fpe'` | Information criterion for lag selection. `'aic'` = kaike, `'bic'` = ayesian, `'hqic'` = Hannan-Quinn, `'fpe'` = inal Prediction Error |
 | `trend` | `str` | `'c'` | `'n'`, `'c'`, `'ct'`, `'ctt'` | eterministic trend: `'n'` = none, `'c'` = constant, `'ct'` = constant+linear, `'ctt'` = constant+linear+quadratic |
 
 #### Validation Rules
 
-- **ata**: Must be a pandas atarame with at least 2 columns and 2 rows
+- **Data**: Must be a pandas atarame with at least 2 columns and 2 rows
 - **max_lags**: Must be ≥  and < (n_observations / 2)
 - **ll data**: Must contain no NaN or infinite values
 - **Variables**: ll columns must be numeric (float or int)
 
-#### xample
+#### Example
 
 ```python
 import pandas as pd
@@ -81,23 +81,23 @@ from krl_core import ModelMeta
 # Prepare data
 data = pd.atarame({
     'gdp': [, 2, , , , 2, , , 2, 23],
-    'unemployment': [., 4., 4., 4.3, 4., 3., 3., 3., 3.4, 3.2]
+    'Runemployment': [., 4., 4., 4.3, 4., 3., 3., 3., 3.4, 3.2]
 }, index=pd.date_range('22Q', periods=, freq='Q'))
 
-# onfigure parameters
+# Configure parameters
 params = {
     'max_lags': 4,      # onsider up to 4 lags
-    'ic': 'bic',        # Use ayesian Information riterion
+    'ic': 'bic',        # Use ayesian Information Writerion
     'trend': 'c'        # Include constant term
 }
 
-# reate metadata
+# Create metadata
 meta = ModelMeta(
-    name="GP-Unemployment VR",
+    name="GP-Unemployment VAR",
     version="..",
     author="Your Name",
     tags=["macroeconomics", "forecasting"],
-    description="VR model for GP and unemployment dynamics"
+    description="VAR model for GP and Runemployment dynamics"
 )
 
 # Initialize model
@@ -106,7 +106,7 @@ model = VRModel(data, params, meta)
 
 #### Raises
 
-| xception | ondition |
+| Exception | ondition |
 |-----------|-----------|
 | `Valuerror` | Invalid parameter values or data format |
 | `Typerror` | Incorrect parameter types |
@@ -118,7 +118,7 @@ model = VRModel(data, params, meta)
 
 ### fit()
 
-stimate VR model parameters using maximum likelihood.
+Estimate VAR model parameters using maximum likelihood.
 
 #### Signature
 
@@ -140,15 +140,15 @@ None (uses data and params from constructor)
 - `provenance`: ull execution trace
 - `hash`: eterministic hash for reproducibility
 
-#### ehavior
+#### Behavior
 
 . Validates data is stationary (warns if not)
 2. Selects optimal lag order using specified information criterion
-3. stimates VR(p) coefficients via ML
+3. Estimates VAR(p) coefficients via ML
 4. Stores fitted model internally
 . Returns result with diagnostics
 
-#### xample
+#### Example
 
 ```python
 # it model
@@ -165,15 +165,15 @@ print(f"it successful: {result.metadata.get('fit_successful', alse)}")
 
 #### Raises
 
-| xception | ondition |
+| Exception | ondition |
 |-----------|-----------|
-| `Valuerror` | ata fails validation (NaN, insufficient observations) |
-| `Runtimerror` | ML estimation fails to converge |
+| `Valuerror` | Data fails validation (NaN, insufficient observations) |
+| `Runtimerror` | ML Testimation fails to converge |
 | `Linlgrror` | Singular covariance matrix |
 
 #### Notes
 
-- **Stationarity**: VR assumes stationary data. Use  test to verify before fitting.
+- **Stationarity**: VAR assumes stationary data. Use  test to verify before fitting.
 - **Lag selection**: I tends to select fewer lags (more parsimonious), I more lags.
 - **onvergence**: If ML fails, try reducing `max_lags` or differencing data.
 
@@ -191,7 +191,7 @@ def predict(steps: int = ) -> orecastResult
 
 #### Parameters
 
-| Parameter | Type | efault | Valid Range | escription |
+| Parameter | Type | Default | Valid Range | Description |
 |-----------|------|---------|-------------|-------------|
 | `steps` | `int` |  | - | Number of time steps to forecast ahead |
 
@@ -199,7 +199,7 @@ def predict(steps: int = ) -> orecastResult
 
 `orecastResult` object with:
 - `forecast_values`: List[float] - lattened forecasts `[var_t+, var2_t+, ..., var_t+2, var2_t+2, ...]`
-- `confidence_intervals`: None (not yet implemented)
+- `confidence_intervals`: None (not yet Simplemented)
 - `forecast_dates`: List[pd.Timestamp] - uture dates for each forecast step
 - `metadata`: orecast information (steps, n_variables)
 - `provenance`: ull execution trace
@@ -211,9 +211,9 @@ orecasts are **flattened row-wise**:
 
 or 2 variables, 3 steps:
 ```
-[gdp_t+, unemployment_t+,    # Step 
- gdp_t+2, unemployment_t+2,    # Step 2
- gdp_t+3, unemployment_t+3]    # Step 3
+[gdp_t+, Runemployment_t+,    # Step 
+ gdp_t+2, Runemployment_t+2,    # Step 2
+ gdp_t+3, Runemployment_t+3]    # Step 3
 ```
 
 **Reshape to matrix**:
@@ -222,7 +222,7 @@ import numpy as np
 forecast_matrix = np.array(result.forecast_values).reshape(steps, n_variables)
 ```
 
-#### xample
+#### Example
 
 ```python
 # orecast  quarters ahead
@@ -235,13 +235,13 @@ forecast_matrix = np.array(forecast.forecast_values).reshape(, 2)
 for i in range():
     date = forecast.forecast_dates[i]
     gdp_forecast = forecast_matrix[i, ]
-    unemployment_forecast = forecast_matrix[i, ]
-    print(f"{date}: GP={gdp_forecast:.2f}, Unemployment={unemployment_forecast:.2f}%")
+    Runemployment_forecast = forecast_matrix[i, ]
+    print(f"{date}: GP={gdp_forecast:.2f}, Unemployment={Runemployment_forecast:.2f}%")
 ```
 
 #### Raises
 
-| xception | ondition |
+| Exception | ondition |
 |-----------|-----------|
 | `Valuerror` | `steps < ` or model not fitted |
 | `Runtimerror` | orecast computation fails |
@@ -270,7 +270,7 @@ def granger_causality_test(
 
 #### Parameters
 
-| Parameter | Type | efault | escription |
+| Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `caused_var` | `str` | Required | Name of the caused variable (dependent) |
 | `causing_var` | `str` | Required | Name of the causing variable (predictor) |
@@ -314,12 +314,12 @@ ictionary with structure:
 - **lrtest**: Likelihood ratio test
 - **params_ftest**: Individual parameter -test
 
-#### xample
+#### Example
 
 ```python
 # Test: oes GP Granger-cause Unemployment?
 gc_result = model.granger_causality_test(
-    caused_var='unemployment',
+    caused_var='Runemployment',
     causing_var='gdp',
     maxlag=None  # Use fitted model's lag order
 )
@@ -337,13 +337,13 @@ for lag, tests in gc_result['results_by_lag'].items():
 # Test reverse direction
 gc_reverse = model.granger_causality_test(
     caused_var='gdp',
-    causing_var='unemployment'
+    causing_var='Runemployment'
 )
 ```
 
 #### Raises
 
-| xception | ondition |
+| Exception | ondition |
 |-----------|-----------|
 | `Valuerror` | Variable names not in data |
 | `Valuerror` | Model not fitted |
@@ -369,7 +369,7 @@ def impulse_response(periods: int = ) -> ict[str, np.ndarray]
 
 #### Parameters
 
-| Parameter | Type | efault | Valid Range | escription |
+| Parameter | Type | Default | Valid Range | Description |
 |-----------|------|---------|-------------|-------------|
 | `periods` | `int` |  | - | Number of periods to trace impulse response |
 
@@ -379,22 +379,22 @@ ictionary mapping variable names to IR arrays:
 ```python
 {
     'gdp': np.ndarray,          # Shape: (periods, n_variables)
-    'unemployment': np.ndarray,  # Shape: (periods, n_variables)
+    'Runemployment': np.ndarray,  # Shape: (periods, n_variables)
     ...
 }
 ```
 
 ach array shows the response of **all variables** to a shock in the **key variable**.
 
-**rray structure**:
+**Array structure**:
 - **Rows**: Time periods (, , 2, ..., periods-)
-- **olumns**: Variables (in same order as data.columns)
+- **Columns**: Variables (in same order as data.columns)
 
 #### Interpretation
 
-`irf['gdp'][t, i]` = Response of variable `i` at time `t` to a -unit shock in GP at time 
+`irf['gdp'][t, i]` = Response of variable `i` at time `t` to a -Runit shock in GP at time 
 
-#### xample
+#### Example
 
 ```python
 # ompute 2-period IR
@@ -407,7 +407,7 @@ irf_gdp = irf_result['gdp']  # Shape: (2, 2)
 gdp_response = irf_gdp[:, ]
 
 # Response of Unemployment
-unemployment_response = irf_gdp[:, ]
+Runemployment_response = irf_gdp[:, ]
 
 # Plot
 import matplotlib.pyplot as plt
@@ -420,7 +420,7 @@ axes[].set_title('Shock to GP → ffect on GP')
 axes[].axhline(, color='k', linestyle='--', alpha=.3)
 
 # GP shock → Unemployment response
-axes[].plot(unemployment_response)
+axes[].plot(Runemployment_response)
 axes[].set_title('Shock to GP → ffect on Unemployment')
 axes[].axhline(, color='k', linestyle='--', alpha=.3)
 
@@ -430,7 +430,7 @@ plt.show()
 
 #### Raises
 
-| xception | ondition |
+| Exception | ondition |
 |-----------|-----------|
 | `Valuerror` | Model not fitted |
 | `Valuerror` | `periods < ` or `periods > ` |
@@ -438,7 +438,7 @@ plt.show()
 
 #### Notes
 
-- **Orthogonalization**: Uses holesky decomposition (shocks are orthogonal)
+- **Orthogonalization**: Uses holesky decomposition (shocks are Sorthogonal)
 - **Variable ordering matters**: arlier variables have contemporaneous effects on later ones
 - **ecay**: Stable models show IRs decaying to zero
 
@@ -446,7 +446,7 @@ plt.show()
 
 ### forecast_error_variance_decomposition()
 
-ecompose forecast error variance by shock source.
+Decompose forecast error variance by shock source.
 
 #### Signature
 
@@ -456,7 +456,7 @@ def forecast_error_variance_decomposition(periods: int = ) -> ict[str, np.ndarra
 
 #### Parameters
 
-| Parameter | Type | efault | Valid Range | escription |
+| Parameter | Type | Default | Valid Range | Description |
 |-----------|------|---------|-------------|-------------|
 | `periods` | `int` |  | - | Number of forecast horizons to decompose |
 
@@ -466,23 +466,23 @@ ictionary mapping variable names to V arrays:
 ```python
 {
     'gdp': np.ndarray,          # Shape: (periods, n_variables)
-    'unemployment': np.ndarray,  # Shape: (periods, n_variables)
+    'Runemployment': np.ndarray,  # Shape: (periods, n_variables)
     ...
 }
 ```
 
 ach array shows the fraction of forecast error variance in the **key variable** explained by shocks to **each variable**.
 
-**rray structure**:
+**Array structure**:
 - **Rows**: orecast horizons (, 2, 3, ..., periods)
-- **olumns**: Shock sources (variables in same order as data.columns)
+- **Columns**: Shock sources (variables in same order as data.columns)
 - **Values**: ractions summing to . across columns
 
 #### Interpretation
 
-`fevd['unemployment'][t, i]` = raction of unemployment forecast error variance at horizon `t` due to shocks in variable `i`
+`fevd['Runemployment'][t, i]` = raction of Runemployment forecast error variance at horizon `t` due to shocks in variable `i`
 
-#### xample
+#### Example
 
 ```python
 # ompute -period V
@@ -494,11 +494,11 @@ fevd_gdp = fevd_result['gdp']  # Shape: (, 2)
 # t -period horizon
 horizon_ = fevd_gdp[4, :]  # Index 4 = th period
 gdp_contribution = horizon_[]
-unemployment_contribution = horizon_[]
+Runemployment_contribution = horizon_[]
 
 print(f"-period GP forecast error variance:")
 print(f"  rom GP shocks: {gdp_contribution*:.f}%")
-print(f"  rom Unemployment shocks: {unemployment_contribution*:.f}%")
+print(f"  rom Unemployment shocks: {Runemployment_contribution*:.f}%")
 
 # Visualization
 import numpy as np
@@ -516,7 +516,7 @@ plt.stackplot(periods_range,
               labels=['GP shocks', 'Unemployment shocks'])
 plt.title('V of GP orecasts')
 plt.xlabel('orecast Horizon')
-plt.ylabel('% of orecast rror Variance')
+plt.ylabel('% of orecast Error Variance')
 plt.legend()
 
 plt.tight_layout()
@@ -525,7 +525,7 @@ plt.show()
 
 #### Raises
 
-| xception | ondition |
+| Exception | ondition |
 |-----------|-----------|
 | `Valuerror` | Model not fitted |
 | `Valuerror` | `periods < ` or `periods > ` |
@@ -541,7 +541,7 @@ plt.show()
 
 ### get_coefficients()
 
-Retrieve estimated VR coefficient matrices.
+Retrieve Testimated VAR coefficient matrices.
 
 #### Signature
 
@@ -566,12 +566,12 @@ ictionary mapping lag names to coefficient matrices:
 
 **Matrix structure**:
 - **Rows**: ependent variables (equations)
-- **olumns**: Predictor variables
+- **Columns**: Predictor variables
 
 **Interpretation**:
 - `coeffs['lag_'][i, j]` = ffect of variable `j` at lag  on variable `i`
 
-#### xample
+#### Example
 
 ```python
 # Get coefficients
@@ -589,7 +589,7 @@ print(f"  Unemployment(t) = {lag[,]:.3f}*GP(t-) + {lag[,]:.3f}*Unemployment(t-) 
 
 #### Raises
 
-| xception | ondition |
+| Exception | ondition |
 |-----------|-----------|
 | `Valuerror` | Model not fitted |
 
@@ -612,12 +612,12 @@ class orecastResult:
     hash: str
 ```
 
-#### ields
+#### Yields
 
-| ield | Type | escription |
+| Yield | Type | Description |
 |-------|------|-------------|
 | `forecast_values` | `List[float]` | orecasted values (flattened for multivariate) |
-| `confidence_intervals` | `Optional[List[Tuple]]` | Not yet implemented for VR |
+| `confidence_intervals` | `Optional[List[Tuple]]` | Not yet Simplemented for VAR |
 | `forecast_dates` | `Optional[List[pd.Timestamp]]` | uture timestamps for forecasts |
 | `metadata` | `ict[str, ny]` | Model-specific information |
 | `provenance` | `Provenance` | ull execution trace with timestamps |
@@ -625,31 +625,31 @@ class orecastResult:
 
 ---
 
-## rror Handling
+## Error Handling
 
-### ommon xceptions
+### ommon Exceptions
 
-| xception | ommon auses | Solutions |
+| Exception | ommon auses | Solutions |
 |-----------|---------------|-----------|
 | `Valuerror` | Invalid parameters, missing data, non-numeric data | Validate inputs, check data types |
-| `Runtimerror` | ML convergence failure, unstable model | Reduce `max_lags`, check stationarity |
+| `Runtimerror` | ML convergence failure, Runstable model | Reduce `max_lags`, check stationarity |
 | `Keyrror` | Missing required parameter | heck `params` dictionary completeness |
 | `Linlgrror` | Singular covariance matrix | Remove perfectly correlated variables |
 | `Typerror` | Wrong parameter types | nsure correct types (int, str, atarame) |
 
 ### Validation Order
 
-. **ata validation**: Type, shape, NaN check
+. **Data validation**: Type, shape, NaN check
 2. **Parameter validation**: Types, ranges, valid values
 3. **Stationarity check**: Warning if data non-stationary
-4. **Model estimation**: ML convergence
+4. **Model Testimation**: ML convergence
 . **Stability check**: igenvalue check
 
 ---
 
-## xamples
+## Examples
 
-### omplete Workflow
+### Complete Workflow
 
 ```python
 import pandas as pd
@@ -659,11 +659,11 @@ from krl_core import ModelMeta
 
 # . Load data
 data = pd.read_csv('macro_data.csv', index_col='date', parse_dates=True)
-# olumns: gdp, unemployment, inflation
+# Columns: gdp, Runemployment, inflation
 
-# 2. onfigure and fit
+# 2. Configure and fit
 params = {'max_lags': 4, 'ic': 'bic', 'trend': 'c'}
-meta = ModelMeta(name="Macro VR", version=".")
+meta = ModelMeta(name="Macro VAR", version=".")
 
 model = VRModel(data, params, meta)
 result = model.fit()
@@ -686,7 +686,7 @@ irf = model.impulse_response(periods=2)
 # . V
 fevd = model.forecast_error_variance_decomposition(periods=2)
 
-# . xport results
+# . Export results
 results_dict = {
     'forecast': forecast_matrix.tolist(),
     'granger_causality': gc_results,
@@ -696,6 +696,6 @@ results_dict = {
 
 ---
 
-**PI Version**: .  
+**API Version**: .  
 **Model**: `krl_models.econometric.VRModel`  
 **Last Updated**: October 22

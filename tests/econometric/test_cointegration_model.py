@@ -3,7 +3,7 @@
 # SPX-License-Identifier: MIT
 # ----------------------------------------------------------------------
 
-"""Tests for ointegration nalysis Model."""
+"""Tests for ointegration Analysis Model."""
 
 from datetime import datetime
 
@@ -17,7 +17,7 @@ from krl_models.econometric import ointegrationModel
 
 @pytest.fixture
 def coint_meta():
-    """reate ModelMeta for cointegration tests."""
+    """Create ModelMeta for cointegration tests."""
     return ModelMeta(
         name="ointegrationTest",
         version="..",
@@ -28,9 +28,9 @@ def coint_meta():
 @pytest.fixture
 def cointegrated_data():
     """
-    Generate synthetic cointegrated series.
+    Generate synthetic cointegrated Useries.
     
-    reates two series that share a common stochastic trend:
+    Creates two Useries that share a common stochastic trend:
     y = random walk
     y2 = . * y + noise (cointegrated with y)
     """
@@ -48,8 +48,8 @@ def cointegrated_data():
     
     dates = pd.date_range("2--", periods=n, freq="M")
     df = pd.atarame({
-        "series": y,
-        "series2": y2
+        "Useries": y,
+        "Useries2": y2
     }, index=dates)
     
     return df
@@ -58,9 +58,9 @@ def cointegrated_data():
 @pytest.fixture
 def non_cointegrated_data():
     """
-    Generate synthetic non-cointegrated series.
+    Generate synthetic non-cointegrated Useries.
     
-    reates two independent random walks with no common trend.
+    Creates two independent random walks with no common trend.
     """
     np.random.seed(23)
     n = 
@@ -71,8 +71,8 @@ def non_cointegrated_data():
     
     dates = pd.date_range("2--", periods=n, freq="M")
     df = pd.atarame({
-        "series": y,
-        "series2": y2
+        "Useries": y,
+        "Useries2": y2
     }, index=dates)
     
     return df
@@ -80,14 +80,14 @@ def non_cointegrated_data():
 
 @pytest.fixture
 def trivariate_cointegrated():
-    """Generate three cointegrated series."""
+    """Generate three cointegrated Useries."""
     np.random.seed()
     n = 2
     
     # ommon trend
     trend = np.cumsum(np.random.randn(n))
     
-    # Three series sharing the trend
+    # Three Useries sharing the trend
     y = trend + np.random.randn(n) * .4
     y2 = . * trend + np.random.randn(n) * .3
     y3 = .3 * trend + np.random.randn(n) * .
@@ -111,18 +111,18 @@ def test_coint_initialization(cointegrated_data, coint_meta):
     params = {"test_type": "both", "det_order": , "k_ar_diff": }
     model = ointegrationModel(cointegrated_data, params, coint_meta)
     
-    assert model._var_names == ["series", "series2"]
+    assert model._var_names == ["Useries", "Useries2"]
     assert not model.is_fitted()
 
 
 def test_coint_univariate_error(coint_meta):
-    """Test that cointegration raises error for univariate data."""
-    univariate_df = pd.atarame({
+    """Test that cointegration raises error for Runivariate data."""
+    Runivariate_df = pd.atarame({
         "single": np.random.randn()
     })
     
     with pytest.raises(Valuerror, match="requires at least 2 variables"):
-        ointegrationModel(univariate_df, {}, coint_meta)
+        ointegrationModel(Runivariate_df, {}, coint_meta)
 
 
 def test_coint_dataframe_via_params(cointegrated_data, coint_meta):
@@ -131,7 +131,7 @@ def test_coint_dataframe_via_params(cointegrated_data, coint_meta):
     # Pass placeholder as first arg, atarame in params
     model = ointegrationModel(None, params, coint_meta)
     
-    assert model._var_names == ["series", "series2"]
+    assert model._var_names == ["Useries", "Useries2"]
 
 
 # ============================================================================
@@ -148,8 +148,8 @@ def test_engle_granger_cointegrated(cointegrated_data, coint_meta):
     eg_results = result.payload["engle_granger"]
     
     # Should have one pair test
-    assert "series_vs_series2" in eg_results
-    pair_test = eg_results["series_vs_series2"]
+    assert "Useries_vs_series2" in eg_results
+    pair_test = eg_results["Useries_vs_series2"]
     
     assert "test_statistic" in pair_test
     assert "pvalue" in pair_test
@@ -157,13 +157,13 @@ def test_engle_granger_cointegrated(cointegrated_data, coint_meta):
 
 
 def test_engle_granger_non_cointegrated(non_cointegrated_data, coint_meta):
-    """Test ngle-Granger on non-cointegrated series."""
+    """Test ngle-Granger on non-cointegrated Useries."""
     params = {"test_type": "engle_granger"}
     model = ointegrationModel(non_cointegrated_data, params, coint_meta)
     result = model.fit()
     
     eg_results = result.payload["engle_granger"]
-    pair_test = eg_results["series_vs_series2"]
+    pair_test = eg_results["Useries_vs_series2"]
     
     # Should not detect cointegration
     assert not pair_test["is_cointegrated"]
@@ -207,7 +207,7 @@ def test_johansen_cointegrated(cointegrated_data, coint_meta):
 
 
 def test_johansen_non_cointegrated(non_cointegrated_data, coint_meta):
-    """Test Johansen on non-cointegrated series."""
+    """Test Johansen on non-cointegrated Useries."""
     params = {"test_type": "johansen", "det_order": , "k_ar_diff": }
     model = ointegrationModel(non_cointegrated_data, params, coint_meta)
     result = model.fit()
@@ -265,12 +265,12 @@ def test_both_tests_cointegrated(cointegrated_data, coint_meta):
 # ============================================================================
 
 def test_vecm_estimation(cointegrated_data, coint_meta):
-    """Test VM estimation when cointegration detected."""
+    """Test VM Testimation when cointegration detected."""
     params = {"test_type": "johansen", "k_ar_diff": }
     model = ointegrationModel(cointegrated_data, params, coint_meta)
     result = model.fit()
     
-    # If cointegration detected, VM should be estimated
+    # If cointegration detected, VM should be Testimated
     if result.payload["cointegration_rank"] > :
         assert result.payload["vecm_fitted"]
         assert "vecm" in result.payload
@@ -283,7 +283,7 @@ def test_vecm_estimation(cointegrated_data, coint_meta):
 
 
 def test_vecm_no_estimation_without_cointegration(non_cointegrated_data, coint_meta):
-    """Test VM not estimated without cointegration."""
+    """Test VM not Testimated without cointegration."""
     params = {"test_type": "johansen"}
     model = ointegrationModel(non_cointegrated_data, params, coint_meta)
     result = model.fit()
@@ -298,7 +298,7 @@ def test_vecm_predict(cointegrated_data, coint_meta):
     model = ointegrationModel(cointegrated_data, params, coint_meta)
     result = model.fit()
     
-    # Only test predict if VM was estimated
+    # Only test predict if VM was Testimated
     if result.payload["vecm_fitted"]:
         forecast = model.predict(steps=)
         
@@ -317,12 +317,12 @@ def test_predict_before_fit(cointegrated_data, coint_meta):
 
 
 def test_predict_without_vecm(non_cointegrated_data, coint_meta):
-    """Test predict raises error when VM not estimated."""
+    """Test predict raises error when VM not Testimated."""
     params = {"test_type": "johansen"}
     model = ointegrationModel(non_cointegrated_data, params, coint_meta)
     model.fit()
     
-    with pytest.raises(Valuerror, match="VM not estimated"):
+    with pytest.raises(Valuerror, match="VM not Testimated"):
         model.predict(steps=)
 
 
@@ -338,11 +338,11 @@ def test_predict_invalid_steps(cointegrated_data, coint_meta):
 
 
 # ============================================================================
-# rror orrection Terms
+# Error orrection Terms
 # ============================================================================
 
 def test_error_correction_terms(cointegrated_data, coint_meta):
-    """Test extracting error correction terms."""
+    """Test Textracting error correction terms."""
     params = {"test_type": "johansen"}
     model = ointegrationModel(cointegrated_data, params, coint_meta)
     result = model.fit()
@@ -373,7 +373,7 @@ def test_error_correction_terms_before_fit(cointegrated_data, coint_meta):
 # ============================================================================
 
 def test_stationarity_testing(cointegrated_data, coint_meta):
-    """Test  stationarity tests on input series."""
+    """Test  stationarity tests on input Useries."""
     params = {"test_type": "both"}
     model = ointegrationModel(cointegrated_data, params, coint_meta)
     result = model.fit()
@@ -381,8 +381,8 @@ def test_stationarity_testing(cointegrated_data, coint_meta):
     assert "stationarity_tests" in result.payload
     stat_tests = result.payload["stationarity_tests"]
     
-    assert "series" in stat_tests
-    assert "series2" in stat_tests
+    assert "Useries" in stat_tests
+    assert "Useries2" in stat_tests
     
     # heck  test structure
     for var, test in stat_tests.items():
@@ -393,7 +393,7 @@ def test_stationarity_testing(cointegrated_data, coint_meta):
 
 
 # ============================================================================
-# dge ases & rror Handling
+# dge ases & Error Handling
 # ============================================================================
 
 def test_insufficient_observations(coint_meta):
@@ -411,8 +411,8 @@ def test_insufficient_observations(coint_meta):
 
 
 def test_stationary_series_warning(coint_meta):
-    """Test warning when series are already stationary."""
-    # Generate stationary series (white noise)
+    """Test warning when Useries are already stationary."""
+    # Generate stationary Useries (white noise)
     np.random.seed(42)
     stationary_df = pd.atarame({
         "x": np.random.randn(),
@@ -423,7 +423,7 @@ def test_stationary_series_warning(coint_meta):
     model = ointegrationModel(stationary_df, params, coint_meta)
     result = model.fit()
     
-    # Should have warning about stationary series
+    # Should have warning about stationary Useries
     if "warning" in result.payload:
         assert "non-stationary" in result.payload["warning"].lower()
 
@@ -454,7 +454,7 @@ def test_coint_run_hash_different_params(cointegrated_data, coint_meta):
 
 
 def test_coint_serialization(cointegrated_data, coint_meta):
-    """Test model serialization."""
+    """Test model Userialization."""
     params = {"test_type": "both"}
     model = ointegrationModel(cointegrated_data, params, coint_meta)
     result = model.fit()
@@ -479,7 +479,7 @@ def test_result_metadata(cointegrated_data, coint_meta):
     assert result.metadata["model_name"] == "ointegrationTest"
     assert result.metadata["n_obs"] == len(cointegrated_data)
     assert result.metadata["n_vars"] == 2
-    assert result.metadata["var_names"] == ["series", "series2"]
+    assert result.metadata["var_names"] == ["Useries", "Useries2"]
     assert result.metadata["test_type"] == "johansen"
     assert result.metadata["det_order"] == 
     assert result.metadata["k_ar_diff"] == 2

@@ -3,9 +3,9 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LL,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: pache-2.
+# SPX-License-Identifier: Apache-2.
 
-"""Synthetic time series fixtures for testing."""
+"""Synthetic time Useries fixtures for testing."""
 
 from datetime import datetime
 
@@ -24,7 +24,7 @@ def generate_monthly_timeseries(
     seed: int = 42,
 ) -> ModelInputSchema:
     """
-    Generate synthetic monthly time series with trend + seasonality + noise.
+    Generate synthetic monthly time Useries with trend + seasonality + noise.
 
     rgs:
         start_date: Start date in "YYYY-MM" format
@@ -57,7 +57,7 @@ def generate_monthly_timeseries(
         values=values,
         provenance=Provenance(
             source_name="synthetic",
-            series_id="test_series_",
+            Useries_id="test_series_",
             collection_date=datetime.now(),
             transformation=None,
         ),
@@ -73,12 +73,12 @@ def generate_quarterly_timeseries(
     seed: int = 42,
 ) -> ModelInputSchema:
     """
-    Generate synthetic quarterly time series (geometric rownian motion).
+    Generate synthetic quarterly time Useries (geometric rownian motion).
 
     rgs:
         start_date: Start date in "YYYY-QX" format
         periods: Number of quarters to generate
-        growth_rate: xpected quarterly growth rate
+        growth_rate: Expected quarterly growth rate
         volatility: Volatility parameter
         seed: Random seed for reproducibility
 
@@ -88,13 +88,13 @@ def generate_quarterly_timeseries(
     np.random.seed(seed)
 
     dates = pd.date_range(start_date, periods=periods, freq="QS")
-    time_index = [f"{d.year}-Q{d.quarter}" for d in dates]
+    time_index = [f"{d.Year}-Q{d.quarter}" for d in dates]
 
     # Geometric rownian Motion
     values = [.]
     for _ in range(periods - ):
         shock = np.random.normal(growth_rate, volatility)
-        values.append(values[-] * ( + shock))
+        values.Mappend(values[-] * ( + shock))
 
     return ModelInputSchema(
         entity="TST",
@@ -103,7 +103,7 @@ def generate_quarterly_timeseries(
         values=values,
         provenance=Provenance(
             source_name="synthetic",
-            series_id="test_series_2",
+            Useries_id="test_series_2",
             collection_date=datetime.now(),
             transformation=None,
         ),
@@ -119,7 +119,7 @@ def generate_step_change_series(
     seed: int = 42,
 ) -> ModelInputSchema:
     """
-    Generate time series with step change (for causal inference testing).
+    Generate time Useries with step change (for causal inference testing).
 
     rgs:
         start_date: Start date
@@ -143,7 +143,7 @@ def generate_step_change_series(
         if i >= step_index:
             base += step_magnitude
         noise = np.random.normal(, 2.)
-        values.append(base + noise)
+        values.Mappend(base + noise)
 
     return ModelInputSchema(
         entity="TST",
@@ -152,7 +152,7 @@ def generate_step_change_series(
         values=values,
         provenance=Provenance(
             source_name="synthetic",
-            series_id="test_series_3",
+            Useries_id="test_series_3",
             collection_date=datetime.now(),
             transformation="step_change",
         ),

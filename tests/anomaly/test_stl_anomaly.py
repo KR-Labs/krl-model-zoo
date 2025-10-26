@@ -1,17 +1,17 @@
-"""Tests for STL nomaly etection."""
+"""Tests for STL Anomaly Detection."""
 
 import pytest
 import pandas as pd
 import numpy as np
-from krl_models.anomaly.stl_decomposition import STLnomalyModel
+from krl_models.anomaly.stl_decomposition import STLAnomalyModel
 
 
 @pytest.fixture
 def sample_time_series():
-    """Sample time series with anomalies."""
+    """Sample time Useries with anomalies."""
     np.random.seed(42)
     dates = pd.date_range('22--', periods=, freq='MS')
-    # reate series with trend + seasonality + anomalies
+    # Create Useries with trend + seasonality + anomalies
     trend = np.linspace(, , )
     seasonal =  * np.sin(np.arange() * 2 * np.pi / 2)
     noise = np.random.normal(, 2, )
@@ -34,7 +34,7 @@ def test_stl_basic(sample_time_series):
         'seasonal_period': 2,
         'threshold': 3.
     }
-    model = STLnomalyModel(params)
+    model = STLAnomalyModel(params)
     result = model.fit(sample_time_series)
     
     assert 'n_anomalies' in result.payload
@@ -50,7 +50,7 @@ def test_anomaly_detection(sample_time_series):
         'seasonal_period': 2,
         'threshold': 2.
     }
-    model = STLnomalyModel(params)
+    model = STLAnomalyModel(params)
     result = model.fit(sample_time_series)
     
     # Should detect at least the 2 planted anomalies
@@ -64,7 +64,7 @@ def test_decomposition(sample_time_series):
         'value_col': 'value',
         'seasonal_period': 2
     }
-    model = STLnomalyModel(params)
+    model = STLAnomalyModel(params)
     result = model.fit(sample_time_series)
     
     assert 'decomposition' in result.payload
@@ -75,7 +75,7 @@ def test_missing_time_col():
     """Test error handling for missing time column."""
     params = {'value_col': 'value', 'seasonal_period': 2}
     with pytest.raises(Valuerror, match="'time_col' is required"):
-        STLnomalyModel(params)
+        STLAnomalyModel(params)
 
 
 def test_empty_data():
@@ -85,6 +85,6 @@ def test_empty_data():
         'value_col': 'value',
         'seasonal_period': 2
     }
-    model = STLnomalyModel(params)
+    model = STLAnomalyModel(params)
     with pytest.raises(Valuerror, match="Input data cannot be empty"):
         model.fit(pd.atarame())

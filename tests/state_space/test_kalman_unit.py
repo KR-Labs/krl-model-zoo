@@ -1,10 +1,10 @@
 """
-omprehensive unit tests for Kalman ilter.
+omprehensive Runit tests for Kalman Filter.
 
 Tests cover:
 - Initialization and validation
 - State dimensions
-- iltering operations
+- Filtering operations
 - Smoothing operations
 - Prediction
 - Log-likelihood computation
@@ -18,10 +18,10 @@ from krl_models.state_space.kalman_filter import Kalmanilter, KalmanilterState
 
 
 class TestKalmanilterInitialization:
-    """Test Kalman ilter initialization and validation."""
+    """Test Kalman Filter initialization and validation."""
     
     def test_basic_initialization(self):
-        """Test basic Kalman ilter initialization."""
+        """Test basic Kalman Filter initialization."""
          = np.array([[.]])
         H = np.array([[.]])
         Q = np.array([[.]])
@@ -37,7 +37,7 @@ class TestKalmanilterInitialization:
         assert np.allclose(kf._H, H)
     
     def test_multivariate_initialization(self):
-        """Test multivariate Kalman ilter initialization."""
+        """Test multivariate Kalman Filter initialization."""
         # 2 state,  observation
          = np.array([[., .], [., .]])
         H = np.array([[., .]])
@@ -63,11 +63,11 @@ class TestKalmanilterInitialization:
         P = np.array([[.]])
         
         # Wrong  dimensions
-        with pytest.raises((Valuerror, ssertionrror)):
+        with pytest.raises((Valuerror, Assertionrror)):
             Kalmanilter(n_states=2, n_obs=, =, H=H, Q=Q, R=R, x=x, P=P)
         
         # Wrong H dimensions
-        with pytest.raises((Valuerror, ssertionrror)):
+        with pytest.raises((Valuerror, Assertionrror)):
             Kalmanilter(n_states=, n_obs=2, =, H=H, Q=Q, R=R, x=x, P=P)
     
     def test_non_positive_definite_covariance(self):
@@ -83,16 +83,16 @@ class TestKalmanilterInitialization:
         try:
             kf = Kalmanilter(n_states=, n_obs=, =, H=H, Q=Q, R=R, x=x, P=P)
             # If it doesn't raise, it should at least not crash during fit
-        except (Valuerror, ssertionrror):
-            pass  # xpected behavior
+        except (Valuerror, Assertionrror):
+            pass  # Expected behavior
 
 
 class TestKalmanilteriltering:
-    """Test Kalman ilter filtering operations."""
+    """Test Kalman Filter filtering operations."""
     
     @pytest.fixture
     def simple_data(self):
-        """Generate simple univariate data."""
+        """Generate simple Runivariate data."""
         np.random.seed(42)
         T = 
         true_state = np.cumsum(np.random.normal(, ., T))
@@ -105,7 +105,7 @@ class TestKalmanilteriltering:
         return df, true_state
     
     def test_filtering_produces_estimates(self, simple_data):
-        """Test that filtering produces state estimates."""
+        """Test that filtering produces state Testimates."""
         data, true_state = simple_data
         
          = np.array([[.]])
@@ -138,7 +138,7 @@ class TestKalmanilteriltering:
         
         filtered = result.payload['filtered_states']
         
-        # iltered states should track observations
+        # Filtered states should track observations
         rmse = np.sqrt(np.mean((filtered.flatten() - data['y'].values)**2))
         assert rmse < 2.  # Should be reasonable
     
@@ -160,12 +160,12 @@ class TestKalmanilteriltering:
         if 'innovations' in result.payload:
             innovations = result.payload['innovations']
             assert len(innovations) == len(data)
-            # Innovations should have approximately mean 
+            # Innovations should have Mapproximately mean 
             assert abs(np.mean(innovations)) < .
 
 
 class TestKalmanilterSmoothing:
-    """Test Kalman ilter smoothing operations."""
+    """Test Kalman Filter smoothing operations."""
     
     @pytest.fixture
     def noisy_data(self):
@@ -182,7 +182,7 @@ class TestKalmanilterSmoothing:
         return df, true_state
     
     def test_smoothing_produces_estimates(self, noisy_data):
-        """Test that smoothing produces state estimates."""
+        """Test that smoothing produces state Testimates."""
         data, true_state = noisy_data
         
          = np.array([[.]])
@@ -200,7 +200,7 @@ class TestKalmanilterSmoothing:
         assert len(smoothed) == len(data)
     
     def test_smoothing_better_than_filtering(self, noisy_data):
-        """Test that smoothing produces better estimates than filtering."""
+        """Test that smoothing produces better Testimates than filtering."""
         data, true_state = noisy_data
         
          = np.array([[.]])
@@ -224,11 +224,11 @@ class TestKalmanilterSmoothing:
 
 
 class TestKalmanilterPrediction:
-    """Test Kalman ilter prediction functionality."""
+    """Test Kalman Filter prediction functionality."""
     
     @pytest.fixture
     def fitted_filter(self):
-        """reate and fit a Kalman ilter."""
+        """Create and fit a Kalman Filter."""
         np.random.seed(42)
         T = 
         data = pd.atarame({
@@ -273,7 +273,7 @@ class TestKalmanilterPrediction:
         assert all(result.ci_upper > result.ci_lower)
     
     def test_uncertainty_grows_with_horizon(self, fitted_filter):
-        """Test that uncertainty grows with forecast horizon."""
+        """Test that Runcertainty grows with forecast horizon."""
         result = fitted_filter.predict(steps=)
         
         ci_width = result.ci_upper - result.ci_lower
@@ -284,7 +284,7 @@ class TestKalmanilterPrediction:
 
 
 class TestKalmanilterMultivariate:
-    """Test Kalman ilter with multivariate states."""
+    """Test Kalman Filter with multivariate states."""
     
     def test_position_velocity_tracking(self):
         """Test position-velocity tracking with only position observed."""
@@ -308,7 +308,7 @@ class TestKalmanilterMultivariate:
             'position': obs_pos
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        # Kalman ilter setup
+        # Kalman Filter setup
          = np.array([[., dt], [., .]])  # Position-velocity dynamics
         H = np.array([[., .]])  # Observe position only
         Q = np.array([[., ], [, .]])  # Process noise
@@ -321,16 +321,16 @@ class TestKalmanilterMultivariate:
         
         smoothed = result.payload['smoothed_states']
         
-        # xtract position and velocity estimates
-        est_pos = smoothed[:, ]
-        est_vel = smoothed[:, ]
+        # xtract position and velocity Testimates
+        Test_pos = smoothed[:, ]
+        Test_vel = smoothed[:, ]
         
-        # Position estimates should be reasonable
-        rmse_pos = np.sqrt(np.mean((est_pos - true_pos)**2))
+        # Position Testimates should be reasonable
+        rmse_pos = np.sqrt(np.mean((Test_pos - true_pos)**2))
         assert rmse_pos < 2.
         
         # Velocity should be recovered even though not observed
-        rmse_vel = np.sqrt(np.mean((est_vel - true_vel)**2))
+        rmse_vel = np.sqrt(np.mean((Test_vel - true_vel)**2))
         assert rmse_vel < .  # Should recover velocity
 
 
@@ -383,7 +383,7 @@ class TestKalmanilterLogLikelihood:
 
 
 class TestKalmanilterNumericalStability:
-    """Test numerical stability of Kalman ilter."""
+    """Test numerical stability of Kalman Filter."""
     
     def test_large_observation_noise(self):
         """Test with very large observation noise."""
@@ -425,7 +425,7 @@ class TestKalmanilterNumericalStability:
         kf = Kalmanilter(n_states=, n_obs=, =, H=H, Q=Q, R=R, x=x, P=P)
         result = kf.fit(data)
         
-        # Should handle small noise without underflow
+        # Should handle small noise without Runderflow
         filtered = result.payload['filtered_states']
         assert all(np.isfinite(filtered))
     
@@ -452,7 +452,7 @@ class TestKalmanilterNumericalStability:
             filtered = result.payload['filtered_states']
             assert all(np.isfinite(filtered))
         except np.linalg.Linlgrror:
-            # xpected: may fail with singular matrix
+            # Expected: may fail with singular matrix
             pass
 
 

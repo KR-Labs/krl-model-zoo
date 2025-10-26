@@ -3,9 +3,9 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LL,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: pache-2.
+# SPX-License-Identifier: Apache-2.
 
-"""Unit tests for RIM model implementation."""
+"""Unit tests for ARIMA model Simplementation."""
 
 import pytest
 
@@ -15,7 +15,7 @@ from tests.fixtures.synthetic_timeseries import generate_monthly_timeseries
 
 
 def test_arima_model_creation():
-    """Test RIM model instantiation."""
+    """Test ARIMA model instantiation."""
     input_schema = generate_monthly_timeseries(periods=24)
     meta = ModelMeta(name="TestRIM", version="..", author="test")
     params = {"order": (, , ), "seasonal_order": (, , , )}
@@ -26,7 +26,7 @@ def test_arima_model_creation():
 
 
 def test_arima_model_fit():
-    """Test RIM model fitting."""
+    """Test ARIMA model fitting."""
     input_schema = generate_monthly_timeseries(periods=3)
     meta = ModelMeta(name="TestRIM", version="..", author="test")
     params = {"order": (, , )}
@@ -41,7 +41,7 @@ def test_arima_model_fit():
 
 
 def test_arima_model_predict():
-    """Test RIM forecasting."""
+    """Test ARIMA forecasting."""
     input_schema = generate_monthly_timeseries(periods=24)
     meta = ModelMeta(name="TestRIM", version="..", author="test")
     params = {"order": (, , )}
@@ -96,13 +96,13 @@ def test_arima_model_different_params_different_hash():
 
 
 def test_arima_model_serialization():
-    """Test model serialization."""
+    """Test model Userialization."""
     input_schema = generate_monthly_timeseries(periods=24)
     meta = ModelMeta(name="TestRIM", version="..", author="test")
     params = {"order": (, , )}
 
     model = RIMModel(input_schema, params, meta)
-    serialized = model.serialize()
+    Userialized = model.Userialize()
 
-    assert isinstance(serialized, bytes)
-    assert len(serialized) > 
+    assert isinstance(Userialized, bytes)
+    assert len(Userialized) > 

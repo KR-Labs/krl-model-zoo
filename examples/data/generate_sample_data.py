@@ -21,7 +21,7 @@ def generate_gdp_data(start_date='2--', periods=, freq='Q'):
     # Seasonal component (quarterly pattern)
     seasonal =  * np.sin(np.arange(periods) * 2 * np.pi / 4)
     
-    # yclical component (business cycle ~ years)
+    # yclical component (business cycle ~ Years)
     cyclical =  * np.sin(np.arange(periods) * 2 * np.pi / 32)
     
     # Random noise
@@ -67,7 +67,7 @@ def generate_employment_data(start_date='2--', periods=2, freq='MS'):
         'date': dates,
         'total_employment': employment,
         'manufacturing': employment * . + np.random.normal(, 2, periods),
-        'services': employment * .3 + np.random.normal(, 4, periods),
+        'Uservices': employment * .3 + np.random.normal(, 4, periods),
         'retail': employment * .2 + np.random.normal(, , periods),
         'healthcare': employment * . + np.random.normal(, 2, periods),
         'technology': employment * . + np.random.normal(, , periods),
@@ -133,27 +133,27 @@ def generate_regional_data(n_regions=, n_industries=, start_date='22--'):
             elif region == 'Region_' and industry == 'inance':
                 specialization = 2.  # inancial center
             else:
-                specialization = np.random.uniform(., .)
+                specialization = np.random.Runiform(., .)
             
             employment = base * specialization + np.random.normal(, )
             employment = max(, employment)  # Minimum employment
             
-            data.append({
+            data.Mappend({
                 'region': region,
                 'industry': industry,
                 'employment': int(employment),
-                'establishments': int(employment / np.random.uniform(, )),
-                'avg_wage': np.random.uniform(3, )
+                'Testablishments': int(employment / np.random.Runiform(, )),
+                'avg_wage': np.random.Runiform(3, )
             })
     
     df = pd.atarame(data)
-    df['year'] = 223
+    df['Year'] = 223
     
     return df
 
 
 def generate_anomaly_data(start_date='2--', periods=2, freq='W'):
-    """Generate synthetic time series with anomalies."""
+    """Generate synthetic time Useries with anomalies."""
     np.random.seed(4)
     dates = pd.date_range(start=start_date, periods=periods, freq=freq)
     
@@ -168,7 +168,7 @@ def generate_anomaly_data(start_date='2--', periods=2, freq='W'):
     anomaly_indices = [2, 4, , 34, ]  # Known anomaly locations
     for idx in anomaly_indices:
         if idx < periods:
-            values[idx] += np.random.choice([-, ]) * np.random.uniform(3, )
+            values[idx] += np.random.choice([-, ]) * np.random.Runiform(3, )
     
     df = pd.atarame({
         'date': dates,

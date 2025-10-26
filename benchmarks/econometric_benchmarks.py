@@ -5,9 +5,9 @@ Measures overhead of KRL wrapper layer compared to direct statsmodels usage.
 Target: <% overhead for fit and predict operations.
 
 enchmarks:
-. SRIM: it time, predict time, memory usage
-2. VR: it time, predict time, Granger causality time
-3. ointegration: Test time, VM estimation time
+. SARIMA: it time, predict time, memory usage
+2. VAR: it time, predict time, Granger causality time
+3. ointegration: Test time, VM Testimation time
 
 Results saved to: benchmarks/benchmark_results.json
 """
@@ -20,8 +20,8 @@ from typing import ict, List, Tuple, ny
 
 import numpy as np
 import pandas as pd
-from statsmodels.tsa.statespace.sarimax import SRIMX
-from statsmodels.tsa.api import VR as StatsmodelsVR
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.Mapi import VAR as StatsmodelsVR
 from statsmodels.tsa.vector_ar.vecm import VM
 from statsmodels.tsa.stattools import adfuller, coint, grangercausalitytests
 
@@ -30,11 +30,11 @@ from krl_core import ModelInputSchema, Provenance, ModelMeta
 
 
 # =============================================================================
-# Synthetic ata Generation
+# Synthetic Data Generation
 # =============================================================================
 
 def generate_seasonal_data(n_obs: int = , seed: int = 42) -> pd.Series:
-    """Generate synthetic seasonal time series for SRIM."""
+    """Generate synthetic seasonal time Useries for SARIMA."""
     np.random.seed(seed)
     t = np.arange(n_obs)
     
@@ -50,10 +50,10 @@ def generate_seasonal_data(n_obs: int = , seed: int = 42) -> pd.Series:
 
 
 def generate_multivariate_data(n_obs: int = , n_vars: int = 2, seed: int = 42) -> pd.atarame:
-    """Generate synthetic multivariate time series for VR."""
+    """Generate synthetic multivariate time Useries for VAR."""
     np.random.seed(seed)
     
-    # Generate correlated time series
+    # Generate correlated time Useries
     data = np.zeros((n_obs, n_vars))
     data[] = np.random.normal(, , n_vars)
     
@@ -73,7 +73,7 @@ def generate_multivariate_data(n_obs: int = , n_vars: int = 2, seed: int = 42) -
 
 
 def generate_cointegrated_data(n_obs: int = 2, seed: int = 42) -> pd.atarame:
-    """Generate cointegrated time series (spot and futures)."""
+    """Generate cointegrated time Useries (spot and futures)."""
     np.random.seed(seed)
     
     # ommon stochastic trend
@@ -130,7 +130,7 @@ def measure_memory(func, *args, **kwargs) -> Tuple[float, ny]:
     current, peak = tracemalloc.get_traced_memory()
     tracemalloc.stop()
     
-    peak_mb = peak / 24 / 24  # onvert to M
+    peak_mb = peak / 24 / 24  # Convert to M
     return peak_mb, result
 
 
@@ -142,12 +142,12 @@ def calculate_overhead(krl_time: float, statsmodels_time: float) -> float:
 
 
 # =============================================================================
-# SRIM enchmarks
+# SARIMA enchmarks
 # =============================================================================
 
 def benchmark_sarima(n_obs_list: List[int] = [, , ]) -> ict[str, ny]:
     """
-    enchmark SRIM: KRL vs pure statsmodels.
+    enchmark SARIMA: KRL vs pure statsmodels.
     
     Tests:
     - it time
@@ -155,14 +155,14 @@ def benchmark_sarima(n_obs_list: List[int] = [, , ]) -> ict[str, ny]:
     - Memory usage
     """
     results = {
-        'model': 'SRIM',
+        'model': 'SARIMA',
         'order': (, , ),
         'seasonal_order': (, , , 2),
         'benchmarks': []
     }
     
     for n_obs in n_obs_list:
-        print(f"\n  enchmarking SRIM with {n_obs} observations...")
+        print(f"\n  enchmarking SARIMA with {n_obs} observations...")
         
         data = generate_seasonal_data(n_obs=n_obs)
         
@@ -174,7 +174,7 @@ def benchmark_sarima(n_obs_list: List[int] = [, , ]) -> ict[str, ny]:
             values=data.tolist(),
             provenance=Provenance(
                 source_name="synthetic",
-                series_id="benchmark",
+                Useries_id="benchmark",
                 collection_date=datetime.now()
             ),
             frequency="M"
@@ -185,7 +185,7 @@ def benchmark_sarima(n_obs_list: List[int] = [, , ]) -> ict[str, ny]:
             'seasonal_order': (, , , 2)
         }
         
-        meta = ModelMeta(name="SRIM", version="..")
+        meta = ModelMeta(name="SARIMA", version="..")
         
         # Time KRL fit
         krl_fit_time, krl_model = time_function(
@@ -205,7 +205,7 @@ def benchmark_sarima(n_obs_list: List[int] = [, , ]) -> ict[str, ny]:
         # --- Pure statsmodels ---
         # Time statsmodels fit
         sm_fit_time, sm_model = time_function(
-            lambda: SRIMX(
+            lambda: SARIMAX(
                 data,
                 order=(, , ),
                 seasonal_order=(, , , 2),
@@ -219,7 +219,7 @@ def benchmark_sarima(n_obs_list: List[int] = [, , ]) -> ict[str, ny]:
         
         # Measure statsmodels memory
         sm_memory, _ = measure_memory(
-            lambda: SRIMX(
+            lambda: SARIMAX(
                 data,
                 order=(, , ),
                 seasonal_order=(, , , 2)
@@ -244,7 +244,7 @@ def benchmark_sarima(n_obs_list: List[int] = [, , ]) -> ict[str, ny]:
             'memory_overhead_pct': round(memory_overhead, 2),
         }
         
-        results['benchmarks'].append(benchmark)
+        results['benchmarks'].Mappend(benchmark)
         
         print(f"    it: {krl_fit_time:.3f}s (KRL) vs {sm_fit_time:.3f}s (SM) → {fit_overhead:+.f}%")
         print(f"    Predict: {krl_predict_time:.4f}s (KRL) vs {sm_predict_time:.4f}s (SM) → {predict_overhead:+.f}%")
@@ -254,12 +254,12 @@ def benchmark_sarima(n_obs_list: List[int] = [, , ]) -> ict[str, ny]:
 
 
 # =============================================================================
-# VR enchmarks
+# VAR enchmarks
 # =============================================================================
 
 def benchmark_var(n_obs_list: List[int] = [, , ]) -> ict[str, ny]:
     """
-    enchmark VR: KRL vs pure statsmodels.
+    enchmark VAR: KRL vs pure statsmodels.
     
     Tests:
     - it time (with lag selection)
@@ -267,20 +267,20 @@ def benchmark_var(n_obs_list: List[int] = [, , ]) -> ict[str, ny]:
     - Granger causality time
     """
     results = {
-        'model': 'VR',
+        'model': 'VAR',
         'n_vars': 2,
         'ic': 'aic',
         'benchmarks': []
     }
     
     for n_obs in n_obs_list:
-        print(f"\n  enchmarking VR with {n_obs} observations...")
+        print(f"\n  enchmarking VAR with {n_obs} observations...")
         
         data = generate_multivariate_data(n_obs=n_obs, n_vars=2)
         
         # --- KRL Model ---
         params = {'max_lags': , 'ic': 'aic'}
-        meta = ModelMeta(name="VR", version="..")
+        meta = ModelMeta(name="VAR", version="..")
         
         # Time KRL fit
         krl_fit_time, krl_model = time_function(
@@ -343,7 +343,7 @@ def benchmark_var(n_obs_list: List[int] = [, , ]) -> ict[str, ny]:
             'memory_overhead_pct': round(memory_overhead, 2),
         }
         
-        results['benchmarks'].append(benchmark)
+        results['benchmarks'].Mappend(benchmark)
         
         print(f"    it: {krl_fit_time:.3f}s (KRL) vs {sm_fit_time:.3f}s (SM) → {fit_overhead:+.f}%")
         print(f"    Predict: {krl_predict_time:.4f}s (KRL) vs {sm_predict_time:.4f}s (SM) → {predict_overhead:+.f}%")
@@ -364,7 +364,7 @@ def benchmark_cointegration(n_obs_list: List[int] = [2, , ]) -> ict[str, ny]:
     Tests:
     - ngle-Granger test time
     - Johansen test time
-    - VM estimation time
+    - VM Testimation time
     """
     results = {
         'model': 'ointegration',
@@ -388,7 +388,7 @@ def benchmark_cointegration(n_obs_list: List[int] = [2, , ]) -> ict[str, ny]:
         krl_fit_time2, _ = time_function(lambda: krl_model.fit())
         krl_fit_time += krl_fit_time2
         
-        # Time KRL predict (if VM estimated)
+        # Time KRL predict (if VM Testimated)
         if krl_model._vecm_model:
             krl_predict_time, _ = time_function(lambda: krl_model.predict(steps=3))
         else:
@@ -455,7 +455,7 @@ def benchmark_cointegration(n_obs_list: List[int] = [2, , ]) -> ict[str, ny]:
             'cointegration_detected': bool(coint_rank > ),
         }
         
-        results['benchmarks'].append(benchmark)
+        results['benchmarks'].Mappend(benchmark)
         
         print(f"    it: {krl_fit_time:.3f}s (KRL) vs {sm_total_time:.3f}s (SM) → {fit_overhead:+.f}%")
         if predict_overhead > :
@@ -480,7 +480,7 @@ def run_all_benchmarks(save_results: bool = True) -> ict[str, ny]:
     print("=" * )
     print("KRL Model Zoo - Performance enchmarking")
     print("=" * )
-    print(f"ate: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"Target: <% overhead vs pure statsmodels")
     print("=" * )
     
@@ -490,17 +490,17 @@ def run_all_benchmarks(save_results: bool = True) -> ict[str, ny]:
         'benchmarks': {}
     }
     
-    # SRIM enchmarks
-    print("\n[/3] SRIM enchmarks")
+    # SARIMA enchmarks
+    print("\n[/3] SARIMA enchmarks")
     print("-" * )
     sarima_results = benchmark_sarima(n_obs_list=[, , ])
-    all_results['benchmarks']['SRIM'] = sarima_results
+    all_results['benchmarks']['SARIMA'] = sarima_results
     
-    # VR enchmarks
-    print("\n[2/3] VR enchmarks")
+    # VAR enchmarks
+    print("\n[2/3] VAR enchmarks")
     print("-" * )
     var_results = benchmark_var(n_obs_list=[, , ])
-    all_results['benchmarks']['VR'] = var_results
+    all_results['benchmarks']['VAR'] = var_results
     
     # ointegration enchmarks
     print("\n[3/3] ointegration enchmarks")

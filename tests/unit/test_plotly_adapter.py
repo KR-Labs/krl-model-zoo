@@ -3,7 +3,7 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LL,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: pache-2.
+# SPX-License-Identifier: Apache-2.
 
 """Unit tests for PlotlySchemadapter."""
 
@@ -52,13 +52,13 @@ def test_feature_importance_plot():
     fig_dict = adapter.feature_importance_plot(
         features=["feature", "feature2", "feature3"],
         importance=[., .3, .2],
-        title="Test eature Importance",
+        title="Test Feature Importance",
     )
 
     assert "data" in fig_dict
     assert len(fig_dict["data"]) == 
     assert fig_dict["data"][]["type"] == "bar"
-    assert fig_dict["layout"]["title"] == "Test eature Importance"
+    assert fig_dict["layout"]["title"] == "Test Feature Importance"
 
 
 def test_feature_importance_sorting():

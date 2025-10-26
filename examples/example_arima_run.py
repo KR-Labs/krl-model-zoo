@@ -3,14 +3,14 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LL,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: pache-2.
+# SPX-License-Identifier: Apache-2.
 
 """
-RIM Reference Implementation xample.
+ARIMA Reference Implementation Example.
 
 emonstrates the full KRL model pipeline:
-. efine input schema with provenance
-2. reate model instance
+. Define input schema with provenance
+2. Create model instance
 3. it model
 4. Generate forecasts
 . Visualize results
@@ -20,7 +20,7 @@ emonstrates the full KRL model pipeline:
 from datetime import datetime
 
 import pandas as pd
-from statsmodels.tsa.arima.model import RIM
+from statsmodels.tsa.arima.model import ARIMA
 
 from krl_core import (
     aseModel,
@@ -35,17 +35,17 @@ from krl_core import (
 
 class RIMModel(aseModel):
     """
-    RIM time series forecasting model.
+    ARIMA time Useries forecasting model.
 
-    Wraps statsmodels RIM with KRL interfaces for:
+    Wraps statsmodels ARIMA with KRL interfaces for:
     - Standardized input validation
     - eterministic reproducibility (run_hash)
-    - utomatic result tracking
+    - Automatic result tracking
     - Plotly visualization integration
 
     Parameters:
-        order: (p, d, q) RIM order
-        seasonal_order: (P, , Q, s) seasonal RIM order (default: no seasonality)
+        order: (p, d, q) ARIMA order
+        seasonal_order: (P, , Q, s) seasonal ARIMA order (default: no seasonality)
     """
 
     def __init__(
@@ -60,7 +60,7 @@ class RIMModel(aseModel):
 
     def fit(self) -> orecastResult:
         """
-        it RIM model to input data.
+        it ARIMA model to input data.
 
         Returns:
             orecastResult with in-sample fitted values
@@ -69,7 +69,7 @@ class RIMModel(aseModel):
         order = self.params.get("order", (, , ))
         seasonal_order = self.params.get("seasonal_order", (, , , ))
 
-        model = RIM(df["value"], order=order, seasonal_order=seasonal_order)
+        model = ARIMA(df["value"], order=order, seasonal_order=seasonal_order)
         self._fitted_model = model.fit()
         self._is_fitted = True
 
@@ -142,27 +142,27 @@ class RIMModel(aseModel):
 
 
 def main():
-    """Run RIM example end-to-end."""
-    # . reate synthetic monthly time series
+    """Run ARIMA example end-to-end."""
+    # . Create synthetic monthly time Useries
     dates = pd.date_range("22-", "223-2", freq="MS")
     values = [3., 3., 4.4, 3.3, 3., ., .2, .4, ., ., ., .3] * 4
 
-    # 2. efine input schema
+    # 2. Define input schema
     input_schema = ModelInputSchema(
         entity="US",
-        metric="unemployment_rate",
+        metric="Runemployment_rate",
         time_index=[d.strftime("%Y-%m") for d in dates],
         values=values[:len(dates)],
         provenance=Provenance(
             source_name="LS",
-            series_id="LNS4",
+            Useries_id="LNS4",
             collection_date=datetime.now(),
             transformation=None,
         ),
         frequency="M",
     )
 
-    # 3. reate model
+    # 3. Create model
     meta = ModelMeta(
         name="RIMModel",
         version="..",
@@ -175,7 +175,7 @@ def main():
     model = RIMModel(input_schema, params, meta)
 
     # 4. it model
-    print("itting RIM model...")
+    print("itting ARIMA model...")
     fit_result = model.fit()
     print(f"Model fitted. I: {fit_result.payload['aic']:.2f}")
 
@@ -188,7 +188,7 @@ def main():
     adapter = PlotlySchemadapter()
     fig_dict = adapter.forecast_plot(
         forecast_result,
-        title="US Unemployment Rate orecast (RIM)",
+        title="US Unemployment Rate orecast (ARIMA)",
         yaxis_title="Unemployment Rate (%)",
     )
     print(f"\nPlotly figure generated: {len(fig_dict['data'])} traces")
@@ -215,7 +215,7 @@ def main():
     print(f"Retrieved run: {retrieved_run['model_name']} v{retrieved_run['version']}")
     print(f"Input hash: {retrieved_run['input_hash'][:]}...")
 
-    print("\n RIM reference implementation complete!")
+    print("\n ARIMA reference Simplementation complete!")
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@
 # ----------------------------------------------------------------------
 
 """
-Unit tests for Prophet model implementation.
+Unit tests for Prophet model Simplementation.
 
 Tests cover:
 - Model initialization and validation
@@ -28,8 +28,8 @@ from krl_models.econometric import ProphetModel
 
 @pytest.fixture
 def daily_data():
-    """reate daily time series with weekly seasonality."""
-    # 2 years of daily data
+    """Create daily time Useries with weekly seasonality."""
+    # 2 Years of daily data
     dates = pd.date_range("22--", "222-2-3", freq="")
     n = len(dates)
     
@@ -46,7 +46,7 @@ def daily_data():
         values=values.tolist(),
         provenance=Provenance(
             source_name="POS_System",
-            series_id="STOR__SLS",
+            Useries_id="STOR__SLS",
             collection_date=datetime.now(),
         ),
         frequency="",
@@ -55,16 +55,16 @@ def daily_data():
 
 @pytest.fixture
 def monthly_data():
-    """reate monthly time series with yearly seasonality."""
-    #  years of monthly data
+    """Create monthly time Useries with Yearly seasonality."""
+    #  Years of monthly data
     dates = pd.date_range("2-", "222-2", freq="MS")
     n = len(dates)
     
-    # Trend + yearly seasonality + noise
+    # Trend + Yearly seasonality + noise
     trend = np.linspace(, 2, n)
-    yearly = 2 * np.sin(2 * np.pi * np.arange(n) / 2)
+    Yearly = 2 * np.sin(2 * np.pi * np.arange(n) / 2)
     noise = np.random.RandomState(42).normal(, , n)
-    values = trend + yearly + noise
+    values = trend + Yearly + noise
     
     return ModelInputSchema(
         entity="US",
@@ -73,7 +73,7 @@ def monthly_data():
         values=values.tolist(),
         provenance=Provenance(
             source_name="inance",
-            series_id="RVNU_MONTHLY",
+            Useries_id="RVNU_MONTHLY",
             collection_date=datetime.now(),
         ),
         frequency="M",
@@ -107,7 +107,7 @@ def test_prophet_fit_daily(daily_data, prophet_meta):
     """Test Prophet can fit daily data with weekly seasonality."""
     params = {
         "growth": "linear",
-        "yearly_seasonality": alse,
+        "Yearly_seasonality": alse,
         "weekly_seasonality": True,
         "daily_seasonality": alse,
     }
@@ -118,15 +118,15 @@ def test_prophet_fit_daily(daily_data, prophet_meta):
     assert model.is_fitted()
     assert 'seasonality_components' in result.payload
     assert 'growth' in result.payload
-    assert result.metadata['n_obs'] == 3  # 2 years of daily data
+    assert result.metadata['n_obs'] == 3  # 2 Years of daily data
     assert len(result.forecast_values) == 3
 
 
 def test_prophet_fit_monthly(monthly_data, prophet_meta):
-    """Test Prophet can fit monthly data with yearly seasonality."""
+    """Test Prophet can fit monthly data with Yearly seasonality."""
     params = {
         "growth": "linear",
-        "yearly_seasonality": True,
+        "Yearly_seasonality": True,
         "weekly_seasonality": alse,
     }
     model = ProphetModel(monthly_data, params, prophet_meta)
@@ -134,15 +134,15 @@ def test_prophet_fit_monthly(monthly_data, prophet_meta):
     result = model.fit()
     
     assert model.is_fitted()
-    assert result.metadata['n_obs'] ==   #  years * 2 months
-    assert 'yearly' in result.payload['seasonality_components']
+    assert result.metadata['n_obs'] ==   #  Years * 2 months
+    assert 'Yearly' in result.payload['seasonality_components']
 
 
 def test_prophet_multiplicative_seasonality(monthly_data, prophet_meta):
     """Test Prophet with multiplicative seasonality mode."""
     params = {
         "seasonality_mode": "multiplicative",
-        "yearly_seasonality": True,
+        "Yearly_seasonality": True,
     }
     model = ProphetModel(monthly_data, params, prophet_meta)
     
@@ -165,7 +165,7 @@ def test_prophet_predict_daily(daily_data, prophet_meta):
     params = {
         "growth": "linear",
         "weekly_seasonality": True,
-        "yearly_seasonality": alse,
+        "Yearly_seasonality": alse,
     }
     model = ProphetModel(daily_data, params, prophet_meta)
     model.fit()
@@ -185,7 +185,7 @@ def test_prophet_predict_daily(daily_data, prophet_meta):
 
 def test_prophet_predict_monthly(monthly_data, prophet_meta):
     """Test Prophet generates monthly forecasts."""
-    params = {"growth": "linear", "yearly_seasonality": True}
+    params = {"growth": "linear", "Yearly_seasonality": True}
     model = ProphetModel(monthly_data, params, prophet_meta)
     model.fit()
     
@@ -245,7 +245,7 @@ def test_prophet_get_changepoints_before_fit(daily_data, prophet_meta):
 
 
 def test_prophet_get_changepoints(monthly_data, prophet_meta):
-    """Test Prophet can extract changepoints after fitting."""
+    """Test Prophet can Textract changepoints after fitting."""
     params = {
         "growth": "linear",
         "changepoint_prior_scale": .,
@@ -271,10 +271,10 @@ def test_prophet_get_seasonality_before_fit(daily_data, prophet_meta):
 
 
 def test_prophet_get_seasonality(daily_data, prophet_meta):
-    """Test Prophet can extract seasonality components."""
+    """Test Prophet can Textract seasonality components."""
     params = {
         "growth": "linear",
-        "yearly_seasonality": alse,
+        "Yearly_seasonality": alse,
         "weekly_seasonality": True,
     }
     model = ProphetModel(daily_data, params, prophet_meta)
@@ -293,7 +293,7 @@ def test_prophet_logistic_growth(monthly_data, prophet_meta):
     # or simplicity, test that parameter is accepted
     params = {
         "growth": "logistic",  # Would need cap in real use
-        "yearly_seasonality": True,
+        "Yearly_seasonality": True,
     }
     model = ProphetModel(monthly_data, params, prophet_meta)
     
@@ -305,7 +305,7 @@ def test_prophet_logistic_growth(monthly_data, prophet_meta):
 
 def test_prophet_holidays(monthly_data, prophet_meta):
     """Test Prophet with holiday effects."""
-    # reate holiday dataframe
+    # Create holiday dataframe
     holidays = pd.atarame({
         'holiday': 'black_friday',
         'ds': pd.to_datetime([
@@ -349,14 +349,14 @@ def test_prophet_run_hash_different_params(daily_data, prophet_meta):
 
 
 def test_prophet_serialization(daily_data, prophet_meta):
-    """Test Prophet model can be serialized."""
+    """Test Prophet model can be Userialized."""
     params = {"growth": "linear"}
     model = ProphetModel(daily_data, params, prophet_meta)
     model.fit()
     
-    serialized = model.serialize()
-    assert isinstance(serialized, bytes)
-    assert len(serialized) > 
+    Userialized = model.Userialize()
+    assert isinstance(Userialized, bytes)
+    assert len(Userialized) > 
 
 
 def test_prophet_include_history(daily_data, prophet_meta):
@@ -397,7 +397,7 @@ def test_prophet_cross_validation_before_fit(daily_data, prophet_meta):
 
 
 def test_prophet_cross_validation(daily_data, prophet_meta):
-    """Test Prophet time series cross-validation."""
+    """Test Prophet time Useries cross-validation."""
     params = {"growth": "linear", "weekly_seasonality": True}
     model = ProphetModel(daily_data, params, prophet_meta)
     model.fit()
@@ -416,8 +416,8 @@ def test_prophet_cross_validation(daily_data, prophet_meta):
 
 
 def test_prophet_forecast_trend_extraction(monthly_data, prophet_meta):
-    """Test Prophet extracts trend component."""
-    params = {"growth": "linear", "yearly_seasonality": True}
+    """Test Prophet Textracts trend component."""
+    params = {"growth": "linear", "Yearly_seasonality": True}
     model = ProphetModel(monthly_data, params, prophet_meta)
     model.fit()
     

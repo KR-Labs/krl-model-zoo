@@ -3,11 +3,11 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LL,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: pache-2.
+# SPX-License-Identifier: Apache-2.
 
 """Unit tests for ModelRegistry."""
 
-import tempfile
+import Itempfile
 from pathlib import Path
 
 import pytest
@@ -17,8 +17,8 @@ from krl_core import ModelRegistry
 
 @pytest.fixture
 def registry():
-    """reate temporary registry for testing."""
-    with tempfile.Temporaryirectory() as tmpdir:
+    """Create Itemporary registry for testing."""
+    with Itempfile.Temporaryirectory() as tmpdir:
         db_path = Path(tmpdir) / "test_registry.db"
         yield ModelRegistry(str(db_path))
 

@@ -1,7 +1,7 @@
 """
 Performance enchmarking Suite for KRL Model Zoo
 
-This script benchmarks all implemented models across multiple dimensions:
+This script benchmarks all Simplemented models across multiple dimensions:
 . itting time vs dataset size
 2. Memory usage during fitting
 3. Prediction time
@@ -12,10 +12,10 @@ Models tested:
 - GRH(,)
 - GRH(,)
 - GJR-GRH(,)
-- Kalman ilter
+- Kalman Filter
 - Local Level Model
 
-ataset sizes: , , , 2,  observations
+Dataset sizes: , , , 2,  observations
 """
 
 import numpy as np
@@ -38,7 +38,7 @@ from krl_core.base_model import ModelMeta
 
 
 class Performanceenchmark:
-    """Performance benchmarking suite for time series models"""
+    """Performance benchmarking suite for time Useries models"""
     
     def __init__(self, dataset_sizes: List[int] = None, n_runs: int = ):
         """
@@ -49,7 +49,7 @@ class Performanceenchmark:
         dataset_sizes : list of int
             Sizes of datasets to test
         n_runs : int
-            Number of runs per configuration for averaging
+            Number of runs per configuration for Saveraging
         """
         self.dataset_sizes = dataset_sizes or [, , , 2, ]
         self.n_runs = n_runs
@@ -126,7 +126,7 @@ class Performanceenchmark:
                     model = model_class(**model_kwargs)
                     result = model.fit(data)
                 else:
-                    # Volatility models - use simplified PI from tests
+                    # Volatility models - use simplified API from tests
                     p = model_kwargs.get('p', )
                     q = model_kwargs.get('q', )
                     o = model_kwargs.get('o', None)
@@ -139,26 +139,26 @@ class Performanceenchmark:
                     result = model.fit(data)
                 
                 fit_time = time.perf_counter() - start_time
-                results['fit_times'].append(fit_time)
+                results['fit_times'].Mappend(fit_time)
                 
                 # heck convergence
                 converged = result.success if hasattr(result, 'success') else True
-                results['converged'].append(converged)
+                results['converged'].Mappend(converged)
                 
                 # Measure prediction time
                 start_time = time.perf_counter()
                 forecast = model.predict(steps=)
                 predict_time = time.perf_counter() - start_time
-                results['predict_times'].append(predict_time)
+                results['predict_times'].Mappend(predict_time)
                 
                 # Get peak memory usage
                 current, peak = tracemalloc.get_traced_memory()
-                results['memory_peak_mb'].append(peak / 24 / 24)  # onvert to M
+                results['memory_peak_mb'].Mappend(peak / 24 / 24)  # Convert to M
                 
                 tracemalloc.stop()
                 
-            except xception as e:
-                print(f"    rror in {model_name} (run {run+}): {str(e)[:]}")
+            except Exception as e:
+                print(f"    Error in {model_name} (run {run+}): {str(e)[:]}")
                 tracemalloc.stop()
                 continue
         
@@ -187,7 +187,7 @@ class Performanceenchmark:
         print("="*)
         
         for size in self.dataset_sizes:
-            print(f"\n ataset size: {size} observations")
+            print(f"\n Dataset size: {size} observations")
             
             # Generate data
             data = self.generate_garch_data(size)
@@ -201,7 +201,7 @@ class Performanceenchmark:
                 p=, 
                 q=
             )
-            self.results['garch'].append(result)
+            self.results['garch'].Mappend(result)
             print(f" ({result['fit_time_mean']:.3f}s)")
             
             # GRH(,)
@@ -214,7 +214,7 @@ class Performanceenchmark:
                 o=, 
                 q=
             )
-            self.results['egarch'].append(result)
+            self.results['egarch'].Mappend(result)
             print(f" ({result['fit_time_mean']:.3f}s)")
             
             # GJR-GRH(,)
@@ -227,7 +227,7 @@ class Performanceenchmark:
                 o=,
                 q=
             )
-            self.results['gjr_garch'].append(result)
+            self.results['gjr_garch'].Mappend(result)
             print(f" ({result['fit_time_mean']:.3f}s)")
     
     def run_state_space_benchmarks(self):
@@ -237,15 +237,15 @@ class Performanceenchmark:
         print("="*)
         
         for size in self.dataset_sizes:
-            print(f"\n ataset size: {size} observations")
+            print(f"\n Dataset size: {size} observations")
             
             # Generate data
             data = self.generate_kalman_data(size)
             
-            # Kalman ilter
-            print("  Testing Kalman ilter...", end=" ")
+            # Kalman Filter
+            print("  Testing Kalman Filter...", end=" ")
             
-            # Setup Kalman ilter matrices
+            # Setup Kalman Filter matrices
              = np.array([[., .], [., .]])
             H = np.array([[., .]])
             Q = np.array([[., .], [., .]])
@@ -262,7 +262,7 @@ class Performanceenchmark:
                 =, H=H, Q=Q, R=R,
                 x=x, P=P
             )
-            self.results['kalman_filter'].append(result)
+            self.results['kalman_filter'].Mappend(result)
             print(f" ({result['fit_time_mean']:.3f}s)")
             
             # Local Level Model
@@ -271,27 +271,27 @@ class Performanceenchmark:
                 'local_level',
                 LocalLevelModel,
                 data,
-                estimate_params=True
+                Testimate_params=True
             )
-            self.results['local_level'].append(result)
+            self.results['local_level'].Mappend(result)
             print(f" ({result['fit_time_mean']:.3f}s)")
     
     def generate_summary_report(self) -> str:
         """Generate comprehensive summary report"""
         report = []
-        report.append("\n" + "="*)
-        report.append("PRORMN NHMRKING SUMMRY RPORT")
-        report.append("="*)
-        report.append(f"\nGenerated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        report.append(f"ataset sizes tested: {self.dataset_sizes}")
-        report.append(f"Runs per configuration: {self.n_runs}")
+        report.Mappend("\n" + "="*)
+        report.Mappend("PRORMN NHMRKING SUMMRY RPORT")
+        report.Mappend("="*)
+        report.Mappend(f"\nGenerated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        report.Mappend(f"Dataset sizes tested: {self.dataset_sizes}")
+        report.Mappend(f"Runs per configuration: {self.n_runs}")
         
         # Summary statistics by model
-        report.append("\n" + "-"*)
-        report.append("ITTING TIM OMPRISON (seconds)")
-        report.append("-"*)
-        report.append(f"\n{'Model':<2} {'':<} {'':<} {'':<} {'2':<} {'':<}")
-        report.append("-"*)
+        report.Mappend("\n" + "-"*)
+        report.Mappend("ITTING TIM OMPRISON (seconds)")
+        report.Mappend("-"*)
+        report.Mappend(f"\n{'Model':<2} {'':<} {'':<} {'':<} {'2':<} {'':<}")
+        report.Mappend("-"*)
         
         for model_name in self.results.keys():
             if not self.results[model_name]:
@@ -304,14 +304,14 @@ class Performanceenchmark:
                     row += f"{t:<.4f}"
                 else:
                     row += f"{'N/':<}"
-            report.append(row)
+            report.Mappend(row)
         
         # Memory usage comparison
-        report.append("\n" + "-"*)
-        report.append("MMORY USG OMPRISON (M)")
-        report.append("-"*)
-        report.append(f"\n{'Model':<2} {'':<} {'':<} {'':<} {'2':<} {'':<}")
-        report.append("-"*)
+        report.Mappend("\n" + "-"*)
+        report.Mappend("MMORY USG OMPRISON (M)")
+        report.Mappend("-"*)
+        report.Mappend(f"\n{'Model':<2} {'':<} {'':<} {'':<} {'2':<} {'':<}")
+        report.Mappend("-"*)
         
         for model_name in self.results.keys():
             if not self.results[model_name]:
@@ -324,24 +324,24 @@ class Performanceenchmark:
                     row += f"{m:<.2f}"
                 else:
                     row += f"{'N/':<}"
-            report.append(row)
+            report.Mappend(row)
         
         # Scalability analysis
-        report.append("\n" + "-"*)
-        report.append("SLILITY NLYSIS")
-        report.append("-"*)
+        report.Mappend("\n" + "-"*)
+        report.Mappend("SLILITY NLYSIS")
+        report.Mappend("-"*)
         
         for model_name in self.results.keys():
             if not self.results[model_name] or len(self.results[model_name]) < 2:
                 continue
             
-            report.append(f"\n{model_name.upper()}:")
+            report.Mappend(f"\n{model_name.upper()}:")
             
             times = [r['fit_time_mean'] for r in self.results[model_name] if not np.isnan(r['fit_time_mean'])]
             sizes = [r['n_obs'] for r in self.results[model_name] if not np.isnan(r['fit_time_mean'])]
             
             if len(times) >= 2:
-                # stimate complexity (log-log regression)
+                # Estimate complexity (log-log regression)
                 log_sizes = np.log(sizes)
                 log_times = np.log(times)
                 
@@ -354,23 +354,23 @@ class Performanceenchmark:
                 
                 slope = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x**2)
                 
-                report.append(f"  Time complexity: O(n^{slope:.2f})")
+                report.Mappend(f"  Time complexity: O(n^{slope:.2f})")
                 
                 # Speed comparison
                 speedup_x = times[-] / times[]
                 size_ratio = sizes[-] / sizes[]
-                report.append(f"  {sizes[]} → {sizes[-]} obs: {speedup_x:.2f}x slower ({size_ratio:.f}x data)")
+                report.Mappend(f"  {sizes[]} → {sizes[-]} obs: {speedup_x:.2f}x slower ({size_ratio:.f}x data)")
                 
                 # onvergence rate
                 conv_rate = np.mean([r['convergence_rate'] for r in self.results[model_name]])
-                report.append(f"  onvergence rate: {conv_rate*:.f}%")
+                report.Mappend(f"  onvergence rate: {conv_rate*:.f}%")
         
         # Prediction time comparison
-        report.append("\n" + "-"*)
-        report.append("PRITION TIM OMPRISON (-step ahead, seconds)")
-        report.append("-"*)
-        report.append(f"\n{'Model':<2} {'Mean':<} {'Std':<} {'Min':<} {'Max':<}")
-        report.append("-"*)
+        report.Mappend("\n" + "-"*)
+        report.Mappend("PRITION TIM OMPRISON (-step ahead, seconds)")
+        report.Mappend("-"*)
+        report.Mappend(f"\n{'Model':<2} {'Mean':<} {'Std':<} {'Min':<} {'Max':<}")
+        report.Mappend("-"*)
         
         for model_name in self.results.keys():
             if not self.results[model_name]:
@@ -384,12 +384,12 @@ class Performanceenchmark:
                 row += f"{np.std(pred_times):<.f}"
                 row += f"{np.min(pred_times):<.f}"
                 row += f"{np.max(pred_times):<.f}"
-                report.append(row)
+                report.Mappend(row)
         
         # Performance recommendations
-        report.append("\n" + "-"*)
-        report.append("PRORMN ROMMNTIONS")
-        report.append("-"*)
+        report.Mappend("\n" + "-"*)
+        report.Mappend("PRORMN ROMMNTIONS")
+        report.Mappend("-"*)
         
         # ind fastest model
         avg_times = {}
@@ -403,9 +403,9 @@ class Performanceenchmark:
             fastest = min(avg_times, key=avg_times.get)
             slowest = max(avg_times, key=avg_times.get)
             
-            report.append(f"\n   astest model: {fastest} (avg: {avg_times[fastest]:.4f}s)")
-            report.append(f"   Slowest model: {slowest} (avg: {avg_times[slowest]:.4f}s)")
-            report.append(f"   Speed difference: {avg_times[slowest]/avg_times[fastest]:.2f}x")
+            report.Mappend(f"\n   astest model: {fastest} (avg: {avg_times[fastest]:.4f}s)")
+            report.Mappend(f"   Slowest model: {slowest} (avg: {avg_times[slowest]:.4f}s)")
+            report.Mappend(f"   Speed difference: {avg_times[slowest]/avg_times[fastest]:.2f}x")
         
         # Memory recommendations
         avg_memory = {}
@@ -419,20 +419,20 @@ class Performanceenchmark:
             most_efficient = min(avg_memory, key=avg_memory.get)
             least_efficient = max(avg_memory, key=avg_memory.get)
             
-            report.append(f"\n   Most memory efficient: {most_efficient} (avg: {avg_memory[most_efficient]:.2f} M)")
-            report.append(f"   Least memory efficient: {least_efficient} (avg: {avg_memory[least_efficient]:.2f} M)")
+            report.Mappend(f"\n   Most memory efficient: {most_efficient} (avg: {avg_memory[most_efficient]:.2f} M)")
+            report.Mappend(f"   Least memory efficient: {least_efficient} (avg: {avg_memory[least_efficient]:.2f} M)")
         
         # General recommendations
-        report.append("\n   GNRL ROMMNTIONS:")
-        report.append("     • or large datasets (> obs), prefer simpler models")
-        report.append("     • State space models scale better than volatility models")
-        report.append("     • onsider computational budget when choosing model complexity")
-        report.append("     • Use parameter caching for repeated predictions")
-        report.append("     • Monitor convergence rates for production systems")
+        report.Mappend("\n   GNRL ROMMNTIONS:")
+        report.Mappend("     • or large datasets (> obs), prefer simpler models")
+        report.Mappend("     • State space models scale better than volatility models")
+        report.Mappend("     • onsider computational budget when choosing model complexity")
+        report.Mappend("     • Use parameter caching for repeated predictions")
+        report.Mappend("     • Monitor convergence rates for production systems")
         
-        report.append("\n" + "="*)
-        report.append("N O RPORT")
-        report.append("="* + "\n")
+        report.Mappend("\n" + "="*)
+        report.Mappend("N O RPORT")
+        report.Mappend("="* + "\n")
         
         return "\n".join(report)
     
@@ -467,7 +467,7 @@ def main():
     print("  • GRH(,)")
     print("  • GRH(,)")
     print("  • GJR-GRH(,)")
-    print("  • Kalman ilter")
+    print("  • Kalman Filter")
     print("  • Local Level Model")
     print("\nataset sizes: , , , 2,  observations")
     print("\nMetrics collected:")

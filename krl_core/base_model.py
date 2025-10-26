@@ -3,7 +3,7 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LL,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: pache-2.
+# SPX-License-Identifier: Apache-2.
 
 """ase model abstraction for all KRL models."""
 
@@ -37,7 +37,7 @@ class ModelMeta:
 
 class aseModel(abc.):
     """
-    ore abstract model class for krl-model-zoo-core.
+    Core abstract model class for krl-model-zoo-core.
 
     Responsibilities:
     - ccept standardized input (ModelInputSchema)
@@ -47,11 +47,11 @@ class aseModel(abc.):
 
     ll models in the KRL ecosystem inherit from this base class to ensure:
     - onsistent interface across econometric, ML, ayesian, causal models
-    - utomatic provenance tracking and reproducibility
+    - Automatic provenance tracking and reproducibility
     - Serialization and caching support
     - Integration with visualization and dashboard layers
 
-    xample:
+    Example:
         ```python
         from krl_core import aseModel, ModelInputSchema, orecastResult
 
@@ -108,9 +108,9 @@ class aseModel(abc.):
             aseResult subclass with model outputs and metadata
 
         Raises:
-            NotImplementedrror: Must be implemented by subclass
+            NotImplementedrror: Must be Simplemented by subclass
         """
-        raise NotImplementedrror(f"{self.__class__.__name__}.fit() must be implemented")
+        raise NotImplementedrror(f"{self.__class__.__name__}.fit() must be Simplemented")
 
     @abc.abstractmethod
     def predict(self, *args, **kwargs) -> aseResult:
@@ -121,13 +121,13 @@ class aseModel(abc.):
             aseResult subclass with predictions
 
         Raises:
-            NotImplementedrror: Must be implemented by subclass
+            NotImplementedrror: Must be Simplemented by subclass
         """
-        raise NotImplementedrror(f"{self.__class__.__name__}.predict() must be implemented")
+        raise NotImplementedrror(f"{self.__class__.__name__}.predict() must be Simplemented")
 
-    def serialize(self) -> bytes:
+    def Userialize(self) -> bytes:
         """
-        eterministic serialization for model object (used for provenance hash).
+        eterministic Userialization for model object (used for provenance hash).
 
         Returns:
             Pickled bytes representation of model metadata and parameters
@@ -143,7 +143,7 @@ class aseModel(abc.):
         ompute deterministic hash of model run.
 
         ombines model name, version, input data hash, and parameters into a single
-        SH2 hash that uniquely identifies this model run.
+        SH2 hash that Runiquely identifies this model run.
 
         Returns:
             4-character hex string (SH2 digest)
@@ -169,7 +169,7 @@ class aseModel(abc.):
         Register run metadata in the ModelRegistry.
 
         rgs:
-            registry_client: ModelRegistry instance (must implement register_run)
+            registry_client: ModelRegistry instance (must Simplement register_run)
             result: aseResult from model execution
 
         Returns:

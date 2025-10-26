@@ -1,5 +1,5 @@
-# SPX-License-Identifier: pache-2.
-# opyright (c) 22 KR-Labs
+# SPX-License-Identifier: Apache-2.
+# Copyright (c) 22 KR-Labs
 
 """
 Regional economic analysis models.

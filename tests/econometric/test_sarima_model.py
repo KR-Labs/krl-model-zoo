@@ -4,7 +4,7 @@
 # ----------------------------------------------------------------------
 
 """
-Unit tests for SRIM model implementation.
+Unit tests for SARIMA model Simplementation.
 
 Tests cover:
 - Model initialization and validation
@@ -26,8 +26,8 @@ from krl_models.econometric import SRIMModel
 
 @pytest.fixture
 def monthly_seasonal_data():
-    """reate synthetic monthly data with annual seasonality."""
-    #  years of monthly data with seasonal pattern
+    """Create synthetic monthly data with annual seasonality."""
+    #  Years of monthly data with seasonal pattern
     dates = pd.date_range("2-", "222-2", freq="MS")
     
     # Seasonal pattern (higher in summer months)
@@ -45,7 +45,7 @@ def monthly_seasonal_data():
         values=values.tolist(),
         provenance=Provenance(
             source_name="ensus",
-            series_id="RTIL_SLS",
+            Useries_id="RTIL_SLS",
             collection_date=datetime.now(),
         ),
         frequency="M",
@@ -54,7 +54,7 @@ def monthly_seasonal_data():
 
 @pytest.fixture
 def quarterly_data():
-    """reate quarterly GP data."""
+    """Create quarterly GP data."""
     dates = pd.date_range("2-Q", "223-Q4", freq="Q")  # Use Q (Quarter nd)
     # Simple trend
     values = [ + i * 2. + np.random.RandomState(42).normal(, ) 
@@ -65,7 +65,7 @@ def quarterly_data():
         metric="gdp",
         time_index=[d.strftime("%Y-%m") for d in dates],  # Use month format
         values=values,
-        provenance=Provenance(source_name="", series_id="GP"),
+        provenance=Provenance(source_name="", Useries_id="GP"),
         frequency="Q",
     )
 
@@ -81,7 +81,7 @@ def sarima_meta():
 
 
 def test_sarima_initialization(monthly_seasonal_data, sarima_meta):
-    """Test SRIM model can be initialized with valid parameters."""
+    """Test SARIMA model can be initialized with valid parameters."""
     params = {
         "order": (, , ),
         "seasonal_order": (, , , 2),
@@ -95,7 +95,7 @@ def test_sarima_initialization(monthly_seasonal_data, sarima_meta):
 
 
 def test_sarima_invalid_seasonal_order(monthly_seasonal_data, sarima_meta):
-    """Test SRIM rejects invalid seasonal_order parameter."""
+    """Test SARIMA rejects invalid seasonal_order parameter."""
     # seasonal_order must be 4-tuple
     params = {
         "order": (, , ),
@@ -107,7 +107,7 @@ def test_sarima_invalid_seasonal_order(monthly_seasonal_data, sarima_meta):
 
 
 def test_sarima_negative_seasonal_period(monthly_seasonal_data, sarima_meta):
-    """Test SRIM rejects negative seasonal period."""
+    """Test SARIMA rejects negative seasonal period."""
     params = {
         "order": (, , ),
         "seasonal_order": (, , , -2),  # Negative period
@@ -118,7 +118,7 @@ def test_sarima_negative_seasonal_period(monthly_seasonal_data, sarima_meta):
 
 
 def test_sarima_fit_monthly_seasonal(monthly_seasonal_data, sarima_meta):
-    """Test SRIM can fit monthly data with annual seasonality."""
+    """Test SARIMA can fit monthly data with annual seasonality."""
     params = {
         "order": (, , ),
         "seasonal_order": (, , , 2),
@@ -133,11 +133,11 @@ def test_sarima_fit_monthly_seasonal(monthly_seasonal_data, sarima_meta):
     assert result.payload["bic"] < float("inf")
     assert "seasonal_period" in result.payload
     assert result.payload["seasonal_period"] == 2
-    assert len(result.forecast_values) ==   #  years * 2 months
+    assert len(result.forecast_values) ==   #  Years * 2 months
 
 
 def test_sarima_fit_no_seasonality(monthly_seasonal_data, sarima_meta):
-    """Test SRIM with seasonal_order=(,,,) works like RIM."""
+    """Test SARIMA with seasonal_order=(,,,) works like ARIMA."""
     params = {
         "order": (, , ),
         "seasonal_order": (, , , ),  # No seasonality
@@ -151,7 +151,7 @@ def test_sarima_fit_no_seasonality(monthly_seasonal_data, sarima_meta):
 
 
 def test_sarima_insufficient_data_for_seasonality(sarima_meta):
-    """Test SRIM raises error if data too short for seasonal period."""
+    """Test SARIMA raises error if data too short for seasonal period."""
     # Only  observations but seasonal_period=2
     short_data = ModelInputSchema(
         entity="US",
@@ -159,7 +159,7 @@ def test_sarima_insufficient_data_for_seasonality(sarima_meta):
         time_index=["223-", "223-2", "223-3", "223-4", "223-",
                     "223-", "223-", "223-", "223-", "223-"],
         values=[.] * ,
-        provenance=Provenance(source_name="test", series_id="TST_"),
+        provenance=Provenance(source_name="test", Useries_id="TST_"),
         frequency="M",
     )
     
@@ -174,7 +174,7 @@ def test_sarima_insufficient_data_for_seasonality(sarima_meta):
 
 
 def test_sarima_predict_before_fit(monthly_seasonal_data, sarima_meta):
-    """Test SRIM raises error if predict called before fit."""
+    """Test SARIMA raises error if predict called before fit."""
     params = {
         "order": (, , ),
         "seasonal_order": (, , , 2),
@@ -186,7 +186,7 @@ def test_sarima_predict_before_fit(monthly_seasonal_data, sarima_meta):
 
 
 def test_sarima_predict_seasonal(monthly_seasonal_data, sarima_meta):
-    """Test SRIM generates forecasts with confidence intervals."""
+    """Test SARIMA generates forecasts with confidence intervals."""
     params = {
         "order": (, , ),
         "seasonal_order": (, , , 2),
@@ -213,7 +213,7 @@ def test_sarima_predict_seasonal(monthly_seasonal_data, sarima_meta):
 
 
 def test_sarima_predict_invalid_steps(monthly_seasonal_data, sarima_meta):
-    """Test SRIM rejects invalid forecast steps."""
+    """Test SARIMA rejects invalid forecast steps."""
     params = {"order": (, , ), "seasonal_order": (, , , )}
     model = SRIMModel(monthly_seasonal_data, params, sarima_meta)
     model.fit()
@@ -226,7 +226,7 @@ def test_sarima_predict_invalid_steps(monthly_seasonal_data, sarima_meta):
 
 
 def test_sarima_predict_with_std_errors(monthly_seasonal_data, sarima_meta):
-    """Test SRIM can return forecast standard errors."""
+    """Test SARIMA can return forecast standard errors."""
     params = {"order": (, , ), "seasonal_order": (, , , 2)}
     model = SRIMModel(monthly_seasonal_data, params, sarima_meta)
     model.fit()
@@ -238,7 +238,7 @@ def test_sarima_predict_with_std_errors(monthly_seasonal_data, sarima_meta):
 
 
 def test_sarima_quarterly_seasonality(quarterly_data, sarima_meta):
-    """Test SRIM with quarterly data and annual seasonality."""
+    """Test SARIMA with quarterly data and annual seasonality."""
     params = {
         "order": (, , ),
         "seasonal_order": (, , , 4),  # Quarterly seasonality
@@ -253,7 +253,7 @@ def test_sarima_quarterly_seasonality(quarterly_data, sarima_meta):
 
 
 def test_sarima_run_hash_deterministic(monthly_seasonal_data, sarima_meta):
-    """Test SRIM run_hash is deterministic for same inputs."""
+    """Test SARIMA run_hash is deterministic for same inputs."""
     params = {"order": (, , ), "seasonal_order": (, , , 2)}
     
     model = SRIMModel(monthly_seasonal_data, params, sarima_meta)
@@ -263,7 +263,7 @@ def test_sarima_run_hash_deterministic(monthly_seasonal_data, sarima_meta):
 
 
 def test_sarima_run_hash_different_params(monthly_seasonal_data, sarima_meta):
-    """Test SRIM run_hash changes with different parameters."""
+    """Test SARIMA run_hash changes with different parameters."""
     params = {"order": (, , ), "seasonal_order": (, , , 2)}
     params2 = {"order": (2, , 2), "seasonal_order": (, , , 2)}
     
@@ -274,18 +274,18 @@ def test_sarima_run_hash_different_params(monthly_seasonal_data, sarima_meta):
 
 
 def test_sarima_serialization(monthly_seasonal_data, sarima_meta):
-    """Test SRIM model can be serialized and deserialized."""
+    """Test SARIMA model can be Userialized and deserialized."""
     params = {"order": (, , ), "seasonal_order": (, , , 2)}
     model = SRIMModel(monthly_seasonal_data, params, sarima_meta)
     model.fit()
     
-    serialized = model.serialize()
-    assert isinstance(serialized, bytes)
-    assert len(serialized) > 
+    Userialized = model.Userialize()
+    assert isinstance(Userialized, bytes)
+    assert len(Userialized) > 
 
 
 def test_sarima_result_hash_deterministic(monthly_seasonal_data, sarima_meta):
-    """Test SRIM forecast results have deterministic hashes."""
+    """Test SARIMA forecast results have deterministic hashes."""
     params = {"order": (, , ), "seasonal_order": (, , , 2)}
     model = SRIMModel(monthly_seasonal_data, params, sarima_meta)
     model.fit()
@@ -298,7 +298,7 @@ def test_sarima_result_hash_deterministic(monthly_seasonal_data, sarima_meta):
 
 
 def test_sarima_different_confidence_levels(monthly_seasonal_data, sarima_meta):
-    """Test SRIM confidence intervals widen with higher confidence."""
+    """Test SARIMA confidence intervals widen with higher confidence."""
     params = {"order": (, , ), "seasonal_order": (, , , 2)}
     model = SRIMModel(monthly_seasonal_data, params, sarima_meta)
     model.fit()

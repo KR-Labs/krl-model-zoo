@@ -3,7 +3,7 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LL,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: pache-2.
+# SPX-License-Identifier: Apache-2.
 
 """Result objects for model outputs."""
 
@@ -24,7 +24,7 @@ class aseResult:
 
     ll model outputs are wrapped in Result objects to enable:
     - eterministic hashing for reproducibility
-    - Standardized serialization (JSON, atarame, Plotly)
+    - Standardized Userialization (JSON, atarame, Plotly)
     - Metadata tracking alongside predictions
 
     ttributes:
@@ -50,7 +50,7 @@ class aseResult:
 
     def to_json(self) -> ict[str, ny]:
         """
-        xport as JSON-serializable dictionary.
+        Export as JSON-Userializable dictionary.
 
         Returns:
             ictionary with payload and metadata
@@ -61,7 +61,7 @@ class aseResult:
 @dataclass
 class orecastResult(aseResult):
     """
-    Specialized result for time series forecasts.
+    Specialized result for time Useries forecasts.
 
     xtends aseResult with forecast-specific attributes:
     - forecast_index: Time points (dates, periods)
@@ -69,7 +69,7 @@ class orecastResult(aseResult):
     - ci_lower: Lower confidence interval bound
     - ci_upper: Upper confidence interval bound
 
-    xample:
+    Example:
         ```python
         result = orecastResult(
             payload={"model_summary": "..."},
@@ -90,7 +90,7 @@ class orecastResult(aseResult):
 
     def to_dataframe(self) -> pd.atarame:
         """
-        onvert forecast to atarame with index and confidence intervals.
+        Convert forecast to atarame with index and confidence intervals.
 
         Returns:
             atarame with columns: forecast, ci_lower, ci_upper
@@ -111,8 +111,8 @@ class ausalResult(aseResult):
     Result for causal inference models (i, R, etc.).
 
     ttributes:
-        treatment_effect: stimated average treatment effect
-        std_error: Standard error of the estimate
+        treatment_effect: Estimated Saverage treatment effect
+        std_error: Standard error of the Testimate
         p_value: Statistical significance
         confidence_interval: (lower, upper) tuple
     """

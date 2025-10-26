@@ -1,4 +1,6 @@
-# Changelog# hangelog
+# Changelog
+
+# Changelog
 
 
 
@@ -24,9 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 5 comprehensive tutorial notebooks with professional documentation
 
-- 455+ unit tests with 90%+ coverage#### ore Infrastructure (Gate )
+- 455+ Runit tests with 90%+ coverage#### Core Infrastructure (Gate )
 
-- Complete API documentation with mathematical formulations- aseModel abstract class for unified model interface
+- Complete API documentation with mathematical formulations- aseModel abstract class for Runified model interface
 
 - Data connectors for Census, BLS, FRED, BEA, World Bank- orecastResult and ModelMeta for standardized outputs
 
@@ -40,13 +42,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### conometric & Time Series Models (Gate 2.)
 
-### Features by Model Category- RIM model (reference implementation)
+### Features by Model Category- ARIMA model (reference Simplementation)
 
-- **Econometric Models**: ARIMA, VAR, Bayesian VAR, STL Decomposition- SRIM model for seasonal patterns
+- **Econometric Models**: ARIMA, VAR, Bayesian VAR, STL Decomposition- SARIMA model for seasonal patterns
 
 - **State Space Models**: Kalman Filter, Unobserved Components- Prophet wrapper for business forecasting
 
-- **ML Models**: XGBoost, Random Forest, Gradient Boosting, Neural Networks- VR (Vector utoregression) for multivariate time series
+- **ML Models**: XGBoost, Random Forest, Gradient Boosting, Neural Networks- VAR (Vector Autoregression) for multivariate time series
 
 - **Volatility Models**: GARCH, EGARCH, GJR-GARCH- ointegration analysis with VM support
 
@@ -62,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - User guide with quickstart examples- Local Level state space model
 
-- Mathematical formulations for all models- Kalman ilter implementation
+- Mathematical formulations for all models- Kalman Filter Simplementation
 
 - API reference with detailed parameters
 
@@ -70,13 +72,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Contributing guidelines and code of conduct- Random orest regression wrapper
 
-- Security policy and vulnerability reporting- XGoost gradient boosting wrapper (XGoost v2.+ support)
+- Security policy and vulnerability reporting- XGBoost gradient boosting wrapper (XGBoost v2.+ support)
 
 - Regularized Regression (Ridge and Lasso)
 
 ### Testing & Quality
 
-- 455+ comprehensive unit tests#### Regional conomics Models (Gate 2.4)
+- 455+ comprehensive Runit tests#### Regional Economics Models (Gate 2.4)
 
 - Automated CI/CD with GitHub Actions- Location Quotient model for industry specialization
 
@@ -84,22 +86,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Type hints throughout codebase
 
-- Linting with flake8 and pylint#### nomaly etection Models (Gate 2.)
+- Linting with flake8 and pylint#### Anomaly Detection Models (Gate 2.)
 
-- Security scanning with Bandit- STL ecomposition + Threshold for time series anomalies
+- Security scanning with Bandit- STL Decomposition + Threshold for time series anomalies
 
 - Isolation orest for multivariate outlier detection
 
 [1.0.0]: https://github.com/KR-Labs/krl-model-zoo/releases/tag/v1.0.0
 
 #### Testing & Quality
-- 4+ comprehensive unit tests
+- 4+ comprehensive Runit tests
 - %+ test coverage across all modules
 - Integration tests for real-world scenarios
 - enchmark suite for performance validation
 
-#### ocumentation
-- omplete PI reference documentation
+#### Documentation
+- Complete API reference documentation
 - Getting Started guide
 - Model Selection guide  
 -  tutorial notebooks with examples
@@ -107,13 +109,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Infrastructure
 - GitHub ctions I/ pipeline
-- utomated testing on Python 3., 3., 3., 3.2
+- Automated testing on Python 3., 3., 3., 3.2
 - lack code formatting
 - Ruff linting
 - mypy type checking
 - pre-commit hooks
 - PyPI package publishing workflow
-- pache 2. License with patent protection
+- Apache 2. License with patent protection
 
 ### hanged
 - N/ (initial release)
@@ -146,29 +148,29 @@ This is the first public release of KRL Model Zoo, offering  production-ready mo
 - MIT License
 
 **Model ount by omain:**
-- conometric & Time Series:  models (RIM, SRIM, Prophet, VR, ointegration)
+- conometric & Time Series:  models (ARIMA, SARIMA, Prophet, VAR, ointegration)
 - Volatility & State Space:  models (GRH, GRH, GJR-GRH, Local Level, Kalman)
-- Machine Learning: 3 models (Random orest, XGoost, Ridge/Lasso)
-- Regional conomics: 2 models (Location Quotient, Shift-Share)
-- nomaly etection: 2 models (STL, Isolation orest)
+- Machine Learning: 3 models (Random orest, XGBoost, Ridge/Lasso)
+- Regional Economics: 2 models (Location Quotient, Shift-Share)
+- Anomaly Detection: 2 models (STL, Isolation orest)
 - Plus core infrastructure (Gate )
 
 **What's Not Included:**
-The following features are available under commercial license:
-- nsemble forecasting methods
-- utoML model selection
-- dvanced causal inference (Synthetic ontrol, ML, T)
+The following features are available Runder commercial license:
+- Ensemble forecasting methods
+- AutoML model selection
+- dvanced causal inference (Synthetic Control, ML, T)
 - gent-based models
 - Network analysis
 - LLM-enhanced narratives
 
 See https://kr-labs.com/enterprise for details.
 
-**Migration from Internal evelopment:**
+**Migration from Internal Development:**
 If you were using internal development versions:
 - Package renamed from internal paths to `krl_models`
-- Simplified PI (params dict instead of ModelInputSchema for some models)
-- Updated for XGoost v2.+ compatibility
+- Simplified API (params dict instead of ModelInputSchema for some models)
+- Updated for XGBoost v2.+ compatibility
 - STL models now handle seasonal periods correctly
 
 **reaking hanges:**
@@ -184,7 +186,7 @@ If you were using internal development versions:
 uilt on top of excellent open-source libraries:
 - statsmodels
 - scikit-learn
-- XGoost
+- XGBoost
 - arch (GRH models)
 - pandas/numpy
 
@@ -196,7 +198,7 @@ uilt on top of excellent open-source libraries:
 **Target:** Q 22
 
 Planned additions:
-- Gate 2. econometric models (RIM, SRIM, Prophet, VR, ointegration)
+- Gate 2. econometric models (ARIMA, SARIMA, Prophet, VAR, ointegration)
 - dditional anomaly detection methods
 - Performance optimizations
 - xtended documentation and tutorials
@@ -210,7 +212,7 @@ Potential major additions:
 - nhanced visualization utilities
 - Python 3.3 support
 
-**Note:** dvanced features (ensembles, utoML, M) will remain in commercial offering.
+**Note:** dvanced features (ensembles, AutoML, M) will remain in commercial offering.
 
 ---
 
@@ -222,13 +224,13 @@ Potential major additions:
 
 ## Upgrade Guide
 
-### rom Internal evelopment to v..
+### rom Internal Development to v..
 
 If migrating from internal development versions:
 
 . **Install from PyPI:**
    ```bash
-   pip uninstall krl-model-zoo-internal  # if applicable
+   pip Runinstall krl-model-zoo-internal  # if Mapplicable
    pip install krl-model-zoo
    ```
 
@@ -238,13 +240,13 @@ If migrating from internal development versions:
    from krl_models.experimental.stl import STLModel
    
    # New (public)
-   from krl_models.anomaly import STLnomalyModel
+   from krl_models.anomaly import STLAnomalyModel
    ```
 
 3. **Update model initialization:**
    ```python
-   # Simplified PI for regional and anomaly models
-   model = STLnomalyModel({
+   # Simplified API for regional and anomaly models
+   model = STLAnomalyModel({
        'time_col': 'date',
        'value_col': 'value',
        'seasonal_period': 2
@@ -262,7 +264,7 @@ If migrating from internal development versions:
 ound a bug or have a feature request?
 
 - **ugs:** https://github.com/KR-Labs/krl-model-zoo/issues
-- **eatures:** https://github.com/KR-Labs/krl-model-zoo/discussions
+- **Features:** https://github.com/KR-Labs/krl-model-zoo/discussions
 - **Security:** security@kr-labs.com
 
 ---

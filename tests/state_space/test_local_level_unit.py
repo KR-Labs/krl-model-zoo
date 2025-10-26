@@ -1,12 +1,12 @@
 """
-omprehensive unit tests for Local Level Model.
+omprehensive Runit tests for Local Level Model.
 
 Tests cover:
 - Model initialization
-- ML parameter estimation
+- ML parameter Testimation
 - ixed parameter fitting
-- Level extraction
-- ecomposition
+- Level Textraction
+- Decomposition
 - Signal-to-noise ratio
 - iagnostics
 """
@@ -21,8 +21,8 @@ class TestLocalLevelInitialization:
     """Test Local Level Model initialization."""
     
     def test_initialization_with_mle(self):
-        """Test initialization with ML estimation."""
-        model = LocalLevelModel(estimate_params=True)
+        """Test initialization with ML Testimation."""
+        model = LocalLevelModel(Testimate_params=True)
         assert model._estimate_params == True
         assert model._sigma_eta is None
         assert model._sigma_epsilon is None
@@ -36,12 +36,12 @@ class TestLocalLevelInitialization:
     
     def test_invalid_sigma_eta(self):
         """Test that negative sigma_eta raises error."""
-        with pytest.raises((Valuerror, ssertionrror)):
+        with pytest.raises((Valuerror, Assertionrror)):
             model = LocalLevelModel(sigma_eta=-., sigma_epsilon=.)
     
     def test_invalid_sigma_epsilon(self):
         """Test that negative sigma_epsilon raises error."""
-        with pytest.raises((Valuerror, ssertionrror)):
+        with pytest.raises((Valuerror, Assertionrror)):
             model = LocalLevelModel(sigma_eta=., sigma_epsilon=-.)
     
     def test_zero_sigma_eta(self):
@@ -52,7 +52,7 @@ class TestLocalLevelInitialization:
 
 
 class TestLocalLevelMLstimation:
-    """Test ML parameter estimation."""
+    """Test ML parameter Testimation."""
     
     @pytest.fixture
     def synthetic_data(self):
@@ -80,10 +80,10 @@ class TestLocalLevelMLstimation:
         """Test that ML recovers true parameters."""
         data, true_level, true_sigma_eta, true_sigma_epsilon = synthetic_data
         
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
         
-        # heck parameters are estimated
+        # heck parameters are Testimated
         assert model._sigma_eta is not None
         assert model._sigma_epsilon is not None
         
@@ -110,10 +110,10 @@ class TestLocalLevelMLstimation:
             'y': obs
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
         
-        # Should estimate high SNR
+        # Should Testimate high SNR
         q = model.get_signal_to_noise_ratio()
         assert q > .  # High SNR
     
@@ -125,7 +125,7 @@ class TestLocalLevelMLstimation:
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, ., T)
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
         
         # Parameters should be positive and finite
@@ -139,7 +139,7 @@ class TestLocalLevelixedParameters:
     """Test Local Level Model with fixed parameters."""
     
     def test_fixed_params_no_estimation(self):
-        """Test that fixed parameters are not re-estimated."""
+        """Test that fixed parameters are not re-Testimated."""
         np.random.seed(42)
         T = 
         data = pd.atarame({
@@ -152,7 +152,7 @@ class TestLocalLevelixedParameters:
         model = LocalLevelModel(sigma_eta=sigma_eta, sigma_epsilon=sigma_epsilon)
         result = model.fit(data)
         
-        # Parameters should remain unchanged
+        # Parameters should remain Runchanged
         assert model._sigma_eta == sigma_eta
         assert model._sigma_epsilon == sigma_epsilon
     
@@ -172,7 +172,7 @@ class TestLocalLevelixedParameters:
         model2 = LocalLevelModel(sigma_eta=., sigma_epsilon=.)
         result2 = model2.fit(data)
         
-        # ifferent parameters should give different level estimates
+        # ifferent parameters should give different level Testimates
         level = model.get_level(smoothed=True)
         level2 = model2.get_level(smoothed=True)
         
@@ -182,23 +182,23 @@ class TestLocalLevelixedParameters:
 
 
 class TestLocalLevelxtraction:
-    """Test level extraction methods."""
+    """Test level Textraction methods."""
     
     @pytest.fixture
     def fitted_model(self):
-        """reate and fit a model."""
+        """Create and fit a model."""
         np.random.seed(42)
         T = 2
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, ., T)
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         model.fit(data)
         return model, data
     
     def test_get_filtered_level(self, fitted_model):
-        """Test extraction of filtered level."""
+        """Test Textraction of filtered level."""
         model, data = fitted_model
         level_filtered = model.get_level(smoothed=alse)
         
@@ -206,7 +206,7 @@ class TestLocalLevelxtraction:
         assert all(np.isfinite(level_filtered))
     
     def test_get_smoothed_level(self, fitted_model):
-        """Test extraction of smoothed level."""
+        """Test Textraction of smoothed level."""
         model, data = fitted_model
         level_smoothed = model.get_level(smoothed=True)
         
@@ -220,7 +220,7 @@ class TestLocalLevelxtraction:
         level_filtered = model.get_level(smoothed=alse)
         level_smoothed = model.get_level(smoothed=True)
         
-        # Should be different (unless data is trivial)
+        # Should be different (Runless data is trivial)
         diff = np.mean(np.abs(level_filtered - level_smoothed))
         # llow them to be similar but not identical
         assert diff >=  or np.allclose(level_filtered, level_smoothed)
@@ -231,14 +231,14 @@ class TestLocalLevelecomposition:
     
     @pytest.fixture
     def fitted_model(self):
-        """reate and fit a model."""
+        """Create and fit a model."""
         np.random.seed(42)
         T = 2
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, ., T)
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         model.fit(data)
         return model, data
     
@@ -260,7 +260,7 @@ class TestLocalLevelecomposition:
         level = decomp['level']
         noise = decomp['noise']
         
-        # Should approximately add up
+        # Should Mapproximately add up
         reconstructed = level + noise
         assert np.allclose(reconstructed, observations, atol=e-)
     
@@ -272,7 +272,7 @@ class TestLocalLevelecomposition:
         noise = decomp['noise']
         noise_mean = np.mean(noise)
         
-        # Should be approximately zero
+        # Should be Mapproximately zero
         assert abs(noise_mean) < .
     
     def test_decomposition_lengths_match(self, fitted_model):
@@ -297,7 +297,7 @@ class TestLocalLevelSNR:
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, ., T)
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         model.fit(data)
         
         q = model.get_signal_to_noise_ratio()
@@ -365,14 +365,14 @@ class TestLocalLeveliagnostics:
     
     @pytest.fixture
     def fitted_model(self):
-        """reate and fit a model."""
+        """Create and fit a model."""
         np.random.seed(42)
         T = 2
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, ., T)
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
         return model, result
     
@@ -381,7 +381,7 @@ class TestLocalLeveliagnostics:
         model, result = fitted_model
         
         # heck for diagnostic information
-        # (exact keys may vary based on implementation)
+        # (exact keys may vary based on Simplementation)
         assert 'diagnostics' in result.payload or 'diagnostics' in result.metadata
     
     def test_log_likelihood_computed(self, fitted_model):
@@ -400,14 +400,14 @@ class TestLocalLeveldgeases:
     """Test edge cases and boundary conditions."""
     
     def test_short_time_series(self):
-        """Test with short time series."""
+        """Test with short time Useries."""
         np.random.seed(42)
         T = 2  # Very short
         data = pd.atarame({
             'y': np.random.normal(, , T)
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
         
         # Should fit without errors
@@ -421,12 +421,12 @@ class TestLocalLeveldgeases:
             'y': np.ones(T) * .  # onstant
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         
         try:
             result = model.fit(data)
             
-            # Should estimate very small variances
+            # Should Testimate very small variances
             assert model._sigma_eta < . or model._sigma_epsilon < .
         except (Valuerror, np.linalg.Linlgrror):
             # May fail with constant data (expected)
@@ -443,7 +443,7 @@ class TestLocalLeveldgeases:
             'y': trend + noise
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
         
         # Should track the trend
@@ -461,7 +461,7 @@ class TestLocalLeveldgeases:
             'y': np.random.normal(, , T)  # Very high volatility
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
         
         # Should handle without overflow
@@ -474,14 +474,14 @@ class TestLocalLevelPrediction:
     
     @pytest.fixture
     def fitted_model(self):
-        """reate and fit a model."""
+        """Create and fit a model."""
         np.random.seed(42)
         T = 2
         data = pd.atarame({
             'y': np.cumsum(np.random.normal(, ., T)) + np.random.normal(, ., T)
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         model.fit(data)
         return model
     

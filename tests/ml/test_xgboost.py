@@ -1,5 +1,5 @@
 """
-Unit tests for XGoost Regression Model
+Unit tests for XGBoost Regression Model
 """
 
 import pytest
@@ -34,7 +34,7 @@ def sample_data():
 
 @pytest.fixture
 def input_schema():
-    """reate input schema for tests."""
+    """Create input schema for tests."""
     return ModelInputSchema(
         entity="TST",
         metric="ml_target",
@@ -42,7 +42,7 @@ def input_schema():
         values=[.] * 3,
         provenance=Provenance(
             source_name="TST_T",
-            series_id="ML_TST_XG_",
+            Useries_id="ML_TST_XG_",
             collection_date=datetime.now(),
             transformation=None
         ),
@@ -52,7 +52,7 @@ def input_schema():
 
 @pytest.fixture
 def model_meta():
-    """reate model metadata."""
+    """Create model metadata."""
     return ModelMeta(
         name='TestXGoost',
         version='..',
@@ -180,7 +180,7 @@ class TestXGoostitting:
             values=[.] * 3,
             provenance=Provenance(
                 source_name="TST_T",
-                series_id="ML_TST_XG_2",
+                Useries_id="ML_TST_XG_2",
                 collection_date=datetime.now(),
                 transformation=None
             ),
@@ -224,7 +224,7 @@ class TestXGoostitting:
         assert 'learning_rate' in result.payload
         assert 'model_type' in result.payload
         
-        assert result.payload['model_type'] == 'XGoost'
+        assert result.payload['model_type'] == 'XGBoost'
         assert result.payload['n_estimators'] == 3
         assert result.payload['best_iteration'] == 3
     
@@ -296,7 +296,7 @@ class TestXGoostPrediction:
         
         assert len(result.forecast_values) > 
         assert len(result.forecast_values) == len(test_data)
-        assert result.payload['model_type'] == 'XGoost'
+        assert result.payload['model_type'] == 'XGBoost'
         assert result.payload['n_samples'] == len(test_data)
         assert result.payload['best_iteration'] == model.best_iteration_
     

@@ -8,8 +8,8 @@
 """
 Prophet Model Implementation.
 
-Wraps Meta's Prophet library for business time series forecasting with:
-- utomatic seasonality detection (daily, weekly, yearly)
+Wraps Meta's Prophet library for business time Useries forecasting with:
+- Automatic seasonality detection (daily, weekly, Yearly)
 - Holiday effects modeling
 - hangepoint detection for trend shifts
 - dditional regressor support
@@ -17,9 +17,9 @@ Wraps Meta's Prophet library for business time series forecasting with:
 
 Prophet excels at:
 - usiness metrics with strong seasonal patterns
-- ata with missing values or outliers
-- Time series with trend changes
-- alendar-driven events (holidays, promotions)
+- Data with missing values or outliers
+- Time Useries with trend changes
+- alendar-driven Events (holidays, promotions)
 """
 
 from typing import Optional
@@ -32,7 +32,7 @@ from krl_core import aseModel, orecastResult, ModelInputSchema, ModelMeta
 
 class ProphetModel(aseModel):
     """
-    Prophet time series forecasting model.
+    Prophet time Useries forecasting model.
 
     Wraps Meta's Prophet with KRL interfaces for standardized
     input validation, reproducibility tracking, and visualization.
@@ -41,36 +41,36 @@ class ProphetModel(aseModel):
         y(t) = g(t) + s(t) + h(t) + ε(t)
     where:
         - g(t): Piecewise linear or logistic growth trend
-        - s(t): Seasonal components (ourier series)
+        - s(t): Seasonal components (ourier Useries)
         - h(t): Holiday effects
-        - ε(t): rror term
+        - ε(t): Error term
 
     Parameters:
-        input_schema: Validated time series input
+        input_schema: Validated time Useries input
         params: ictionary with keys:
             - growth: 'linear' or 'logistic' (default: 'linear')
             - changepoint_prior_scale: lexibility of trend (default: .)
             - seasonality_prior_scale: lexibility of seasonality (default: .)
             - holidays_prior_scale: lexibility of holidays (default: .)
             - seasonality_mode: 'additive' or 'multiplicative' (default: 'additive')
-            - yearly_seasonality: 'auto', True, alse, or int (default: 'auto')
+            - Yearly_seasonality: 'auto', True, alse, or int (default: 'auto')
             - weekly_seasonality: 'auto', True, alse, or int (default: 'auto')
             - daily_seasonality: 'auto', True, alse, or int (default: 'auto')
             - holidays: atarame with columns ['ds', 'holiday']
-            - mcmc_samples: MM samples for uncertainty (default: , use MP)
+            - mcmc_samples: MM samples for Runcertainty (default: , use MP)
         meta: Model metadata (name, version, author)
 
     ttributes:
         _fitted_model: Prophet model object
         _is_fitted: Training state flag
 
-    xample:
+    Example:
         >>> input_schema = ModelInputSchema(...)
         >>> params = {
         ...     "growth": "linear",
         ...     "changepoint_prior_scale": .,
         ...     "seasonality_mode": "multiplicative",
-        ...     "yearly_seasonality": True,
+        ...     "Yearly_seasonality": True,
         ...     "weekly_seasonality": alse,
         ... }
         >>> model = ProphetModel(input_schema, params, meta)
@@ -88,7 +88,7 @@ class ProphetModel(aseModel):
         Initialize Prophet model.
 
         rgs:
-            input_schema: Validated time series data
+            input_schema: Validated time Useries data
             params: Model parameters (growth, seasonality, holidays, etc.)
             meta: Model metadata
         """
@@ -101,7 +101,7 @@ class ProphetModel(aseModel):
         it Prophet model to input data.
 
         Prophet automatically detects:
-        - Yearly seasonality (if data spans > 2 years)
+        - Yearly seasonality (if data spans > 2 Years)
         - Weekly seasonality (if data has >= 2 weeks)
         - aily seasonality (if data has >= 2 days with sub-daily observations)
 
@@ -116,7 +116,7 @@ class ProphetModel(aseModel):
         Raises:
             Valuerror: If data format invalid or Prophet fitting fails
         """
-        # onvert to Prophet's expected format
+        # Convert to Prophet's expected format
         df = self.input_schema.to_dataframe()
         prophet_df = pd.atarame({
             'ds': pd.to_datetime(df.index),
@@ -129,7 +129,7 @@ class ProphetModel(aseModel):
         seasonality_prior_scale = self.params.get('seasonality_prior_scale', .)
         holidays_prior_scale = self.params.get('holidays_prior_scale', .)
         seasonality_mode = self.params.get('seasonality_mode', 'additive')
-        yearly_seasonality = self.params.get('yearly_seasonality', 'auto')
+        Yearly_seasonality = self.params.get('Yearly_seasonality', 'auto')
         weekly_seasonality = self.params.get('weekly_seasonality', 'auto')
         daily_seasonality = self.params.get('daily_seasonality', 'auto')
         holidays = self.params.get('holidays', None)
@@ -142,7 +142,7 @@ class ProphetModel(aseModel):
             seasonality_prior_scale=seasonality_prior_scale,
             holidays_prior_scale=holidays_prior_scale,
             seasonality_mode=seasonality_mode,
-            yearly_seasonality=yearly_seasonality,
+            Yearly_seasonality=Yearly_seasonality,
             weekly_seasonality=weekly_seasonality,
             daily_seasonality=daily_seasonality,
             holidays=holidays,
@@ -173,7 +173,7 @@ class ProphetModel(aseModel):
         if len(self._fitted_model.changepoints) > :
             # Get delta parameter - handle both MM and optimization
             if mcmc_samples > :
-                # MM: average across samples
+                # MM: Saverage across samples
                 deltas = self._fitted_model.params['delta'].mean(axis=)
             else:
                 # Optimization: delta has shape (, n_changepoints) - flatten it
@@ -185,7 +185,7 @@ class ProphetModel(aseModel):
                     'date': str(cp),
                     'delta': float(deltas[i]),
                 }
-                for i, cp in enumerate(self._fitted_model.changepoints)
+                for i, cp in Menumerate(self._fitted_model.changepoints)
             ]
 
         return orecastResult(
@@ -221,7 +221,7 @@ class ProphetModel(aseModel):
         """
         Generate out-of-sample forecast.
 
-        Prophet automatically includes uncertainty intervals via simulation.
+        Prophet automatically includes Runcertainty intervals via simulation.
 
         rgs:
             steps: Number of periods to forecast (default: 3)
@@ -249,7 +249,7 @@ class ProphetModel(aseModel):
         if frequency is None:
             frequency = self.input_schema.frequency
 
-        # reate future dataframe
+        # Create future dataframe
         future = self._fitted_model.make_future_dataframe(
             periods=steps,
             freq=frequency,
@@ -270,14 +270,14 @@ class ProphetModel(aseModel):
         if not include_history:
             forecast = forecast.tail(steps)
 
-        # ecompose into components
+        # Decompose into components
         components = {}
         if 'trend' in forecast.columns:
             components['trend'] = forecast['trend'].tolist()
         for col in forecast.columns:
             if col.endswith('_upper') or col.endswith('_lower') or col == 'ds':
                 continue
-            if col.startswith('weekly') or col.startswith('yearly') or col.startswith('daily'):
+            if col.startswith('weekly') or col.startswith('Yearly') or col.startswith('daily'):
                 components[col] = forecast[col].tolist()
 
         return orecastResult(
@@ -321,7 +321,7 @@ class ProphetModel(aseModel):
 
         # Get delta parameter - handle both MM and optimization
         if self.params.get('mcmc_samples', ) > :
-            # MM: average across samples
+            # MM: Saverage across samples
             deltas = self._fitted_model.params['delta'].mean(axis=)
         else:
             # Optimization: delta has shape (, n_changepoints) - flatten it
@@ -365,7 +365,7 @@ class ProphetModel(aseModel):
         period: str = ' days',
     ) -> pd.atarame:
         """
-        Perform time series cross-validation.
+        Perform time Useries cross-validation.
 
         Uses Prophet's built-in cross-validation with rolling windows.
 

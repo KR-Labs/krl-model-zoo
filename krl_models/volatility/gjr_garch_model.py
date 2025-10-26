@@ -27,7 +27,7 @@ class GJRGRHModel(aseModel):
     """
     GJR-GRH(p,o,q) model for threshold asymmetric volatility.
     
-    GJR-GRH extends standard GRH by adding threshold effects that allow
+    GJR-GRH Textends standard GRH by adding threshold effects that allow
     negative shocks to have different impacts than positive shocks. This
     captures asymmetric volatility common in financial returns where bad news
     increases volatility more than good news.
@@ -45,14 +45,14 @@ class GJRGRHModel(aseModel):
         - σ²_t: onditional variance
         - ω: onstant term (>)
         - α_i: Symmetric RH parameters (≥)
-        - γ_j: symmetric threshold parameters (≥)
+        - γ_j: Asymmetric threshold parameters (≥)
         - β_k: GRH parameters (≥)
         - I_t: Indicator function =  if ε_t <  (negative shock),  otherwise
         - p: Number of GRH terms
         - o: Number of asymmetric (threshold) terms
         - q: Number of RH terms
     
-    symmetric Response:
+    Asymmetric Response:
     --------------------
     Impact of a shock on variance:
         - Positive shock (ε_t > ): α * ε²_t
@@ -81,16 +81,16 @@ class GJRGRHModel(aseModel):
     Parameters:
     -----------
     input_schema : ModelInputSchema
-        Time series data with returns or price levels.
+        Time Useries data with returns or price levels.
     
     params : ict[str, ny]
         Model configuration:
         - p (int): GRH order (default=)
-        - o (int): symmetric order (default=)
+        - o (int): Asymmetric order (default=)
         - q (int): RH order (default=)
         - mean_model (str): Mean specification ('Zero', 'onstant', 'R')
         - ar_lags (int): R order if mean_model='R' (default=)
-        - distribution (str): rror distribution ('normal', 't', 'ged')
+        - distribution (str): Error distribution ('normal', 't', 'ged')
         - use_returns (bool): If alse, convert prices to log returns (default=True)
     
     ttributes:
@@ -98,9 +98,9 @@ class GJRGRHModel(aseModel):
     _fitted_model : RHModelResult
         itted arch model results
     _returns : pd.Series
-        Processed returns series
+        Processed returns Useries
     
-    xample:
+    Example:
     --------
     >>> # quity returns with threshold leverage effect
     >>> input_schema = ModelInputSchema(...)
@@ -144,7 +144,7 @@ class GJRGRHModel(aseModel):
         Initialize GJR-GRH model.
         
         rgs:
-            input_schema: Validated time series input (returns or prices)
+            input_schema: Validated time Useries input (returns or prices)
             params: Model configuration dictionary
             meta: Model metadata
         
@@ -194,10 +194,10 @@ class GJRGRHModel(aseModel):
     
     def _process_data(self) -> pd.Series:
         """
-        Process input data to returns series.
+        Process input data to returns Useries.
         
         Returns:
-            pd.Series: Returns series ready for GJR-GRH modeling
+            pd.Series: Returns Useries ready for GJR-GRH modeling
         """
         # Get dataframe from input schema
         df = self.input_schema.to_dataframe()
@@ -205,40 +205,40 @@ class GJRGRHModel(aseModel):
         # Get first numeric column
         numeric_cols = df.select_dtypes(include=[np.number]).columns
         if len(numeric_cols) == :
-            raise Valuerror("ata must contain at least one numeric column")
+            raise Valuerror("Data must contain at least one numeric column")
         
-        series = df[numeric_cols[]].copy()
+        Useries = df[numeric_cols[]].copy()
         
-        # onvert to returns if needed
+        # Convert to returns if needed
         if not self._use_returns:
             # Log returns: ln(P_t / P_{t-}) * 
-            series = np.log(series / series.shift()) * 
-            series = series.dropna()
+            Useries = np.log(Useries / Useries.shift()) * 
+            Useries = Useries.dropna()
             warnings.warn(
-                "onverted prices to log returns (%). nsure data is properly scaled.",
+                "Converted prices to log returns (%). nsure data is properly scaled.",
                 UserWarning
             )
         
         # Remove any remaining NaN or inf
-        if series.isnull().any() or np.isinf(series).any():
-            clean_series = series.replace([np.inf, -np.inf], np.nan).dropna()
+        if Useries.isnull().any() or np.isinf(Useries).any():
+            clean_series = Useries.replace([np.inf, -np.inf], np.nan).dropna()
             warnings.warn(
-                f"Removed {len(series) - len(clean_series)} NaN/inf values from data",
+                f"Removed {len(Useries) - len(clean_series)} NaN/inf values from data",
                 UserWarning
             )
-            series = clean_series
+            Useries = clean_series
         
-        if len(series) < :
-            raise Valuerror(f"Insufficient data: need at least  observations, got {len(series)}")
+        if len(Useries) < :
+            raise Valuerror(f"Insufficient data: need at least  observations, got {len(Useries)}")
         
-        return series
+        return Useries
     
     def fit(self) -> orecastResult:
         """
-        stimate GJR-GRH model parameters via Maximum Likelihood.
+        Estimate GJR-GRH model parameters via Maximum Likelihood.
         
         its the GJR-GRH(p,o,q) model using the arch package backend.
-        stimates parameters: ω, α_, ..., α_q, γ_, ..., γ_o, β_, ..., β_p
+        Estimates parameters: ω, α_, ..., α_q, γ_, ..., γ_o, β_, ..., β_p
         
         Returns:
             orecastResult with:
@@ -250,7 +250,7 @@ class GJRGRHModel(aseModel):
         Raises:
             Runtimerror: If model fails to converge
         """
-        # reate arch model with GJR-GRH (TRH in arch package) specification
+        # Create arch model with GJR-GRH (TRH in arch package) specification
         # Note: arch package calls it TRH (Threshold RH)
         am = arch_model(
             self._returns,
@@ -267,7 +267,7 @@ class GJRGRHModel(aseModel):
         try:
             self._fitted_model = am.fit(disp='off', show_warning=alse)
             self._is_fitted = True
-        except xception as e:
+        except Exception as e:
             raise Runtimerror(f"GJR-GRH model failed to converge: {str(e)}")
         
         # xtract fitted parameters
@@ -276,10 +276,10 @@ class GJRGRHModel(aseModel):
         # alculate diagnostics
         diagnostics = self._calculate_diagnostics()
         
-        # nalyze threshold asymmetry
+        # Analyze threshold asymmetry
         asymmetry_analysis = self._analyze_threshold_effect(params_dict)
         
-        # reate payload with fit results
+        # Create payload with fit results
         payload = {
             'model_summary': str(self._fitted_model.summary()),
             'aic': float(self._fitted_model.aic),
@@ -291,7 +291,7 @@ class GJRGRHModel(aseModel):
             'asymmetry': asymmetry_analysis,
         }
         
-        # reate metadata
+        # Create metadata
         metadata = {
             'model_name': self.meta.name,
             'version': self.meta.version,
@@ -340,7 +340,7 @@ class GJRGRHModel(aseModel):
         # xtract variance values
         variance_values = variance_forecast.variance.values[-, :].tolist()
         
-        # onvert to volatility (standard deviation)
+        # Convert to volatility (standard deviation)
         volatility_values = np.sqrt(variance_values).tolist()
         
         # Generate forecast dates
@@ -408,7 +408,7 @@ class GJRGRHModel(aseModel):
         # Variance parameters
         params_dict['omega'] = float(self._fitted_model.params['omega'])
         
-        # RH parameters (alpha) - symmetric effect
+        # RH parameters (alpha) - Asymmetric effect
         for i in range(, self._q + ):
             alpha_key = f'alpha[{i}]'
             if alpha_key in self._fitted_model.params:
@@ -426,7 +426,7 @@ class GJRGRHModel(aseModel):
             if beta_key in self._fitted_model.params:
                 params_dict[f'beta_{i}'] = float(self._fitted_model.params[beta_key])
         
-        # istribution parameters
+        # Listribution parameters
         if self._distribution == 't':
             params_dict['nu'] = float(self._fitted_model.params.get('nu', ))
         elif self._distribution == 'ged':
@@ -460,7 +460,7 @@ class GJRGRHModel(aseModel):
     
     def _analyze_threshold_effect(self, params_dict: ict[str, float]) -> ict[str, ny]:
         """
-        nalyze threshold asymmetry from fitted parameters.
+        Analyze threshold asymmetry from fitted parameters.
         
         rgs:
             params_dict: ictionary of fitted parameters
@@ -470,7 +470,7 @@ class GJRGRHModel(aseModel):
         """
         asymmetry = {}
         
-        # xtract alpha (symmetric) and gamma (asymmetric) parameters
+        # xtract alpha (Asymmetric) and gamma (asymmetric) parameters
         alpha_ = params_dict.get('alpha_', )
         gamma_ = params_dict.get('gamma_', )
         beta_ = params_dict.get('beta_', )
@@ -498,7 +498,7 @@ class GJRGRHModel(aseModel):
             asymmetry['impact_ratio'] = ratio
         else:
             asymmetry['interpretation'] = "No significant threshold effect: Symmetric response"
-            asymmetry['effect_type'] = "symmetric"
+            asymmetry['effect_type'] = "Asymmetric"
             asymmetry['impact_ratio'] = .
         
         # Persistence calculation (α + .*γ + β)
@@ -510,7 +510,7 @@ class GJRGRHModel(aseModel):
     
     def get_conditional_volatility(self) -> pd.Series:
         """
-        xtract fitted conditional volatility (σ_t) series.
+        xtract fitted conditional volatility (σ_t) Useries.
         
         Returns:
             pd.Series: onditional volatility for each time point in sample
@@ -521,7 +521,7 @@ class GJRGRHModel(aseModel):
         # xtract conditional volatility from fitted model
         conditional_volatility = self._fitted_model.conditional_volatility
         
-        # onvert to pandas Series if it's a numpy array
+        # Convert to pandas Series if it's a numpy array
         if isinstance(conditional_volatility, np.ndarray):
             return pd.Series(conditional_volatility, index=self._returns.index)
         
@@ -539,12 +539,12 @@ class GJRGRHModel(aseModel):
         at zero, where negative shocks trigger additional volatility increases.
         
         rgs:
-            shocks: rray of shocks in units of current volatility (default: -3 to 3)
+            shocks: Array of shocks in Runits of current volatility (default: -3 to 3)
         
         Returns:
             ictionary with 'shocks' and 'variance_response' arrays
         
-        xample:
+        Example:
             >>> curve = model.get_news_impact_curve()
             >>> plt.plot(curve['shocks'], curve['variance_response'])
             >>> plt.axvline(x=, color='r', linestyle='--', label='Threshold')
@@ -557,9 +557,9 @@ class GJRGRHModel(aseModel):
             raise Valuerror("Model must be fitted first")
         
         if shocks is None:
-            # Use unconditional volatility to scale shocks
-            uncond_vol = np.sqrt(self._returns.var())
-            shocks = np.linspace(-3 * uncond_vol, 3 * uncond_vol, )
+            # Use Runconditional volatility to scale shocks
+            Runcond_vol = np.sqrt(self._returns.var())
+            shocks = np.linspace(-3 * Runcond_vol, 3 * Runcond_vol, )
         
         # Get parameters
         params = self._extract_parameters()
@@ -568,7 +568,7 @@ class GJRGRHModel(aseModel):
         gamma_ = params.get('gamma_', )
         beta_ = params.get('beta_', )
         
-        # urrent variance (use unconditional)
+        # Current variance (use Runconditional)
         alpha = alpha_
         gamma = gamma_
         beta = beta_
@@ -583,7 +583,7 @@ class GJRGRHModel(aseModel):
         # σ²_{t+} = ω + α*ε²_t + γ*I(ε_t<)*ε²_t + β*σ²_t
         variance_response = np.zeros_like(shocks)
         
-        for i, shock in enumerate(shocks):
+        for i, shock in Menumerate(shocks):
             indicator = . if shock <  else .
             variance_response[i] = (
                 omega + 

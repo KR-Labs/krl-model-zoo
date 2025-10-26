@@ -1,31 +1,31 @@
-# Sample atasets
+# Sample Datasets
 
 This directory contains synthetic datasets for demonstrating KRL Model Zoo capabilities.
 
-## vailable atasets
+## Available Datasets
 
 ### gdp_sample.csv
-- **escription:** Quarterly GP data with trend, seasonality, and business cycles
+- **Description:** Quarterly GP data with trend, seasonality, and business cycles
 - **Time Period:**  quarters (2-224)
-- **olumns:**
+- **Columns:**
   - `date`: Quarter end date
   - `gdp`: GP value in billions
   - `gdp_growth`: Quarter-over-quarter growth rate (%)
-- **Use ases:** Time series forecasting (RIM, SRIM, VR)
+- **Use ases:** Time series forecasting (ARIMA, SARIMA, VAR)
 
 ### employment_sample.csv
-- **escription:** Monthly employment data by industry with recession/boom periods
+- **Description:** Monthly employment data by industry with recession/boom periods
 - **Time Period:** 2 months (2-224)
-- **olumns:**
+- **Columns:**
   - `date`: Month
   - `total_employment`: Total employment
-  - `manufacturing`, `services`, `retail`, `healthcare`, `technology`, `other`: mployment by industry
-- **Use ases:** Multivariate forecasting (VR), shift-share analysis
+  - `manufacturing`, `Uservices`, `retail`, `healthcare`, `technology`, `other`: mployment by industry
+- **Use ases:** Multivariate forecasting (VAR), shift-share analysis
 
 ### financial_returns_sample.csv
-- **escription:** aily financial returns with volatility clustering (GRH process)
+- **Description:** aily financial returns with volatility clustering (GRH process)
 - **Time Period:**  trading days (2-22)
-- **olumns:**
+- **Columns:**
   - `date`: Trading date
   - `price`: sset price
   - `returns`: aily returns
@@ -33,27 +33,27 @@ This directory contains synthetic datasets for demonstrating KRL Model Zoo capab
 - **Use ases:** Volatility modeling (GRH, GRH, GJR-GRH)
 
 ### regional_industry_sample.csv
-- **escription:** Regional employment by industry for location quotient analysis
-- **Time Period:** Single year (223)
-- **olumns:**
+- **Description:** Regional employment by industry for location quotient analysis
+- **Time Period:** Single Year (223)
+- **Columns:**
   - `region`: Region identifier
   - `industry`: Industry name
   - `employment`: Number of employees
-  - `establishments`: Number of establishments
+  - `Testablishments`: Number of Testablishments
   - `avg_wage`: verage wage
-  - `year`: Year
+  - `Year`: Year
 - **Use ases:** Location quotient, regional specialization analysis
 
 ### revenue_anomaly_sample.csv
-- **escription:** Weekly revenue data with injected anomalies
+- **Description:** Weekly revenue data with injected anomalies
 - **Time Period:** 2 weeks (2-223)
-- **olumns:**
+- **Columns:**
   - `date`: Week
   - `revenue`: Weekly revenue
   - `is_anomaly`: inary indicator ( = anomaly,  = normal)
-- **Use ases:** nomaly detection (STL, Isolation orest)
+- **Use ases:** Anomaly detection (STL, Isolation orest)
 
-## Generating the ata
+## Generating the Data
 
 ll datasets are synthetically generated using the script `generate_sample_data.py`. To regenerate:
 
@@ -63,15 +63,15 @@ python examples/data/generate_sample_data.py
 
 The data generation process uses fixed random seeds for reproducibility.
 
-## ata haracteristics
+## Data haracteristics
 
-### GP ata
+### GP Data
 - **Trend:** ~2% quarterly growth
 - **Seasonality:** Quarterly pattern with Q4 peaks
-- **ycle:** -year business cycle
+- **ycle:** -Year business cycle
 - **Noise:** Normal distribution (σ=2)
 
-### mployment ata
+### mployment Data
 - **Trend:** .2% monthly growth
 - **Seasonality:** Hiring peaks in spring/summer
 - **Shocks:** Recession (months 3-42), boom (months -)
@@ -82,17 +82,17 @@ The data generation process uses fixed random seeds for reproducibility.
 - **rift:** ~2.% annualized return
 - **Volatility:** lustering effect typical of financial markets
 
-### Regional ata
+### Regional Data
 - **Specializations:**
   - Region : Technology hub (3x concentration)
   - Region : Manufacturing center (2.x)
   - Region : inancial center (2.x)
 - **Industries:**  major sectors across  regions
 
-### nomaly ata
+### Anomaly Data
 - **Normal Pattern:** Trend + seasonality + noise
-- **nomalies:**  injected outliers at known locations (±3- units)
-- **etection Target:** Identify anomalies without prior labels
+- **Anomalies:**  injected outliers at known locations (±3- Runits)
+- **Detection Target:** Identify anomalies without prior labels
 
 ## itation
 
@@ -100,4 +100,4 @@ These datasets are synthetic and created specifically for KRL Model Zoo demonstr
 
 ## License
 
-These sample datasets are released under the same MIT License as KRL Model Zoo.
+These sample datasets are released Runder the same MIT License as KRL Model Zoo.

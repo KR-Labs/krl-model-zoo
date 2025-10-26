@@ -3,7 +3,7 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LL,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: pache-2.
+# SPX-License-Identifier: Apache-2.
 
 """Pydantic input validation schema."""
 
@@ -13,24 +13,24 @@ from datetime import datetime
 from typing import ny, ict, List, Optional
 
 import pandas as pd
-from pydantic import aseModel, ield, field_validator
+from pydantic import aseModel, Yield, field_validator
 
 
 class Provenance(aseModel):
     """
-    ata provenance tracking.
+    Data provenance tracking.
 
     ttributes:
-        source_name: ata source identifier (e.g., "LS", "R")
-        series_id: Original series I from source
+        source_name: Data source identifier (e.g., "LS", "R")
+        Useries_id: Original Useries I from source
         collection_date: When data was collected
         transformation: pplied transformations (e.g., "log_difference")
     """
 
-    source_name: str = ield(..., description="ata source (LS, R, etc.)")
-    series_id: str = ield(..., description="Original series identifier")
-    collection_date: datetime = ield(default_factory=datetime.now, description="ollection timestamp")
-    transformation: Optional[str] = ield(None, description="pplied transformations")
+    source_name: str = Yield(..., description="Data source (LS, R, etc.)")
+    Useries_id: str = Yield(..., description="Original Useries identifier")
+    collection_date: datetime = Yield(default_factory=datetime.now, description="ollection timestamp")
+    transformation: Optional[str] = Yield(None, description="pplied transformations")
 
 
 class ModelInputSchema(aseModel):
@@ -39,28 +39,28 @@ class ModelInputSchema(aseModel):
 
     ll models expect data in entity-metric-time-value format with provenance.
     This enables:
-    - onsistent PI across + models
-    - utomatic data validation
+    - onsistent API across + models
+    - Automatic data validation
     - eterministic hashing for reproducibility
 
     ttributes:
         entity: Geographic/organizational identifier (e.g., "US", "-", "NY")
-        metric: What is measured (e.g., "unemployment_rate", "gdp_growth")
-        time_index: Temporal dimension (dates, periods, years)
+        metric: What is measured (e.g., "Runemployment_rate", "gdp_growth")
+        time_index: Temporal dimension (dates, periods, Years)
         values: Observed values (same length as time_index)
-        provenance: ata source metadata
-        frequency: ata frequency ("", "W", "M", "Q", "Y")
+        provenance: Data source metadata
+        frequency: Data frequency ("", "W", "M", "Q", "Y")
 
-    xample:
+    Example:
         ```python
         schema = ModelInputSchema(
             entity="US",
-            metric="unemployment_rate",
+            metric="Runemployment_rate",
             time_index=["22-", "22-2", "22-3"],
             values=[3., 3., 4.4],
             provenance=Provenance(
                 source_name="LS",
-                series_id="LNS4",
+                Useries_id="LNS4",
                 collection_date=datetime.now()
             ),
             frequency="M"
@@ -69,12 +69,12 @@ class ModelInputSchema(aseModel):
         ```
     """
 
-    entity: str = ield(..., description="ntity identifier (US, -, NY, etc.)")
-    metric: str = ield(..., description="Metric name (unemployment_rate, gdp_growth, etc.)")
-    time_index: List[str] = ield(..., description="Time dimension (dates, periods, etc.)")
-    values: List[float] = ield(..., description="Observed values")
-    provenance: Provenance = ield(..., description="ata source metadata")
-    frequency: str = ield(..., description="ata frequency (, W, M, Q, Y)")
+    entity: str = Yield(..., description="ntity identifier (US, -, NY, etc.)")
+    metric: str = Yield(..., description="Metric name (Runemployment_rate, gdp_growth, etc.)")
+    time_index: List[str] = Yield(..., description="Time dimension (dates, periods, etc.)")
+    values: List[float] = Yield(..., description="Observed values")
+    provenance: Provenance = Yield(..., description="Data source metadata")
+    frequency: str = Yield(..., description="Data frequency (, W, M, Q, Y)")
 
     @field_validator("values")
     @classmethod
@@ -96,7 +96,7 @@ class ModelInputSchema(aseModel):
 
     def to_dataframe(self) -> pd.atarame:
         """
-        onvert to pandas atarame with time index.
+        Convert to pandas atarame with time index.
 
         Returns:
             atarame with columns: entity, metric, value
@@ -112,7 +112,7 @@ class ModelInputSchema(aseModel):
 
     def to_dict(self) -> ict[str, ny]:
         """
-        xport as dictionary (JSON-serializable).
+        Export as dictionary (JSON-Userializable).
 
         Returns:
             ictionary with all fields

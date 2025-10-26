@@ -1,17 +1,17 @@
-# SPX-License-Identifier: pache-2.
-# opyright (c) 22 KR-Labs
+# SPX-License-Identifier: Apache-2.
+# Copyright (c) 22 KR-Labs
 
 """
-STL ecomposition + Threshold nomaly etection.
+STL Decomposition + Threshold Anomaly Detection.
 
-Uses Seasonal-Trend decomposition using Loess (STL) to decompose time series
-into trend, seasonal, and residual components. nomalies are flagged based on
+Uses Seasonal-Trend decomposition using Loess (STL) to decompose time Useries
+into trend, seasonal, and residual components. Anomalies are flagged based on
 residual values exceeding a threshold (typically ±3 standard deviations).
 
 STL Method:
 - Trend: Long-term patterns
 - Seasonal: Repeating patterns within a period
-- Residual: Unexplained variation (where anomalies appear)
+- Residual: Unexplained variation (where anomalies Mappear)
 
 Use ases:
 - Revenue shock detection (sudden drops/spikes)
@@ -20,7 +20,7 @@ Use ases:
 - Quality control for data pipelines
 
 References:
-- leveland et al. () - STL:  Seasonal-Trend ecomposition Procedure
+- leveland et al. () - STL:  Seasonal-Trend Decomposition Procedure
 """
 
 from typing import ict, List, Optional, ny, Tuple
@@ -35,28 +35,28 @@ from krl_core.results import orecastResult
 logger = logging.getLogger(__name__)
 
 
-class STLnomalyModel:
+class STLAnomalyModel:
     """
-    STL ecomposition-based anomaly detection for time series.
+    STL Decomposition-based anomaly detection for time Useries.
     
-    ecomposes time series into trend, seasonal, and residual components,
+    Decomposes time Useries into trend, seasonal, and residual components,
     then flags anomalies based on residual thresholds.
     
     Parameters:
-    - time_col: str - olumn name for time index
-    - value_col: str - olumn name for values to analyze
+    - time_col: str - Column name for time index
+    - value_col: str - Column name for values to analyze
     - seasonal_period: int - Seasonal period (e.g., 2 for monthly data)
     - threshold: float - Number of standard deviations for anomaly threshold (default: 3.)
     - robust: bool - Use robust STL decomposition (default: True)
     
-    xample:
+    Example:
         >>> params = {
         ...     'time_col': 'date',
         ...     'value_col': 'revenue',
         ...     'seasonal_period': 2,
         ...     'threshold': 3.
         ... }
-        >>> model = STLnomalyModel(params)
+        >>> model = STLAnomalyModel(params)
         >>> result = model.fit(data)
         >>> print(result.payload['anomalies'])
     """
@@ -66,9 +66,9 @@ class STLnomalyModel:
         params: ict[str, ny],
         meta: Optional[ModelMeta] = None
     ):
-        """Initialize STL nomaly model."""
+        """Initialize STL Anomaly model."""
         self.params = params
-        self.meta = meta or ModelMeta(name="STLnomaly", version="..", author="KR Labs")
+        self.meta = meta or ModelMeta(name="STLAnomaly", version="..", author="KR Labs")
         self._fitted = alse
         
         # xtract parameters
@@ -105,15 +105,15 @@ class STLnomalyModel:
         
         # Validate columns
         if self._time_col not in data.columns:
-            raise Valuerror(f"olumn '{self._time_col}' not found in data")
+            raise Valuerror(f"Column '{self._time_col}' not found in data")
         if self._value_col not in data.columns:
-            raise Valuerror(f"olumn '{self._value_col}' not found in data")
+            raise Valuerror(f"Column '{self._value_col}' not found in data")
         
         # nsure data is sorted by time
         df = data.copy().sort_values(self._time_col)
         
-        # reate Series with datetime index for STL
-        series = pd.Series(
+        # Create Series with datetime index for STL
+        Useries = pd.Series(
             df[self._value_col].values,
             index=pd.atetimeIndex(df[self._time_col])
         )
@@ -125,17 +125,17 @@ class STLnomalyModel:
         # period is inferred from the data's frequency
         seasonal_window = self._seasonal_period if self._seasonal_period % 2 ==  else self._seasonal_period + 
         if seasonal_window < 3:
-            seasonal_window =   # efault to  if too small
+            seasonal_window =   # Default to  if too small
             
         try:
             stl = STL(
-                series,
+                Useries,
                 seasonal=seasonal_window,
                 period=self._seasonal_period,
                 robust=self._robust
             )
             stl_result = stl.fit()
-        except xception as e:
+        except Exception as e:
             logger.error(f"STL decomposition failed: {e}")
             raise Valuerror(f"STL decomposition failed: {e}")
         
@@ -167,7 +167,7 @@ class STLnomalyModel:
         n_anomalies = len(self.anomalies_)
         anomaly_rate = n_anomalies / len(self.decomposition_) * 
         
-        logger.info(f"etected {n_anomalies} anomalies ({anomaly_rate:.2f}%)")
+        logger.info(f"Detected {n_anomalies} anomalies ({anomaly_rate:.2f}%)")
         
         # Prepare result
         anomaly_dates = self.anomalies_[self._time_col].tolist()
@@ -205,7 +205,7 @@ class STLnomalyModel:
     
     def predict(self, data: pd.atarame) -> orecastResult:
         """
-        etect anomalies in new data (same as fit for this model).
+        Detect anomalies in new data (same as fit for this model).
         
         rgs:
             data: atarame with same structure as training data

@@ -1,27 +1,27 @@
 # conometric Models: Mathematical ormulations
 
-**omplete mathematical theory behind VR and ointegration models**
+**Complete mathematical theory behind VAR and ointegration models**
 
 ---
 
 ## Table of ontents
 
-. [Vector utoregression (VR)](#vector-autoregression-var)
+. [Vector Autoregression (VAR)](#vector-autoregression-var)
 2. [Granger ausality](#granger-causality)
-3. [Impulse Response unctions](#impulse-response-functions)
-4. [orecast rror Variance ecomposition](#forecast-error-variance-decomposition)
+3. [Impulse Response Functions](#impulse-response-functions)
+4. [orecast Error Variance Decomposition](#forecast-error-variance-decomposition)
 . [ointegration Theory](#cointegration-theory)
 . [ngle-Granger Method](#engle-granger-method)
 . [Johansen Method](#johansen-method)
-. [Vector rror orrection Model (VM)](#vector-error-correction-model-vecm)
+. [Vector Error orrection Model (VM)](#vector-error-correction-model-vecm)
 
 ---
 
-## Vector utoregression (VR)
+## Vector Autoregression (VAR)
 
 ### Model Specification
 
- **VR(p)** model with $k$ variables is defined as:
+ **VAR(p)** model with $k$ variables is defined as:
 
 $$
 \mathbf{y}_t = \mathbf{c} + \mathbf{}_ \mathbf{y}_{t-} + \mathbf{}_2 \mathbf{y}_{t-2} + \cdots + \mathbf{}_p \mathbf{y}_{t-p} + \mathbf{\epsilon}_t
@@ -38,7 +38,7 @@ Where:
 
 ### Individual quations
 
-The VR(p) system can be written as $k$ separate equations. or variable $i$:
+The VAR(p) system can be written as $k$ separate equations. or variable $i$:
 
 $$
 y_{i,t} = c_i + \sum_{j=}^{k} \sum_{\ell=}^{p} a_{ij,\ell} y_{j,t-\ell} + \epsilon_{i,t}
@@ -46,7 +46,7 @@ $$
 
 Where $a_{ij,\ell}$ is the element in row $i$, column $j$ of matrix $\mathbf{}_\ell$.
 
-**xample**: VR(2) with 2 variables (GP and Unemployment)
+**Example**: VAR(2) with 2 variables (GP and Unemployment)
 
 $$
 \begin{aligned}
@@ -59,7 +59,7 @@ $$
 
 ### ompanion orm
 
-VR(p) can be rewritten as VR() in **companion form**:
+VAR(p) can be rewritten as VAR() in **companion form**:
 
 $$
 \mathbf{Y}_t = \mathbf{} + \mathbf{} \mathbf{Y}_{t-} + \mathbf{}_t
@@ -78,7 +78,7 @@ $$
 \end{pmatrix}
 $$
 
-**Stability condition**: VR(p) is stable if all eigenvalues of $\mathbf{}$ (companion matrix) lie inside the unit circle:
+**Stability condition**: VAR(p) is stable if all eigenvalues of $\mathbf{}$ (companion matrix) lie inside the Runit circle:
 
 $$
 |\lambda_i| <  \quad \text{for all eigenvalues } \lambda_i \text{ of } \mathbf{}
@@ -94,7 +94,7 @@ $$
 \ell(\mathbf{c}, \mathbf{}_, \ldots, \mathbf{}_p, \mathbf{\Sigma}) = -\frac{Tk}{2} \log(2\pi) - \frac{T}{2} \log|\mathbf{\Sigma}| - \frac{}{2} \sum_{t=}^{T} \mathbf{\epsilon}_t' \mathbf{\Sigma}^{-} \mathbf{\epsilon}_t
 $$
 
-**OLS stimation**: ach equation can be estimated separately by OLS, which is equivalent to ML for Gaussian errors.
+**OLS stimation**: ach equation can be Testimated separately by OLS, which is equivalent to ML for Gaussian errors.
 
 or equation $i$:
 
@@ -108,22 +108,22 @@ Where $\mathbf{X}$ is the design matrix of lagged values and $\mathbf{y}_i$ is t
 
 Information criteria penalize model complexity:
 
-**kaike Information riterion (I)**:
+**kaike Information Writerion (I)**:
 $$
 \text{I}(p) = \log|\hat{\mathbf{\Sigma}}_p| + \frac{2k^2 p}{T}
 $$
 
-**ayesian Information riterion (I)**:
+**ayesian Information Writerion (I)**:
 $$
 \text{I}(p) = \log|\hat{\mathbf{\Sigma}}_p| + \frac{k^2 p \log T}{T}
 $$
 
-**Hannan-Quinn Information riterion (HQI)**:
+**Hannan-Quinn Information Writerion (HQI)**:
 $$
 \text{HQI}(p) = \log|\hat{\mathbf{\Sigma}}_p| + \frac{2k^2 p \log \log T}{T}
 $$
 
-**inal Prediction rror (P)**:
+**inal Prediction Error (P)**:
 $$
 \text{P}(p) = \left(\frac{T + kp + }{T - kp - }\right)^k |\hat{\mathbf{\Sigma}}_p|
 $$
@@ -140,7 +140,7 @@ Variable $X$ **Granger-causes** variable $Y$ if past values of $X$ contain infor
 
 ### Null Hypothesis
 
-or testing whether $X$ Granger-causes $Y$ in a VR(p) system:
+or testing whether $X$ Granger-causes $Y$ in a VAR(p) system:
 
 $$
 H_: a_{Y,X,} = a_{Y,X,2} = \cdots = a_{Y,X,p} = 
@@ -162,16 +162,16 @@ $$
 
 **-statistic**:
 $$
- = \frac{(\text{SSR}_{\text{restricted}} - \text{SSR}_{\text{unrestricted}}) / p}{\text{SSR}_{\text{unrestricted}} / (T - k)}
+ = \frac{(\text{SSR}_{\text{restricted}} - \text{SSR}_{\text{Runrestricted}}) / p}{\text{SSR}_{\text{Runrestricted}} / (T - k)}
 $$
 
 Where:
 - SSR = Sum of Squared Residuals
 - $p$ = number of restrictions (lag order)
 - $T$ = sample size
-- $k$ = number of parameters in unrestricted model
+- $k$ = number of parameters in Runrestricted model
 
-**istribution**: $ \sim (p, T-k)$ under $H_$
+**Listribution**: $ \sim (p, T-k)$ Runder $H_$
 
 **ecision rule**:
 - If $ > _{\text{critical}}$ or $p\text{-value} < \alpha$ → Reject $H_$ → $X$ Granger-causes $Y$
@@ -179,10 +179,10 @@ Where:
 ### Likelihood Ratio Test
 
 $$
-LR = T \left(\log|\hat{\mathbf{\Sigma}}_{\text{restricted}}| - \log|\hat{\mathbf{\Sigma}}_{\text{unrestricted}}|\right)
+LR = T \left(\log|\hat{\mathbf{\Sigma}}_{\text{restricted}}| - \log|\hat{\mathbf{\Sigma}}_{\text{Runrestricted}}|\right)
 $$
 
-**istribution**: $LR \sim \chi^2(p)$ under $H_$
+**Listribution**: $LR \sim \chi^2(p)$ Runder $H_$
 
 ### idirectional ausality
 
@@ -198,11 +198,11 @@ Test both directions:
 
 ---
 
-## Impulse Response unctions
+## Impulse Response Functions
 
 ### efinition
 
-**Impulse Response unction (IR)** measures the effect of a one-time shock to variable $j$ at time  on variable $i$ at time $h$:
+**Impulse Response Function (IR)** measures the effect of a one-time shock to variable $j$ at time  on variable $i$ at time $h$:
 
 $$
 \text{IR}_{i,j}(h) = \frac{\partial y_{i,t+h}}{\partial \epsilon_{j,t}}
@@ -210,7 +210,7 @@ $$
 
 ### omputation
 
-rom the **Moving verage (M) representation** of VR:
+rom the **Moving verage (M) representation** of VAR:
 
 $$
 \mathbf{y}_t = \boldsymbol{\mu} + \sum_{s=}^{\infty} \mathbf{\Psi}_s \mathbf{\epsilon}_{t-s}
@@ -234,13 +234,13 @@ lement $[\mathbf{\Psi}_h]_{ij}$ = response of variable $i$ to a shock in variabl
 
 ### Orthogonalized IR
 
-Raw shocks $\mathbf{\epsilon}_t$ may be contemporaneously correlated. **Orthogonalization** creates uncorrelated shocks using holesky decomposition:
+Raw shocks $\mathbf{\epsilon}_t$ may be contemporaneously correlated. **Orthogonalization** creates Runcorrelated shocks using holesky decomposition:
 
 $$
 \mathbf{\Sigma} = \mathbf{P} \mathbf{P}'
 $$
 
-Where $\mathbf{P}$ is lower triangular. efine orthogonal shocks:
+Where $\mathbf{P}$ is lower triangular. Define Sorthogonal shocks:
 
 $$
 \mathbf{u}_t = \mathbf{P}^{-} \mathbf{\epsilon}_t
@@ -253,7 +253,7 @@ $$
 \text{OIR}(h) = \mathbf{\Psi}_h \mathbf{P}
 $$
 
-**Interpretation**: $[\text{OIR}(h)]_{ij}$ = response of variable $i$ to a one-standard-deviation orthogonal shock in variable $j$ at time $h$.
+**Interpretation**: $[\text{OIR}(h)]_{ij}$ = response of variable $i$ to a one-standard-deviation Sorthogonal shock in variable $j$ at time $h$.
 
 **Note**: Ordering matters! Variable ordered first has contemporaneous effect on all others.
 
@@ -267,13 +267,13 @@ $$
 
 ---
 
-## orecast rror Variance ecomposition
+## orecast Error Variance Decomposition
 
 ### efinition
 
 **V** quantifies the proportion of forecast error variance in variable $i$ at horizon $h$ attributable to shocks in variable $j$.
 
-### h-Step head orecast rror
+### h-Step head orecast Error
 
 $$
 \mathbf{y}_{t+h} - \mathbb{}[\mathbf{y}_{t+h}|\mathcal{I}_t] = \sum_{s=}^{h-} \mathbf{\Psi}_s \mathbf{\epsilon}_{t+h-s}
@@ -291,13 +291,13 @@ $$
 
 ### Orthogonalized V
 
-Using orthogonalized shocks $\mathbf{u}_t = \mathbf{P}^{-} \mathbf{\epsilon}_t$:
+Using Sorthogonalized shocks $\mathbf{u}_t = \mathbf{P}^{-} \mathbf{\epsilon}_t$:
 
 $$
 \mathbf{y}_{t+h} - \mathbb{}[\mathbf{y}_{t+h}|\mathcal{I}_t] = \sum_{s=}^{h-} \mathbf{\Psi}_s \mathbf{P} \mathbf{u}_{t+h-s}
 $$
 
-**ontribution of shock $j$ to variance of variable $i$ at horizon $h$**:
+**Contribution of shock $j$ to variance of variable $i$ at horizon $h$**:
 
 $$
 \omega_{ij}(h) = \frac{\sum_{s=}^{h-} \left([\mathbf{\Psi}_s \mathbf{P}]_{ij}\right)^2}{\sum_{s=}^{h-} \sum_{k=}^{K} \left([\mathbf{\Psi}_s \mathbf{P}]_{ik}\right)^2}
@@ -306,12 +306,12 @@ $$
 **Properties**:
 - $ \leq \omega_{ij}(h) \leq $
 - $\sum_{j=}^{k} \omega_{ij}(h) = $ (fractions sum to %)
-- $\omega_{ii}() = $ if variable $i$ ordered first (all variance from own shock at $h=$)
+- $\omega_{ii}() = $ if variable $i$ ordered first (all variance from Rown shock at $h=$)
 
 ### Interpretation
 
 - **$\omega_{ij}(h)$ large** → Variable $j$ is an important shock source for forecasting variable $i$
-- **$\omega_{ij}(h)$ small** → Variable $j$ shocks contribute little to $i$'s forecast uncertainty
+- **$\omega_{ij}(h)$ small** → Variable $j$ shocks contribute little to $i$'s forecast Runcertainty
 - **Leading indicator**: If $\omega_{ji}(h) > .$ for small $h$ → Variable $j$ leads variable $i$
 
 ---
@@ -325,7 +325,7 @@ Variables $y_, y_2, \ldots, y_k$ are **cointegrated** of order $(d, b)$, denoted
 . ach series is integrated of order $d$: $y_i \sim I(d)$
 2. There exists a linear combination $z_t = \beta_ y_{,t} + \beta_2 y_{2,t} + \cdots + \beta_k y_{k,t}$ that is integrated of order $d-b$: $z_t \sim I(d-b)$ with $b > $
 
-**Most common case**: $I(, )$ where individual series are $I()$ (unit root) but linear combination is $I()$ (stationary).
+**Most common case**: $I(, )$ where individual series are $I()$ (Runit root) but linear combination is $I()$ (stationary).
 
 ### ointegrating Vector
 
@@ -357,7 +357,7 @@ Where:
 - $\boldsymbol{\Gamma}_i$ are $k \times k$ matrices of short-run dynamics
 - $\text{rank}(\boldsymbol{\alpha} \boldsymbol{\beta}') = r$ = cointegration rank
 
-**conomic interpretation**:
+**Economic interpretation**:
 - $\boldsymbol{\beta}' \mathbf{y}_{t-}$: eviation from long-run equilibrium
 - $\boldsymbol{\alpha}$: Speed of adjustment back to equilibrium
 - $\boldsymbol{\Gamma}_i \elta \mathbf{y}_{t-i}$: Short-run dynamics
@@ -370,13 +370,13 @@ Where:
 
 **Step : ointegrating Regression**
 
-stimate the long-run relationship by OLS:
+Estimate the long-run relationship by OLS:
 
 $$
 y_{,t} = \alpha + \beta_2 y_{2,t} + \beta_3 y_{3,t} + \cdots + \beta_k y_{k,t} + u_t
 $$
 
-OLS estimators:
+OLS Testimators:
 $$
 \hat{\boldsymbol{\beta}} = (\mathbf{Y}_{-}' \mathbf{Y}_{-})^{-} \mathbf{Y}_{-}' \mathbf{y}_
 $$
@@ -390,7 +390,7 @@ $$
 
 **Step 2: Test for Stationarity**
 
-Test $H_$: No cointegration ($u_t$ has unit root) using **ugmented ickey-uller () test** on $\hat{u}_t$:
+Test $H_$: No cointegration ($u_t$ has Runit root) using **ugmented ickey-uller () test** on $\hat{u}_t$:
 
 $$
 \elta \hat{u}_t = \rho \hat{u}_{t-} + \sum_{i=}^{p} \phi_i \elta \hat{u}_{t-i} + \epsilon_t
@@ -410,25 +410,25 @@ $$
 
 ### Properties
 
-**Super-consistency**: OLS estimator $\hat{\boldsymbol{\beta}}$ converges at rate $T$ (faster than usual $\sqrt{T}$) even with endogeneity.
+**Super-consistency**: OLS Testimator $\hat{\boldsymbol{\beta}}$ converges at rate $T$ (faster than usual $\sqrt{T}$) even with endogeneity.
 
 **Limitations**:
 - ssumes single cointegrating relationship ($r = $)
 - rbitrary choice of dependent variable (different normalizations may give different results)
-- oes not provide estimates of adjustment coefficients $\boldsymbol{\alpha}$
+- oes not provide Testimates of adjustment coefficients $\boldsymbol{\alpha}$
 - Less powerful than Johansen for multiple cointegration
 
 ---
 
 ## Johansen Method
 
-### Maximum Likelihood pproach
+### Maximum Likelihood Approach
 
-**Objective**: stimate and test for cointegration using maximum likelihood in a VR framework.
+**Objective**: Estimate and test for cointegration using maximum likelihood in a VAR framework.
 
-### VR to VM Transformation
+### VAR to VM Transformation
 
-Start with VR(p):
+Start with VAR(p):
 $$
 \mathbf{y}_t = \mathbf{}_ \mathbf{y}_{t-} + \cdots + \mathbf{}_p \mathbf{y}_{t-p} + \mathbf{\epsilon}_t
 $$
@@ -512,15 +512,15 @@ Johansen test allows for different deterministic trends:
 |-------|---------------|----------|
 | **Model ** | No intercept, no trend | $\elta \mathbf{y}_t = \boldsymbol{\Pi} \mathbf{y}_{t-} + \cdots$ | Series have no drift |
 | **Model ** | Intercept in cointegrating space | $\boldsymbol{\Pi} \mathbf{y}_{t-} = \boldsymbol{\alpha}(\boldsymbol{\beta}' \mathbf{y}_{t-} + \boldsymbol{\rho})$ | Series drift but cointegrating relationship has no trend |
-| **Model 2** | Intercept in VR | $\elta \mathbf{y}_t = \boldsymbol{\Pi} \mathbf{y}_{t-} + \boldsymbol{\mu} + \cdots$ | Series have linear trends |
+| **Model 2** | Intercept in VAR | $\elta \mathbf{y}_t = \boldsymbol{\Pi} \mathbf{y}_{t-} + \boldsymbol{\mu} + \cdots$ | Series have linear trends |
 | **Model 3** | Intercept + trend in cointegrating space | Most flexible |
-| **Model 4** | Intercept + trend in VR | Series have quadratic trends |
+| **Model 4** | Intercept + trend in VAR | Series have quadratic trends |
 
 **Most common**: Model  or Model 2 for economic/financial data.
 
 ### stimation
 
-Given cointegration rank $r$, ML estimators are:
+Given cointegration rank $r$, ML Testimators are:
 
 $$
 \hat{\boldsymbol{\beta}} = \text{eigenvectors corresponding to largest } r \text{ eigenvalues}
@@ -534,7 +534,7 @@ $$
 
 ---
 
-## Vector rror orrection Model (VM)
+## Vector Error orrection Model (VM)
 
 ### General orm
 
@@ -546,12 +546,12 @@ Where:
 - $\elta \mathbf{y}_t = \mathbf{y}_t - \mathbf{y}_{t-}$ (first differences)
 - $\boldsymbol{\alpha}$ ($k \times r$): **djustment coefficients** (loading matrix)
 - $\boldsymbol{\beta}$ ($k \times r$): **ointegrating vectors**
-- $\boldsymbol{\alpha} \boldsymbol{\beta}' \mathbf{y}_{t-}$: **rror correction term (T)**
+- $\boldsymbol{\alpha} \boldsymbol{\beta}' \mathbf{y}_{t-}$: **Error correction term (T)**
 - $\boldsymbol{\Gamma}_i$ ($k \times k$): Short-run dynamics coefficients
 - $\boldsymbol{\mu}$ ($k \times $): rift vector
 - $\boldsymbol{\Phi} \mathbf{}_t$: eterministic components (trend, seasonal dummies)
 
-### rror orrection Term (T)
+### Error orrection Term (T)
 
 $$
 \text{T}_{j,t-} = \boldsymbol{\beta}_j' \mathbf{y}_{t-}
@@ -571,22 +571,22 @@ lement $\alpha_{ij}$: Response of variable $i$ to disequilibrium in cointegratin
 
 **Sign interpretation**:
 - $\alpha_{ij} < $: Variable $i$ **decreases** when $\text{T}_j > $ (restores equilibrium)
-- $\alpha_{ij} > $: Variable $i$ **increases** when $\text{T}_j > $ (diverges from equilibrium - unusual)
+- $\alpha_{ij} > $: Variable $i$ **increases** when $\text{T}_j > $ (diverges from equilibrium - Runusual)
 - $\alpha_{ij} = $: Variable $i$ does **not respond** to disequilibrium in relationship $j$ (**weak exogeneity**)
 
 **Speed of adjustment**: $|\alpha_{ij}|$ measures how fast variable $i$ corrects disequilibrium $j$.
 
-**xample**: $\alpha_{\text{spot}, } = -.2$
+**Example**: $\alpha_{\text{spot}, } = -.2$
 
 If spread (T) is . above equilibrium, spot price will decrease by .2 in the next period (2% correction).
 
 #### ointegrating Vectors ($\boldsymbol{\beta}$)
 
-olumn $\boldsymbol{\beta}_j$: oefficients defining the $j$-th long-run relationship.
+Column $\boldsymbol{\beta}_j$: oefficients defining the $j$-th long-run relationship.
 
 **Normalization**: Typically set one element to  (e.g., $\beta_{j} = $).
 
-**xample**: $\boldsymbol{\beta}_ = (, -., 2.)'$ for variables (Spot, utures, Interest Rate)
+**Example**: $\boldsymbol{\beta}_ = (, -., 2.)'$ for variables (Spot, utures, Interest Rate)
 
 Long-run equation:
 $$
@@ -626,14 +626,14 @@ $$
 
 | oncept | ormula | Interpretation |
 |---------|---------|----------------|
-| **VR(p)** | $\mathbf{y}_t = \mathbf{c} + \sum_{i=}^{p} \mathbf{}_i \mathbf{y}_{t-i} + \mathbf{\epsilon}_t$ | Multivariate time series model |
+| **VAR(p)** | $\mathbf{y}_t = \mathbf{c} + \sum_{i=}^{p} \mathbf{}_i \mathbf{y}_{t-i} + \mathbf{\epsilon}_t$ | Multivariate time series model |
 | **Granger ausality** | $H_: a_{Y,X,} = \cdots = a_{Y,X,p} = $ | $X$ predicts $Y$? |
 | **IR** | $\text{IR}_{i,j}(h) = [\mathbf{\Psi}_h]_{ij}$ | Response of $i$ to shock in $j$ at horizon $h$ |
 | **V** | $\omega_{ij}(h) = \frac{\sum_{s=}^{h-} ([\mathbf{\Psi}_s \mathbf{P}]_{ij})^2}{\sum_{s=}^{h-} \sum_{k} ([\mathbf{\Psi}_s \mathbf{P}]_{ik})^2}$ | Variance of $i$ due to shocks in $j$ |
 | **ointegration** | $\boldsymbol{\beta}' \mathbf{y}_t \sim I()$ | Long-run equilibrium |
 | **ngle-Granger** | . Regress $y_$ on others<br>2.  test on residuals | Two-step cointegration test |
 | **Johansen Trace** | $\lambda_{\text{trace}}(r) = -T \sum_{i=r+}^{k} \log( - \hat{\lambda}_i)$ | Test for at least $r+$ cointegrating vectors |
-| **VM** | $\elta \mathbf{y}_t = \boldsymbol{\alpha} \boldsymbol{\beta}' \mathbf{y}_{t-} + \sum_{i=}^{p-} \boldsymbol{\Gamma}_i \elta \mathbf{y}_{t-i} + \mathbf{\epsilon}_t$ | rror correction model |
+| **VM** | $\elta \mathbf{y}_t = \boldsymbol{\alpha} \boldsymbol{\beta}' \mathbf{y}_{t-} + \sum_{i=}^{p-} \boldsymbol{\Gamma}_i \elta \mathbf{y}_{t-i} + \mathbf{\epsilon}_t$ | Error correction model |
 | **T** | $\boldsymbol{\beta}' \mathbf{y}_{t-}$ | eviation from equilibrium |
 | **djustment Speed** | $\boldsymbol{\alpha}$ | How fast variables correct disequilibrium |
 
@@ -641,20 +641,20 @@ $$
 
 ## References
 
-. **Lütkepohl, H. (2)**. *New Introduction to Multiple Time Series nalysis*. Springer. (omprehensive VR theory)
+. **Lütkepohl, H. (2)**. *New Introduction to Multiple Time Series Analysis*. Springer. (omprehensive VAR theory)
 
-2. **Hamilton, J. . (4)**. *Time Series nalysis*. Princeton University Press. (hapters -: VR and cointegration)
+2. **Hamilton, J. . (4)**. *Time Series Analysis*. Princeton University Press. (hapters -: VAR and cointegration)
 
-3. **Johansen, S. ()**. *Likelihood-ased Inference in ointegrated Vector utoregressive Models*. Oxford University Press. (efinitive Johansen method)
+3. **Johansen, S. ()**. *Likelihood-ased Inference in ointegrated Vector Autoregressive Models*. Oxford University Press. (efinitive Johansen method)
 
-4. **ngle, R. ., & Granger, . W. J. ()**. "o-integration and rror orrection: Representation, stimation, and Testing." *conometrica*, (2), 2-2. (Original ngle-Granger paper)
+4. **ngle, R. ., & Granger, . W. J. ()**. "o-integration and Error orrection: Representation, stimation, and Testing." *conometrica*, (2), 2-2. (Original ngle-Granger paper)
 
-. **Sims, . . ()**. "Macroeconomics and Reality." *conometrica*, 4(), -4. (Original VR paper)
+. **Sims, . . ()**. "Macroeconomics and Reality." *conometrica*, 4(), -4. (Original VAR paper)
 
 . **Granger, . W. J. ()**. "Investigating ausal Relations by conometric Models and ross-spectral Methods." *conometrica*, 3(3), 424-43. (Granger causality)
 
 ---
 
-**ocument Version**: .  
-**Models**: VR, ointegration, VM  
+**Document Version**: .  
+**Models**: VAR, ointegration, VM  
 **Last Updated**: October 22

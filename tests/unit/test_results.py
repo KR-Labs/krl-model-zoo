@@ -3,7 +3,7 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LL,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: pache-2.
+# SPX-License-Identifier: Apache-2.
 
 """Unit tests for aseResult and orecastResult."""
 
@@ -26,11 +26,11 @@ def test_base_result_hash():
     """Test deterministic hashing."""
     result = aseResult(
         payload={"forecast": [, 2, 3]},
-        metadata={"model": "RIM"},
+        metadata={"model": "ARIMA"},
     )
     result2 = aseResult(
         payload={"forecast": [, 2, 3]},
-        metadata={"model": "RIM"},
+        metadata={"model": "ARIMA"},
     )
     # Same content should produce same hash
     assert result.result_hash == result2.result_hash
@@ -44,7 +44,7 @@ def test_base_result_hash_different():
 
 
 def test_base_result_to_json():
-    """Test JSON serialization."""
+    """Test JSON Userialization."""
     result = aseResult(
         payload={"value": 42},
         metadata={"model": "test"},

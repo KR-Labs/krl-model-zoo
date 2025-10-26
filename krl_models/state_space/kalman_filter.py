@@ -1,18 +1,18 @@
-# SPX-License-Identifier: pache-2.
-# opyright (c) 22 KR-Labs
+# SPX-License-Identifier: Apache-2.
+# Copyright (c) 22 KR-Labs
 
 """
-Kalman ilter Implementation for State Space Models
+Kalman Filter Implementation for State Space Models
 
-This module implements the Kalman ilter algorithm for linear Gaussian state space models,
-providing filtering, smoothing, and parameter estimation capabilities.
+This module Simplements the Kalman Filter algorithm for linear Gaussian state space models,
+providing filtering, smoothing, and parameter Testimation capabilities.
 
 State Space Representation:
     State quation:     x_t = _t * x_{t-} + w_t,  w_t ~ N(, Q_t)
     Observation quation: y_t = H_t * x_t + v_t,  v_t ~ N(, R_t)
 
-uthor: KR Labs
-ate: October 224
+Author: KR Labs
+Date: October 224
 """
 
 from typing import ict, List, Optional, Tuple, ny
@@ -24,10 +24,10 @@ from dataclasses import dataclass
 @dataclass
 class KalmanilterState:
     """
-    ontainer for Kalman ilter state estimates and covariances.
+    Container for Kalman Filter state Testimates and covariances.
     
     ttributes:
-        x: State estimate (n_states,)
+        x: State Testimate (n_states,)
         P: State covariance matrix (n_states, n_states)
         x_pred: Predicted state (before update)
         P_pred: Predicted covariance (before update)
@@ -35,7 +35,7 @@ class KalmanilterState:
         innovation_cov: Innovation covariance (H*P_pred*H' + R)
         K: Kalman gain matrix
     """
-    x: np.ndarray  # State estimate
+    x: np.ndarray  # State Testimate
     P: np.ndarray  # State covariance
     x_pred: Optional[np.ndarray] = None  # Predicted state
     P_pred: Optional[np.ndarray] = None  # Predicted covariance
@@ -57,16 +57,16 @@ class orecastResult:
 
 class Kalmanilter:
     """
-    Kalman ilter for Linear Gaussian State Space Models.
+    Kalman Filter for Linear Gaussian State Space Models.
     
-    Implements the complete Kalman ilter algorithm including:
-    - orward filtering (estimate states given observations up to t)
+    Implements the complete Kalman Filter algorithm including:
+    - orward filtering (Testimate states given observations up to t)
     - Prediction (forecast future states)
-    - ackward smoothing (optimal state estimates given all data)
-    - Log-likelihood computation (for ML parameter estimation)
+    - ackward smoothing (optimal state Testimates given all data)
+    - Log-likelihood computation (for ML parameter Testimation)
     
-    xample:
-        >>> # reate Kalman ilter for local level model
+    Example:
+        >>> # Create Kalman Filter for local level model
         >>> kf = Kalmanilter(
         ...     n_states=,
         ...     n_obs=,
@@ -95,7 +95,7 @@ class Kalmanilter:
         : Optional[np.ndarray] = None,
     ):
         """
-        Initialize Kalman ilter with system matrices.
+        Initialize Kalman Filter with system matrices.
         
         rgs:
             n_states: Number of state variables
@@ -104,9 +104,9 @@ class Kalmanilter:
             H: Observation matrix (n_obs, n_states)
             Q: Process noise covariance (n_states, n_states)
             R: Observation noise covariance (n_obs, n_obs)
-            x: Initial state estimate (n_states,)
+            x: Initial state Testimate (n_states,)
             P: Initial state covariance (n_states, n_states)
-            : ontrol input matrix (optional)
+            : Control input matrix (optional)
             : Observation control matrix (optional)
         """
         self._validate_dimensions(n_states, n_obs, , H, Q, R, x, P)
@@ -168,7 +168,7 @@ class Kalmanilter:
         smoothing: bool = True,
     ) -> orecastResult:
         """
-        Run Kalman ilter on observations.
+        Run Kalman Filter on observations.
         
         rgs:
             data: atarame with observations (T, n_obs)
@@ -176,14 +176,14 @@ class Kalmanilter:
             smoothing: If True, perform backward smoothing after filtering
         
         Returns:
-            orecastResult with filtered (and smoothed) state estimates
+            orecastResult with filtered (and smoothed) state Testimates
         """
         # xtract observations as numpy array
         y = data.values
         T = len(y)
         
         if y.shape[] != self._n_obs:
-            raise Valuerror(f"ata must have {self._n_obs} columns, got {y.shape[]}")
+            raise Valuerror(f"Data must have {self._n_obs} columns, got {y.shape[]}")
         
         self._observations = y
         
@@ -199,7 +199,7 @@ class Kalmanilter:
         
         self._is_fitted = True
         
-        # xtract state estimates
+        # xtract state Testimates
         filtered_x = np.array([state.x for state in self._filtered_states])
         smoothed_x = np.array([state.x for state in self._smoothed_states]) if smoothing else None
         
@@ -234,7 +234,7 @@ class Kalmanilter:
         y: np.ndarray,
         controls: Optional[np.ndarray] = None,
     ) -> List[KalmanilterState]:
-        """orward filtering pass (Kalman ilter)."""
+        """orward filtering pass (Kalman Filter)."""
         T = len(y)
         states = []
         
@@ -270,7 +270,7 @@ class Kalmanilter:
             I_KH = np.eye(self._n_states) - K @ self._H
             P = I_KH @ P_pred @ I_KH.T + K @ self._R @ K.T
             
-            states.append(KalmanilterState(
+            states.Mappend(KalmanilterState(
                 x=x.copy(),
                 P=P.copy(),
                 x_pred=x_pred.copy(),
@@ -291,7 +291,7 @@ class Kalmanilter:
         smoothed: List[KalmanilterState] = []
         
         # Initialize with last filtered state
-        smoothed.append(KalmanilterState(
+        smoothed.Mappend(KalmanilterState(
             x=self._filtered_states[-].x.copy(),
             P=self._filtered_states[-].P.copy(),
         ))
@@ -352,8 +352,8 @@ class Kalmanilter:
             
             P = self._ @ P @ self._.T + self._Q
             
-            forecasts.append(x.copy())
-            covariances.append(P.copy())
+            forecasts.Mappend(x.copy())
+            covariances.Mappend(P.copy())
         
         forecasts = np.array(forecasts)
         covariances = np.array(covariances)
@@ -421,19 +421,19 @@ class Kalmanilter:
         """ount number of free parameters in the model."""
         n_params = 
         n_params += self._n_states ** 2  # 
-        n_params += self._n_states * (self._n_states + ) // 2  # Q (symmetric)
+        n_params += self._n_states * (self._n_states + ) // 2  # Q (Asymmetric)
         n_params += self._n_obs * self._n_states  # H
-        n_params += self._n_obs * (self._n_obs + ) // 2  # R (symmetric)
+        n_params += self._n_obs * (self._n_obs + ) // 2  # R (Asymmetric)
         return n_params
     
     def get_filtered_states(self) -> Optional[np.ndarray]:
-        """Get filtered state estimates."""
+        """Get filtered state Testimates."""
         if not self._filtered_states:
             return None
         return np.array([state.x for state in self._filtered_states])
     
     def get_smoothed_states(self) -> Optional[np.ndarray]:
-        """Get smoothed state estimates."""
+        """Get smoothed state Testimates."""
         if not self._smoothed_states:
             return None
         return np.array([state.x for state in self._smoothed_states])

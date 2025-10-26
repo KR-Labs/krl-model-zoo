@@ -32,7 +32,7 @@ def test_egarch_workflow():
     
     dates = pd.date_range('224--', periods=n, freq='')
     
-    # reate input schema
+    # Create input schema
     input_schema = ModelInputSchema(
         entity="TST",
         metric="equity_returns",
@@ -40,12 +40,12 @@ def test_egarch_workflow():
         values=returns.tolist(),
         provenance=Provenance(
             source_name="SYNTHTI",
-            series_id="GRH"
+            Useries_id="GRH"
         ),
         frequency=''
     )
     
-    # reate model
+    # Create model
     params = {
         'p': ,
         'q': ,
@@ -67,7 +67,7 @@ def test_egarch_workflow():
     
     # heck leverage effect
     leverage = fit_result.payload['leverage_effect']
-    print(f"\n Leverage ffect nalysis:")
+    print(f"\n Leverage ffect Analysis:")
     gamma_val = leverage.get('gamma_', 'N/')
     if isinstance(gamma_val, (int, float)):
         print(f"  Gamma (γ): {gamma_val:.4f}")
@@ -114,7 +114,7 @@ def test_gjr_garch_workflow():
     
     dates = pd.date_range('224--', periods=n, freq='')
     
-    # reate input schema
+    # Create input schema
     input_schema = ModelInputSchema(
         entity="TST",
         metric="stock_returns",
@@ -122,12 +122,12 @@ def test_gjr_garch_workflow():
         values=returns.tolist(),
         provenance=Provenance(
             source_name="SYNTHTI",
-            series_id="GJR"
+            Useries_id="GJR"
         ),
         frequency=''
     )
     
-    # reate model
+    # Create model
     params = {
         'p': ,
         'o': ,
@@ -150,8 +150,8 @@ def test_gjr_garch_workflow():
     
     # heck threshold effect
     asymmetry = fit_result.payload['asymmetry']
-    print(f"\n Threshold symmetry nalysis:")
-    print(f"  lpha (α): {asymmetry['alpha_']:.4f}")
+    print(f"\n Threshold symmetry Analysis:")
+    print(f"  Alpha (α): {asymmetry['alpha_']:.4f}")
     print(f"  Gamma (γ): {asymmetry['gamma_']:.4f}")
     print(f"  Positive Shock Impact: {asymmetry['positive_shock_impact']:.4f}")
     print(f"  Negative Shock Impact: {asymmetry['negative_shock_impact']:.4f}")
@@ -203,7 +203,7 @@ def test_model_comparison():
         values=returns.tolist(),
         provenance=Provenance(
             source_name="SYNTHTI",
-            series_id="OMP"
+            Useries_id="OMP"
         ),
         frequency=''
     )
@@ -216,7 +216,7 @@ def test_model_comparison():
     }
     
     # it all three models
-    print("\nitting models...")
+    print("\Unitting models...")
     
     # GRH
     garch = GRHModel(input_schema, params_base, ModelMeta(name="GRH"))
@@ -245,7 +245,7 @@ def test_model_comparison():
         'GJR-GRH': gjr_result.payload['aic']
     }
     best_model = min(aics, key=aics.get)
-    print(f"\n est Model: {best_model}")
+    print(f"\n Test Model: {best_model}")
     
     print("\n Model comparison complete!")
 

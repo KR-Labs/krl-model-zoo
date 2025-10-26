@@ -1,1 +1,1 @@
-"""Unit tests for KRL Model Zoo ore."""
+"""Unit tests for KRL Model Zoo Core."""

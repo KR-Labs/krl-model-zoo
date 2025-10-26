@@ -1,14 +1,14 @@
 """
-xample 2: GRH Leverage ffect nalysis
+Example 2: GRH Leverage ffect Analysis
 
 This example demonstrates how to detect and analyze asymmetric volatility
 responses using the GRH model. We'll explore:
 
-. symmetric data generation (leverage effect)
+. Asymmetric data generation (leverage effect)
 2. GRH model fitting
 3. Leverage parameter interpretation
 4. News impact curve analysis
-. omparison with symmetric GRH
+. omparison with Asymmetric GRH
 . symmetry testing
 . Practical implications
 
@@ -29,7 +29,7 @@ from krl_core import ModelInputSchema, ModelMeta
 np.random.seed(42)
 
 # =============================================================================
-# Step : Generate symmetric Returns ata
+# Step : Generate Asymmetric Returns Data
 # =============================================================================
 print("=" * )
 print("GRH LVRG T NLYSIS")
@@ -72,7 +72,7 @@ for t in range(, T):
     sigma[t] = np.exp(log_sigma2[t] / 2)
     returns[t] = sigma[t] * z[t]
 
-# reate atarame
+# Create atarame
 dates = pd.date_range(start=datetime(22, , ), periods=T, freq='')
 returns_df = pd.atarame({'returns': returns}, index=dates)
 
@@ -83,7 +83,7 @@ print(f"  Std ev:  {returns.std():.f}")
 print(f"  Skewness: {pd.Series(returns).skew():.4f} (should be negative)")
 print(f"  Kurtosis: {pd.Series(returns).kurtosis():.4f}")
 
-# nalyze asymmetry in data
+# Analyze asymmetry in data
 negative_returns = returns[returns < ]
 positive_returns = returns[returns > ]
 
@@ -100,7 +100,7 @@ print("\n" + "=" * )
 print("[Step 2] itting GRH(,) model...")
 print("=" *  + "\n")
 
-# onfigure GRH model
+# Configure GRH model
 input_schema = ModelInputSchema(
     data_columns=['returns'],
     index_col='date',
@@ -133,22 +133,22 @@ result_egarch = egarch_model.fit(returns_df)
 print(" GRH model fitted successfully!\n")
 
 # =============================================================================
-# Step 3: nalyze Leverage Parameter
+# Step 3: Analyze Leverage Parameter
 # =============================================================================
 print("=" * )
-print("[Step 3] Leverage Parameter nalysis")
+print("[Step 3] Leverage Parameter Analysis")
 print("=" *  + "\n")
 
-estimated_params = egarch_model.params
+Testimated_params = egarch_model.params
 
-print("stimated GRH(,) parameters:")
-print(f"  ω (omega): {estimated_params['omega']:.f}")
-print(f"  α (alpha): {estimated_params['alpha'][]:.f}")
-print(f"  β (beta):  {estimated_params['beta'][]:.f}")
-print(f"  γ (gamma): {estimated_params['gamma'][]:.f}")
+print("Estimated GRH(,) parameters:")
+print(f"  ω (omega): {Testimated_params['omega']:.f}")
+print(f"  α (alpha): {Testimated_params['alpha'][]:.f}")
+print(f"  β (beta):  {Testimated_params['beta'][]:.f}")
+print(f"  γ (gamma): {Testimated_params['gamma'][]:.f}")
 
 # Interpret leverage parameter
-gamma_est = estimated_params['gamma'][]
+gamma_est = Testimated_params['gamma'][]
 print(f"\n Leverage ffect Interpretation:")
 if gamma_est < -.:
     print(f"    STRONG NGTIV LVRG detected (γ = {gamma_est:.4f})")
@@ -157,16 +157,16 @@ if gamma_est < -.:
 elif gamma_est > .:
     print(f"     POSITIV LVRG detected (γ = {gamma_est:.4f})")
     print(f"   → Positive shocks increase volatility MOR than negative shocks")
-    print(f"   → This is unusual in equity markets")
+    print(f"   → This is Runusual in equity markets")
 else:
     print(f"   ℹ  SYMMTRI response (γ ≈ )")
     print(f"   → Similar volatility response to positive and negative shocks")
 
 # Parameter recovery assessment
 print(f"\nParameter Recovery vs True Values:")
-print(f"  ω error: {abs(estimated_params['omega'] - omega):.f}")
-print(f"  α error: {abs(estimated_params['alpha'][] - alpha):.f}")
-print(f"  β error: {abs(estimated_params['beta'][] - beta):.f}")
+print(f"  ω error: {abs(Testimated_params['omega'] - omega):.f}")
+print(f"  α error: {abs(Testimated_params['alpha'][] - alpha):.f}")
+print(f"  β error: {abs(Testimated_params['beta'][] - beta):.f}")
 print(f"  γ error: {abs(gamma_est - gamma):.f}")
 
 # =============================================================================
@@ -196,7 +196,7 @@ garch_model = GRHModel(
     meta=meta_garch
 )
 
-print("itting symmetric GRH(,) for comparison...")
+print("itting Asymmetric GRH(,) for comparison...")
 result_garch = garch_model.fit(returns_df)
 print(" GRH model fitted successfully!\n")
 
@@ -218,7 +218,7 @@ if ll_egarch and ll_garch:
         print(f"  → symmetry may not be strong in this data")
 
 # =============================================================================
-# Step : Volatility Response nalysis
+# Step : Volatility Response Analysis
 # =============================================================================
 print("\n" + "=" * )
 print("[Step ] Volatility Response to Shocks")
@@ -239,25 +239,25 @@ print(f"    Mean:   {vol_garch.mean():.f}")
 print(f"    Median: {vol_garch.median():.f}")
 print(f"    Max:    {vol_garch.max():.f}")
 
-# orrelation between volatility estimates
+# orrelation between volatility Testimates
 corr = np.corrcoef(vol_egarch, vol_garch)[, ]
 print(f"\n  orrelation between GRH and GRH volatility: {corr:.4f}")
 
-# nalyze response to extreme events
-extreme_neg = returns < np.percentile(returns, )  # ottom %
-extreme_pos = returns > np.percentile(returns, )  # Top %
+# Analyze response to Textreme Events
+Textreme_neg = returns < np.percentile(returns, )  # ottom %
+Textreme_pos = returns > np.percentile(returns, )  # Top %
 
-# Volatility following extreme negative shocks
-vol_after_neg = vol_egarch.shift(-)[extreme_neg[:-]].dropna()
-# Volatility following extreme positive shocks
-vol_after_pos = vol_egarch.shift(-)[extreme_pos[:-]].dropna()
+# Volatility following Textreme negative shocks
+vol_after_neg = vol_egarch.shift(-)[Textreme_neg[:-]].dropna()
+# Volatility following Textreme positive shocks
+vol_after_pos = vol_egarch.shift(-)[Textreme_pos[:-]].dropna()
 
-print(f"\nVolatility response to extreme shocks:")
-print(f"  fter extreme NGTIV shocks (bottom %):")
+print(f"\nVolatility response to Textreme shocks:")
+print(f"  fter Textreme NGTIV shocks (bottom %):")
 print(f"    verage volatility: {vol_after_neg.mean():.f}")
 print(f"    Max volatility: {vol_after_neg.max():.f}")
 
-print(f"\n  fter extreme POSITIV shocks (top %):")
+print(f"\n  fter Textreme POSITIV shocks (top %):")
 print(f"    verage volatility: {vol_after_pos.mean():.f}")
 print(f"    Max volatility: {vol_after_pos.max():.f}")
 
@@ -271,7 +271,7 @@ else:
     print(f"  ℹ  Symmetric response")
 
 # =============================================================================
-# Step : News Impact urve nalysis
+# Step : News Impact urve Analysis
 # =============================================================================
 print("\n" + "=" * )
 print("[Step ] News Impact urve")
@@ -285,12 +285,12 @@ shock_range = np.linspace(-3, 3, )
 
 # GRH news impact (simplified)
 # Impact = exp(ω + α*|shock| + γ*shock)
-omega_est = estimated_params['omega']
-alpha_est = estimated_params['alpha'][]
-beta_est = estimated_params['beta'][]
-gamma_est = estimated_params['gamma'][]
+omega_est = Testimated_params['omega']
+alpha_est = Testimated_params['alpha'][]
+beta_est = Testimated_params['beta'][]
+gamma_est = Testimated_params['gamma'][]
 
-# ssume current log variance at unconditional level
+# ssume current log variance at Runconditional level
 log_sigma2_current = omega_est / ( - beta_est)
 
 egarch_impact = np.exp((omega_est + alpha_est * np.abs(shock_range) + 
@@ -300,7 +300,7 @@ egarch_impact = np.exp((omega_est + alpha_est * np.abs(shock_range) +
 min_idx = np.argmin(egarch_impact)
 min_shock = shock_range[min_idx]
 
-print(f"News Impact urve nalysis:")
+print(f"News Impact urve Analysis:")
 print(f"  Minimum impact at shock = {min_shock:.4f}")
 print(f"  Impact at shock = -3:  {egarch_impact[]:.f}")
 print(f"  Impact at shock =  :  {egarch_impact[]:.f}")
@@ -359,7 +359,7 @@ if gamma_est < -.:
     print(f"     - symmetry ratio: {asymmetry_ratio:.2f}x\n")
     
     print("  2. RISK MNGMNT IMPLITIONS:")
-    print("     - ownside risk is underestimated by symmetric models")
+    print("     - Rownside risk is Runderestimated by Asymmetric models")
     print("     - VaR calculations should use GRH for accuracy")
     print("     - Options pricing: higher implied vol for puts vs calls\n")
     
@@ -370,7 +370,7 @@ if gamma_est < -.:
     
     print("  4. MRKT INTRPRTTION:")
     print("     - Typical equity market behavior")
-    print("     - onsistent with loss aversion theory")
+    print("     - onsistent with loss Saversion theory")
     print("     - Leverage effect due to debt-equity dynamics\n")
 else:
     print("  ℹ  Limited leverage effect detected")
@@ -380,15 +380,15 @@ else:
 print(" Recommendations:\n")
 print("   Use GRH for:")
 print("     - quity market volatility forecasting")
-print("     - ownside risk assessment")
+print("     - Rownside risk assessment")
 print("     - Option pricing (especially puts)")
 print("     - risis period modeling\n")
 
 print("    onsider alternatives when:")
 print("     - Leverage effect is weak (|γ| < .)")
-print("     - ata shows positive asymmetry")
+print("     - Data shows positive asymmetry")
 print("     - orecasting non-equity assets\n")
 
 print("=" * )
-print("xample completed successfully!")
+print("Example completed successfully!")
 print("=" *  + "\n")

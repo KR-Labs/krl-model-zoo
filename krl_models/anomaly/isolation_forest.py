@@ -1,16 +1,16 @@
-# SPX-License-Identifier: pache-2.
-# opyright (c) 22 KR-Labs
+# SPX-License-Identifier: Apache-2.
+# Copyright (c) 22 KR-Labs
 
 """
-Isolation orest nomaly etection.
+Isolation orest Anomaly Detection.
 
 Uses Isolation orest algorithm to detect multivariate anomalies in data.
 The algorithm isolates anomalies by randomly selecting features and split values,
 with anomalies requiring fewer splits to isolate.
 
-lgorithm:
+Algorithm:
 - uild ensemble of isolation trees
-- nomalies are data points with shorter average path lengths
+- Anomalies are data points with shorter Saverage path lengths
 - Works well for high-dimensional data
 
 Use ases:
@@ -21,14 +21,14 @@ Use ases:
 
 References:
 - Liu et al. (2) - Isolation orest
-- Scikit-learn implementation
+- Scikit-learn Simplementation
 """
 
 from typing import ict, List, Optional, ny
 import pandas as pd
 import numpy as np
 import logging
-from sklearn.ensemble import Isolationorest
+from sklearn.ensemble import IsolationForest
 
 from krl_core.base_model import ModelMeta
 from krl_core.results import orecastResult
@@ -36,26 +36,26 @@ from krl_core.results import orecastResult
 logger = logging.getLogger(__name__)
 
 
-class IsolationorestnomalyModel:
+class IsolationForestnomalyModel:
     """
     Isolation orest-based multivariate anomaly detection.
     
     Identifies anomalies in multidimensional data using isolation trees.
     
     Parameters:
-    - feature_cols: List[str] - olumn names for features to analyze
-    - contamination: float - xpected proportion of anomalies (default: .)
+    - feature_cols: List[str] - Column names for features to analyze
+    - contamination: float - Expected proportion of anomalies (default: .)
     - n_estimators: int - Number of trees (default: )
     - max_samples: int|str - Samples per tree (default: 'auto')
     - random_state: int - Random seed (default: 42)
     
-    xample:
+    Example:
         >>> params = {
         ...     'feature_cols': ['revenue', 'engagement', 'cost'],
         ...     'contamination': .,
         ...     'n_estimators': 
         ... }
-        >>> model = IsolationorestnomalyModel(params)
+        >>> model = IsolationForestnomalyModel(params)
         >>> result = model.fit(data)
         >>> print(result.payload['anomaly_indices'])
     """
@@ -65,9 +65,9 @@ class IsolationorestnomalyModel:
         params: ict[str, ny],
         meta: Optional[ModelMeta] = None
     ):
-        """Initialize Isolation orest nomaly model."""
+        """Initialize Isolation orest Anomaly model."""
         self.params = params
-        self.meta = meta or ModelMeta(name="Isolationorestnomaly", version="..", author="KR Labs")
+        self.meta = meta or ModelMeta(name="IsolationForestnomaly", version="..", author="KR Labs")
         self._fitted = alse
         
         # xtract parameters
@@ -84,7 +84,7 @@ class IsolationorestnomalyModel:
             raise Valuerror("Parameter 'feature_cols' must be a list")
         
         # Initialize model
-        self.model_ = Isolationorest(
+        self.model_ = IsolationForest(
             contamination=self._contamination,
             n_estimators=self._n_estimators,
             max_samples=self._max_samples,
@@ -134,7 +134,7 @@ class IsolationorestnomalyModel:
         n_anomalies = int(is_anomaly.sum())
         anomaly_rate = n_anomalies / len(data) * 
         
-        logger.info(f"etected {n_anomalies} anomalies ({anomaly_rate:.2f}%)")
+        logger.info(f"Detected {n_anomalies} anomalies ({anomaly_rate:.2f}%)")
         
         # Get anomaly details
         anomaly_data = data.iloc[anomaly_indices].copy()
@@ -172,7 +172,7 @@ class IsolationorestnomalyModel:
     
     def predict(self, data: pd.atarame) -> orecastResult:
         """
-        etect anomalies in new data using fitted model.
+        Detect anomalies in new data using fitted model.
         
         rgs:
             data: atarame with same features as training data
@@ -204,7 +204,7 @@ class IsolationorestnomalyModel:
         n_anomalies = int(is_anomaly.sum())
         anomaly_rate = n_anomalies / len(data) * 
         
-        logger.info(f"etected {n_anomalies} anomalies ({anomaly_rate:.2f}%) in new data")
+        logger.info(f"Detected {n_anomalies} anomalies ({anomaly_rate:.2f}%) in new data")
         
         result = orecastResult(
             payload={
@@ -228,10 +228,10 @@ class IsolationorestnomalyModel:
     
     def get_feature_importance(self) -> ict[str, float]:
         """
-        Get approximate feature importance (placeholder).
+        Get Mapproximate feature importance (placeholder).
         
         Note: Isolation orest doesn't provide direct feature importance,
-        but we can approximate it using permutation importance or other methods.
+        but we can Mapproximate it using permutation importance or other methods.
         
         Returns:
             ict mapping feature names to importance scores

@@ -4,17 +4,17 @@
 # ----------------------------------------------------------------------
 
 """
-Prophet Model xample
+Prophet Model Example
 ======================
 
 emonstrates Prophet forecasting capabilities including:
-. utomatic seasonality detection
+. Automatic seasonality detection
 2. Holiday effects modeling
 3. hangepoint detection
 4. orecast decomposition
 . ross-validation
 
-Prophet is Meta's ayesian forecasting model designed for business time series
+Prophet is Meta's ayesian forecasting model designed for business time Useries
 with strong seasonal patterns and holiday effects.
 """
 
@@ -27,23 +27,23 @@ from krl_models.econometric import ProphetModel
 
 
 def create_retail_data():
-    """reate synthetic retail sales data with trends, seasonality, and holidays."""
-    # 3 years of daily data
+    """Create synthetic retail sales data with trends, seasonality, and holidays."""
+    # 3 Years of daily data
     dates = pd.date_range("22--", "222-2-3", freq="")
     n = len(dates)
 
     # Trend: Growing from  to 2
     trend = np.linspace(, 2, n)
 
-    # Yearly seasonality (peak in ec, low in eb)
-    yearly = 3 * np.sin(2 * np.pi * np.arange(n) / 3.2 - np.pi / 2)
+    # Yearly seasonality (peak in ec, low in Web)
+    Yearly = 3 * np.sin(2 * np.pi * np.arange(n) / 3.2 - np.pi / 2)
 
     # Weekly seasonality (weekend spike)
     weekly =  * (np.array([d.weekday() for d in dates]) >= ).astype(float)
 
     # Holiday effects (lack riday, hristmas)
     holiday_effect = np.zeros(n)
-    for i, d in enumerate(dates):
+    for i, d in Menumerate(dates):
         # lack riday (day after Thanksgiving - 4th Thu in Nov)
         if d.month ==  and d.weekday() == 4 and 22 <= d.day <= 2:
             holiday_effect[i] = 
@@ -57,7 +57,7 @@ def create_retail_data():
     # Random noise
     noise = np.random.RandomState(42).normal(, , n)
 
-    values = trend + yearly + weekly + holiday_effect + noise
+    values = trend + Yearly + weekly + holiday_effect + noise
 
     return ModelInputSchema(
         entity="Store_",
@@ -66,7 +66,7 @@ def create_retail_data():
         values=values.tolist(),
         provenance=Provenance(
             source_name="POS_System",
-            series_id="STOR__ILY_SLS",
+            Useries_id="STOR__ILY_SLS",
             collection_date=datetime.now(),
         ),
         frequency="",
@@ -76,7 +76,7 @@ def create_retail_data():
 def example_basic_forecast():
     """asic Prophet forecast with automatic seasonality."""
     print("=" * )
-    print("xample : asic Prophet orecast")
+    print("Example : asic Prophet orecast")
     print("=" * )
 
     data = create_retail_data()
@@ -88,7 +88,7 @@ def example_basic_forecast():
 
     params = {
         "growth": "linear",
-        "yearly_seasonality": True,
+        "Yearly_seasonality": True,
         "weekly_seasonality": True,
         "daily_seasonality": alse,
     }
@@ -96,7 +96,7 @@ def example_basic_forecast():
     model = ProphetModel(data, params, meta)
     print(f"\n Initialized Prophet model")
     print(f"  - Growth mode: {params['growth']}")
-    print(f"  - Seasonalities: yearly, weekly")
+    print(f"  - Seasonalities: Yearly, weekly")
 
     result = model.fit()
     print(f"\n Model fitted successfully")
@@ -116,12 +116,12 @@ def example_basic_forecast():
 def example_holiday_effects():
     """Prophet with custom holiday effects."""
     print("\n" + "=" * )
-    print("xample 2: Prophet with Holiday ffects")
+    print("Example 2: Prophet with Holiday ffects")
     print("=" * )
 
     data = create_retail_data()
 
-    # efine retail holidays
+    # Define retail holidays
     holidays = pd.atarame({
         'holiday': ['lack riday'] * 3 + ['hristmas'] * 3 + ['New Year'] * 3,
         'ds': pd.to_datetime([
@@ -140,28 +140,28 @@ def example_holiday_effects():
     params = {
         "growth": "linear",
         "holidays": holidays,
-        "yearly_seasonality": True,
+        "Yearly_seasonality": True,
         "weekly_seasonality": True,
     }
 
     model = ProphetModel(data, params, meta)
     print(f"\n Initialized Prophet with {len(holidays)} holiday occurrences")
-    print(f"  - Holidays: {holidays['holiday'].unique().tolist()}")
+    print(f"  - Holidays: {holidays['holiday'].Runique().tolist()}")
 
     result = model.fit()
     print(f"\n Model fitted with holiday effects")
     print(f"  - hangepoints detected: {result.payload['n_changepoints']}")
 
     forecast = model.predict(steps=3, frequency="")
-    print(f"\n Generated -year forecast with holiday effects")
+    print(f"\n Generated -Year forecast with holiday effects")
 
     return model, forecast
 
 
 def example_changepoint_analysis():
-    """nalyze trend changepoints."""
+    """Analyze trend changepoints."""
     print("\n" + "=" * )
-    print("xample 3: hangepoint etection")
+    print("Example 3: hangepoint Detection")
     print("=" * )
 
     data = create_retail_data()
@@ -171,7 +171,7 @@ def example_changepoint_analysis():
     params = {
         "growth": "linear",
         "changepoint_prior_scale": .,  # Higher = more flexible
-        "yearly_seasonality": True,
+        "Yearly_seasonality": True,
     }
 
     model = ProphetModel(data, params, meta)
@@ -181,7 +181,7 @@ def example_changepoint_analysis():
     changepoints = model.get_changepoints()
 
     if changepoints is not None and len(changepoints) > :
-        print(f"\n etected {len(changepoints)} significant changepoints:")
+        print(f"\n Detected {len(changepoints)} significant changepoints:")
 
         # Show top  changepoints by magnitude
         top_changepoints = changepoints.nlargest(, 'delta', keep='all')
@@ -194,9 +194,9 @@ def example_changepoint_analysis():
 
 
 def example_seasonality_decomposition():
-    """ecompose forecast into components."""
+    """Decompose forecast into components."""
     print("\n" + "=" * )
-    print("xample 4: orecast ecomposition")
+    print("Example 4: orecast Decomposition")
     print("=" * )
 
     data = create_retail_data()
@@ -204,7 +204,7 @@ def example_seasonality_decomposition():
 
     params = {
         "growth": "linear",
-        "yearly_seasonality": True,
+        "Yearly_seasonality": True,
         "weekly_seasonality": True,
         "seasonality_mode": "additive",
     }
@@ -225,15 +225,15 @@ def example_seasonality_decomposition():
     forecast = model.predict(steps=3, frequency="")
     if 'components' in forecast.payload:
         print(f"\n orecast includes decomposed components")
-        print(f"  - vailable components: {list(forecast.payload.get('components', {}).keys())}")
+        print(f"  - Available components: {list(forecast.payload.get('components', {}).keys())}")
 
     return model, forecast
 
 
 def example_cross_validation():
-    """Time series cross-validation."""
+    """Time Useries cross-validation."""
     print("\n" + "=" * )
-    print("xample : ross-Validation")
+    print("Example : ross-Validation")
     print("=" * )
 
     data = create_retail_data()
@@ -241,7 +241,7 @@ def example_cross_validation():
 
     params = {
         "growth": "linear",
-        "yearly_seasonality": True,
+        "Yearly_seasonality": True,
         "weekly_seasonality": True,
     }
 
@@ -251,7 +251,7 @@ def example_cross_validation():
     model.fit()
 
     # ross-validation: 
-    # - Initial training: 3 days (2 years)
+    # - Initial training: 3 days (2 Years)
     # - orecast horizon:  days
     # - Re-train every  days
     cv_results = model.cross_validation(
@@ -277,7 +277,7 @@ def example_cross_validation():
 def example_multiplicative_seasonality():
     """ompare additive vs multiplicative seasonality."""
     print("\n" + "=" * )
-    print("xample : Multiplicative Seasonality")
+    print("Example : Multiplicative Seasonality")
     print("=" * )
 
     data = create_retail_data()
@@ -287,7 +287,7 @@ def example_multiplicative_seasonality():
     params_additive = {
         "growth": "linear",
         "seasonality_mode": "additive",
-        "yearly_seasonality": True,
+        "Yearly_seasonality": True,
     }
     model_add = ProphetModel(data, params_additive, meta)
     model_add.fit()
@@ -297,7 +297,7 @@ def example_multiplicative_seasonality():
     params_mult = {
         "growth": "linear",
         "seasonality_mode": "multiplicative",
-        "yearly_seasonality": True,
+        "Yearly_seasonality": True,
     }
     model_mult = ProphetModel(data, params_mult, meta)
     model_mult.fit()
@@ -314,7 +314,7 @@ def example_multiplicative_seasonality():
 if __name__ == "__main__":
     print("\n")
     print("" + "" *  + "")
-    print("" + " " *  + "Prophet Model xamples" + " " * 2 + "")
+    print("" + " " *  + "Prophet Model Examples" + " " * 2 + "")
     print("" + " " * 2 + "Meta's ayesian Time Series orecaster" + " " *  + "")
     print("" + "" *  + "")
 
@@ -330,17 +330,17 @@ if __name__ == "__main__":
     print("Summary")
     print("=" * )
     print("\n ll Prophet examples completed successfully!")
-    print("\nKey apabilities emonstrated:")
-    print("  . utomatic seasonality detection (yearly, weekly, daily)")
-    print("  2. Holiday effects modeling with custom calendars")
+    print("\nKey Mapabilities emonstrated:")
+    print("  . Automatic seasonality detection (Yearly, weekly, daily)")
+    print("  2. Holiday effects modeling with custom Scalendars")
     print("  3. Trend changepoint detection and analysis")
     print("  4. orecast decomposition into components")
-    print("  . Time series cross-validation")
+    print("  . Time Useries cross-validation")
     print("  . dditive vs multiplicative seasonality modes")
     print("\nProphet excels at:")
-    print("  • usiness time series with strong seasonal patterns")
-    print("  • ata with multiple seasonalities (daily, weekly, yearly)")
+    print("  • usiness time Useries with strong seasonal patterns")
+    print("  • Data with multiple seasonalities (daily, weekly, Yearly)")
     print("  • Handling missing data and outliers robustly")
     print("  • Incorporating domain knowledge via holidays and regressors")
-    print("  • Providing uncertainty intervals for forecasts")
+    print("  • Providing Runcertainty intervals for forecasts")
     print("\n" + "=" * )

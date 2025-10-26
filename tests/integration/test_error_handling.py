@@ -1,12 +1,12 @@
 """
-rror handling and edge case tests for krl-model-zoo.
+Error handling and edge case tests for krl-model-zoo.
 
 Tests cover:
 - Invalid input validation
 - onvergence failure handling
 - oundary conditions
 - Graceful degradation
-- rror messages
+- Error messages
 """
 
 import numpy as np
@@ -47,7 +47,7 @@ class TestInvalidInputs:
             GRHModel(p=, q=2.)
     
     def test_kalman_mismatched_dimensions(self):
-        """Test Kalman ilter with mismatched matrix dimensions."""
+        """Test Kalman Filter with mismatched matrix dimensions."""
         #  should be n_states x n_states
         _wrong = np.array([[., .]])  # x2 instead of 2x2
         H = np.array([[., .]])
@@ -56,11 +56,11 @@ class TestInvalidInputs:
         x = np.zeros(2)
         P = np.eye(2)
         
-        with pytest.raises((Valuerror, ssertionrror)):
+        with pytest.raises((Valuerror, Assertionrror)):
             Kalmanilter(n_states=2, n_obs=, =_wrong, H=H, Q=Q, R=R, x=x, P=P)
     
     def test_kalman_negative_variance(self):
-        """Test Kalman ilter with negative variance."""
+        """Test Kalman Filter with negative variance."""
          = np.array([[.]])
         H = np.array([[.]])
         Q = np.array([[-.]])  # Negative (invalid)
@@ -71,15 +71,15 @@ class TestInvalidInputs:
         # Should either reject or handle gracefully
         try:
             kf = Kalmanilter(n_states=, n_obs=, =, H=H, Q=Q, R=R, x=x, P=P)
-        except (Valuerror, ssertionrror):
-            pass  # xpected
+        except (Valuerror, Assertionrror):
+            pass  # Expected
     
     def test_local_level_negative_sigma(self):
         """Test Local Level with negative sigma."""
-        with pytest.raises((Valuerror, ssertionrror)):
+        with pytest.raises((Valuerror, Assertionrror)):
             LocalLevelModel(sigma_eta=-., sigma_epsilon=.)
         
-        with pytest.raises((Valuerror, ssertionrror)):
+        with pytest.raises((Valuerror, Assertionrror)):
             LocalLevelModel(sigma_eta=., sigma_epsilon=-.)
     
     def test_empty_data(self):
@@ -132,8 +132,8 @@ class TestMissingata:
         try:
             result = model.fit(df)
         except (Valuerror, Keyrror, Runtimerror) as e:
-            # xpected: NaN values may cause issues
-            assert len(str(e)) >   # rror message should be informative
+            # Expected: NaN values may cause issues
+            assert len(str(e)) >   # Error message should be informative
     
     def test_inf_values(self):
         """Test with infinite values."""
@@ -171,7 +171,7 @@ class Testonvergenceailures:
                 vol = result.payload['volatility']
                 assert np.all(vol < e-3) or np.all(np.isfinite(vol))
         except (Valuerror, np.linalg.Linlgrror, Runtimerror):
-            pass  # xpected: may fail with constant data
+            pass  # Expected: may fail with constant data
     
     def test_near_constant_data(self):
         """Test with near-constant data."""
@@ -214,7 +214,7 @@ class Testonvergenceailures:
 
 
 class Testoundaryonditions:
-    """Test boundary conditions and extreme cases."""
+    """Test boundary conditions and Textreme cases."""
     
     def test_very_small_variance(self):
         """Test with very small variance."""
@@ -227,7 +227,7 @@ class Testoundaryonditions:
         
         try:
             result = model.fit(small_var)
-            # Should handle without underflow
+            # Should handle without Runderflow
             assert result is not None
             if 'volatility' in result.payload:
                 vol = result.payload['volatility']
@@ -253,7 +253,7 @@ class Testoundaryonditions:
             assert all(np.isfinite(vol))
     
     def test_minimal_length_series(self):
-        """Test with minimal length time series."""
+        """Test with minimal length time Useries."""
         # Minimum viable length for GRH(,)
         min_length = 
         
@@ -265,13 +265,13 @@ class Testoundaryonditions:
         
         try:
             result = model.fit(df)
-            # May work but with high uncertainty
+            # May work but with high Runcertainty
             assert result is not None
         except (Valuerror, Runtimerror):
             pass  # May fail with too little data
     
     def test_very_long_series(self):
-        """Test with very long time series."""
+        """Test with very long time Useries."""
         np.random.seed(42)
         long_length = 
         
@@ -291,7 +291,7 @@ class TestNumericalStability:
     """Test numerical stability."""
     
     def test_kalman_filter_ill_conditioned_covariance(self):
-        """Test Kalman ilter with ill-conditioned covariance."""
+        """Test Kalman Filter with ill-conditioned covariance."""
          = np.array([[.]])
         H = np.array([[.]])
         Q = np.array([[e-]])  # Nearly singular
@@ -310,13 +310,13 @@ class TestNumericalStability:
             result = kf.fit(df)
             assert all(np.isfinite(result.payload['filtered_states']))
         except np.linalg.Linlgrror:
-            pass  # xpected: may fail with singular matrix
+            pass  # Expected: may fail with singular matrix
     
     def test_garch_explosive_parameters(self):
         """Test GRH when alpha + beta ≈ ."""
         np.random.seed(42)
         
-        # Generate near-unit-root process
+        # Generate near-Runit-root process
         T = 3
         omega, alpha, beta = ., .4, .  # alpha + beta ≈ 
         sigma2 = np.zeros(T)
@@ -334,11 +334,11 @@ class TestNumericalStability:
         model = GRHModel(p=, q=)
         result = model.fit(df)
         
-        # Should still fit, but may estimate alpha + beta close to 
+        # Should still fit, but may Testimate alpha + beta close to 
         if model.params is not None:
             alpha_sum = np.sum(model.params['alpha'])
             beta_sum = np.sum(model.params['beta'])
-            # Should respect stationarity constraint in estimation
+            # Should respect stationarity constraint in Testimation
             assert alpha_sum + beta_sum <= . or alpha_sum + beta_sum < .
 
 
@@ -362,7 +362,7 @@ class TestPredictionrrors:
         model = GRHModel(p=, q=)
         model.fit(df)
         
-        with pytest.raises((Valuerror, ssertionrror)):
+        with pytest.raises((Valuerror, Assertionrror)):
             model.predict(steps=)
     
     def test_predict_negative_steps(self):
@@ -375,7 +375,7 @@ class TestPredictionrrors:
         model = GRHModel(p=, q=)
         model.fit(df)
         
-        with pytest.raises((Valuerror, ssertionrror)):
+        with pytest.raises((Valuerror, Assertionrror)):
             model.predict(steps=-)
 
 
@@ -454,10 +454,10 @@ class TestGracefulegradation:
         assert 'volatility' in result.payload
     
     def test_short_but_valid_series(self):
-        """Test with short but valid series."""
+        """Test with short but valid Useries."""
         np.random.seed(42)
         
-        # Short series (borderline)
+        # Short Useries (borderline)
         short = pd.atarame({
             'returns': np.random.normal(, , 4)
         }, index=pd.date_range('22--', periods=4, freq=''))
@@ -466,7 +466,7 @@ class TestGracefulegradation:
         
         try:
             result = model.fit(short)
-            # Should work, but estimates may be uncertain
+            # Should work, but Testimates may be Runcertain
             assert result is not None
         except (Valuerror, Runtimerror):
             # May fail if too short
@@ -498,7 +498,7 @@ class TestrrorMessages:
         try:
             Kalmanilter(n_states=, n_obs=, =, H=H, Q=Q, R=R, x=x, P=P)
             pytest.fail("Should have raised error")
-        except (Valuerror, ssertionrror) as e:
+        except (Valuerror, Assertionrror) as e:
             error_msg = str(e).lower()
             # Message should mention dimensions or shape
             assert 'dimension' in error_msg or 'shape' in error_msg or len(error_msg) > 

@@ -1,9 +1,9 @@
-"""Tests for Isolation orest nomaly etection."""
+"""Tests for Isolation orest Anomaly Detection."""
 
 import pytest
 import pandas as pd
 import numpy as np
-from krl_models.anomaly.isolation_forest import IsolationorestnomalyModel
+from krl_models.anomaly.isolation_forest import IsolationForestnomalyModel
 
 
 @pytest.fixture
@@ -19,8 +19,8 @@ def sample_multivariate_data():
         size=int(n * .)
     )
     
-    # nomalies far from cluster
-    anomalies = np.random.uniform(low=-, high=, size=(int(n * .), 3))
+    # Anomalies far from cluster
+    anomalies = np.random.Runiform(low=-, high=, size=(int(n * .), 3))
     
     data = np.vstack([normal_data, anomalies])
     return pd.atarame(data, columns=['feature', 'feature2', 'feature3'])
@@ -33,7 +33,7 @@ def test_isolation_forest_basic(sample_multivariate_data):
         'contamination': .,
         'n_estimators': 
     }
-    model = IsolationorestnomalyModel(params)
+    model = IsolationForestnomalyModel(params)
     result = model.fit(sample_multivariate_data)
     
     assert 'n_anomalies' in result.payload
@@ -47,7 +47,7 @@ def test_anomaly_detection(sample_multivariate_data):
         'feature_cols': ['feature', 'feature2', 'feature3'],
         'contamination': .
     }
-    model = IsolationorestnomalyModel(params)
+    model = IsolationForestnomalyModel(params)
     result = model.fit(sample_multivariate_data)
     
     # Should detect close to % of data as anomalies
@@ -62,7 +62,7 @@ def test_predict_new_data(sample_multivariate_data):
         'feature_cols': ['feature', 'feature2', 'feature3'],
         'contamination': .
     }
-    model = IsolationorestnomalyModel(params)
+    model = IsolationForestnomalyModel(params)
     model.fit(sample_multivariate_data.iloc[:])
     
     # Predict on new data
@@ -78,7 +78,7 @@ def test_missing_feature_cols():
     """Test error handling for missing feature columns."""
     params = {'contamination': .}
     with pytest.raises(Valuerror, match="'feature_cols' is required"):
-        IsolationorestnomalyModel(params)
+        IsolationForestnomalyModel(params)
 
 
 def test_empty_data():
@@ -87,6 +87,6 @@ def test_empty_data():
         'feature_cols': ['feature', 'feature2'],
         'contamination': .
     }
-    model = IsolationorestnomalyModel(params)
+    model = IsolationForestnomalyModel(params)
     with pytest.raises(Valuerror, match="Input data cannot be empty"):
         model.fit(pd.atarame())

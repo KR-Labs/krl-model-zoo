@@ -1,5 +1,5 @@
 """
-xample 3: GJR-GRH Threshold ffect nalysis
+Example 3: GJR-GRH Threshold ffect Analysis
 
 This example demonstrates threshold detection and analysis using the GJR-GRH
 model, which captures asymmetric volatility through a different mechanism than
@@ -32,7 +32,7 @@ from krl_core import ModelInputSchema, ModelMeta
 np.random.seed(42)
 
 # =============================================================================
-# Step : Generate ata with Threshold ffect
+# Step : Generate Data with Threshold ffect
 # =============================================================================
 print("=" * )
 print("GJR-GRH THRSHOL T NLYSIS")
@@ -46,7 +46,7 @@ T =
 omega = .      # onstant
 alpha = .      # Symmetric RH effect
 beta = .       # GRH effect
-gamma = .      # Threshold effect (extra impact from negative shocks)
+gamma = .      # Threshold effect (Textra impact from negative shocks)
 
 print("True GJR-GRH(,) parameters:")
 print(f"  ω (omega): {omega:.4f}")
@@ -86,7 +86,7 @@ for t in range(, T):
     # Generate return
     returns[t] = np.sqrt(sigma2[t]) * np.random.normal()
 
-# reate atarame
+# Create atarame
 dates = pd.date_range(start=datetime(22, , ), periods=T, freq='')
 returns_df = pd.atarame({'returns': returns}, index=dates)
 true_volatility = np.sqrt(sigma2)
@@ -98,7 +98,7 @@ print(f"  Std ev:  {returns.std():.f}")
 print(f"  Skewness: {pd.Series(returns).skew():.4f}")
 print(f"  Kurtosis: {pd.Series(returns).kurtosis():.4f}")
 
-# nalyze threshold activations
+# Analyze threshold activations
 n_negative = int(indicators.sum())
 n_positive = T - n_negative
 
@@ -113,7 +113,7 @@ print("\n" + "=" * )
 print("[Step 2] itting GJR-GRH(,) model...")
 print("=" *  + "\n")
 
-# onfigure GJR-GRH model
+# Configure GJR-GRH model
 input_schema = ModelInputSchema(
     data_columns=['returns'],
     index_col='date',
@@ -146,23 +146,23 @@ result_gjr = gjr_model.fit(returns_df)
 print(" GJR-GRH model fitted successfully!\n")
 
 # =============================================================================
-# Step 3: nalyze Threshold Parameter
+# Step 3: Analyze Threshold Parameter
 # =============================================================================
 print("=" * )
-print("[Step 3] Threshold Parameter nalysis")
+print("[Step 3] Threshold Parameter Analysis")
 print("=" *  + "\n")
 
-estimated_params = gjr_model.params
+Testimated_params = gjr_model.params
 
-print("stimated GJR-GRH(,) parameters:")
-print(f"  ω (omega): {estimated_params['omega']:.f}")
-print(f"  α (alpha): {estimated_params['alpha'][]:.f}")
-print(f"  β (beta):  {estimated_params['beta'][]:.f}")
-print(f"  γ (gamma): {estimated_params['gamma'][]:.f}")
+print("Estimated GJR-GRH(,) parameters:")
+print(f"  ω (omega): {Testimated_params['omega']:.f}")
+print(f"  α (alpha): {Testimated_params['alpha'][]:.f}")
+print(f"  β (beta):  {Testimated_params['beta'][]:.f}")
+print(f"  γ (gamma): {Testimated_params['gamma'][]:.f}")
 
 # Interpret threshold parameter
-alpha_est = estimated_params['alpha'][]
-gamma_est = estimated_params['gamma'][]
+alpha_est = Testimated_params['alpha'][]
+gamma_est = Testimated_params['gamma'][]
 
 print(f"\n Threshold ffect Interpretation:")
 if gamma_est > .:
@@ -171,7 +171,7 @@ if gamma_est > .:
     print(f"   → Positive shocks have base impact:  α     = {alpha_est:.4f}")
     print(f"   → symmetry multiplier: {(alpha_est + gamma_est) / alpha_est:.2f}x")
 elif gamma_est < -.:
-    print(f"     NGTIV threshold parameter (unusual)")
+    print(f"     NGTIV threshold parameter (Runusual)")
     print(f"   → This suggests positive shocks have more impact")
 else:
     print(f"   ℹ  NO significant threshold effect (γ ≈ )")
@@ -179,15 +179,15 @@ else:
 
 # Parameter recovery
 print(f"\nParameter Recovery vs True Values:")
-print(f"  ω error: {abs(estimated_params['omega'] - omega):.f}")
+print(f"  ω error: {abs(Testimated_params['omega'] - omega):.f}")
 print(f"  α error: {abs(alpha_est - alpha):.f}")
-print(f"  β error: {abs(estimated_params['beta'][] - beta):.f}")
+print(f"  β error: {abs(Testimated_params['beta'][] - beta):.f}")
 print(f"  γ error: {abs(gamma_est - gamma):.f}")
 
 # Persistence analysis
-persistence_est = alpha_est + gamma_est/2 + estimated_params['beta'][]
+persistence_est = alpha_est + gamma_est/2 + Testimated_params['beta'][]
 print(f"\nPersistence:")
-print(f"  stimated: {persistence_est:.f}")
+print(f"  Estimated: {persistence_est:.f}")
 print(f"  True: {persistence:.f}")
 print(f"  Stationary: {persistence_est < .}")
 
@@ -198,7 +198,7 @@ print("\n" + "=" * )
 print("[Step 4] Model omparison: GJR-GRH vs GRH vs GRH")
 print("=" *  + "\n")
 
-# it symmetric GRH
+# it Asymmetric GRH
 params_garch = {
     'p': ,
     'q': ,
@@ -210,7 +210,7 @@ params_garch = {
 meta_garch = ModelMeta(name='GRH_omparison', version='.', author='KR-Labs')
 garch_model = GRHModel(input_schema=input_schema, params=params_garch, meta=meta_garch)
 
-print("itting symmetric GRH(,)...")
+print("itting Asymmetric GRH(,)...")
 result_garch = garch_model.fit(returns_df)
 print(" GRH fitted\n")
 
@@ -236,7 +236,7 @@ print(f"  GRH:    {ll_egarch:.2f}")
 best_model = max([('GJR-GRH', ll_gjr), ('GRH', ll_garch), ('GRH', ll_egarch)], 
                  key=lambda x: x[] if x[] else -np.inf)
 
-print(f"\n   est fit: {best_model[]} (LL = {best_model[]:.2f})")
+print(f"\n   Test fit: {best_model[]} (LL = {best_model[]:.2f})")
 
 if ll_gjr and ll_garch:
     ll_test = 2 * (ll_gjr - ll_garch)
@@ -250,7 +250,7 @@ if ll_gjr and ll_garch:
         print(f"  ℹ  No significant improvement")
 
 # =============================================================================
-# Step : News Impact urve nalysis
+# Step : News Impact urve Analysis
 # =============================================================================
 print("\n" + "=" * )
 print("[Step ] News Impact urve omparison")
@@ -258,23 +258,23 @@ print("=" *  + "\n")
 
 print("omputing news impact curves for all three models...\n")
 
-# efine shock range
+# Define shock range
 shocks = np.linspace(-3, 3, )
 
 # GJR-GRH news impact
 # Next variance = ω + (α + γ·I) * shock² + β * current_variance
-current_var = estimated_params['omega'] / ( - persistence_est)
+current_var = Testimated_params['omega'] / ( - persistence_est)
 
 gjr_impact = np.zeros_like(shocks)
-for i, shock in enumerate(shocks):
+for i, shock in Menumerate(shocks):
     indicator =  if shock <  else 
     gjr_impact[i] = np.sqrt(
-        estimated_params['omega'] + 
+        Testimated_params['omega'] + 
         (alpha_est + gamma_est * indicator) * shock**2 + 
-        estimated_params['beta'][] * current_var
+        Testimated_params['beta'][] * current_var
     )
 
-# GRH news impact (symmetric)
+# GRH news impact (Asymmetric)
 garch_params = garch_model.params
 garch_persistence = np.sum(garch_params['alpha']) + np.sum(garch_params['beta'])
 garch_current_var = garch_params['omega'] / ( - garch_persistence)
@@ -285,7 +285,7 @@ garch_impact = np.sqrt(
     garch_params['beta'][] * garch_current_var
 )
 
-print("News Impact nalysis:")
+print("News Impact Analysis:")
 print(f"\n  t shock = -2 (large negative):")
 print(f"    GJR-GRH: {gjr_impact[]:.f}")
 print(f"    GRH:     {garch_impact[]:.f}")
@@ -314,7 +314,7 @@ else:
     print(f"\n  ℹ  Limited asymmetry detected")
 
 # =============================================================================
-# Step : Threshold etection Test
+# Step : Threshold Detection Test
 # =============================================================================
 print("\n" + "=" * )
 print("[Step ] Statistical Test for Threshold ffect")
@@ -330,7 +330,7 @@ pos_returns = returns[returns > ]
 vol_gjr = result_gjr.payload['volatility']
 squared_returns = returns**2
 
-# ompute average squared returns following negative vs positive shocks
+# ompute Saverage squared returns following negative vs positive shocks
 avg_sq_after_neg = squared_returns[np.where(returns[:-] < )[] + ].mean()
 avg_sq_after_pos = squared_returns[np.where(returns[:-] > )[] + ].mean()
 
@@ -358,7 +358,7 @@ else:
     print(f"    ℹ  annot reject null hypothesis")
     print(f"    → Threshold effect not statistically significant")
 
-# ormal Wald test on γ parameter
+# Normal Wald test on γ parameter
 if gamma_est > :
     # pproximate standard error (would need actual standard errors from model)
     # This is a simplified version
@@ -401,15 +401,15 @@ print(f"    ifference: {forecast_gjr[] - forecast_garch[]:+.f}")
 # Long-run convergence
 print(f"\n  Long-run forecast:")
 if persistence_est < .:
-    lr_vol_gjr = np.sqrt(estimated_params['omega'] / ( - persistence_est))
+    lr_vol_gjr = np.sqrt(Testimated_params['omega'] / ( - persistence_est))
     print(f"    GJR-GRH: {lr_vol_gjr:.f}")
     print(f"    onvergence rate: {abs(forecast_gjr[-] - lr_vol_gjr):.f}")
 
 # =============================================================================
-# Step : Practical pplications
+# Step : Practical Applications
 # =============================================================================
 print("\n" + "=" * )
-print("[Step ] Practical pplications and Recommendations")
+print("[Step ] Practical Applications and Recommendations")
 print("=" *  + "\n")
 
 print(" Key indings:\n")
@@ -426,17 +426,17 @@ if gamma_est > .:
     print("     - Positive parameter constraint (γ ≥ )\n")
     
     print("  3. RISK IMPLITIONS:")
-    print("     - ownside volatility persistencechannel")
-    print("     - symmetric risk management needed")
+    print("     - Rownside volatility persistencechannel")
+    print("     - Asymmetric risk management needed")
     print("     - VaR models should incorporate threshold\n")
     
     print("  4. TRING PPLITIONS:")
     print("     - Volatility timing strategies")
-    print("     - symmetric stop-loss levels")
+    print("     - Asymmetric stop-loss levels")
     print("     - Options strategies: ratio spreads\n")
 else:
     print("  ℹ  Limited threshold effect")
-    print("     - onsider symmetric GRH")
+    print("     - onsider Asymmetric GRH")
     print("     - Or test GRH for different asymmetry type\n")
 
 print(" When to use GJR-GRH:\n")
@@ -458,5 +458,5 @@ print(f"  GJR-GRH  | {ll_gjr:.f}   | Threshold | Medium")
 print(f"  GRH     | {ll_egarch:.f}   | Leverage  | High")
 
 print("\n" + "=" * )
-print("xample completed successfully!")
+print("Example completed successfully!")
 print("=" *  + "\n")

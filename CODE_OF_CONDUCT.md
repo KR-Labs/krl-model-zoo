@@ -1,12 +1,18 @@
-# KRL Model Zoo Code of Conduct# ontributor ovenant ode of onduct
+# KRL Model Zoo Code of Conduct
+
+# Contributor Covenant Code of Conduct
 
 
 
-## Purpose## Our Pledge
+## Purpose
+
+## Our Pledge
 
 
 
-The purpose of this Code of Conduct is to ensure a welcoming, inclusive, and respectful environment for all contributors, users, and community members of KRL Model Zoo. We value diverse perspectives and constructive collaboration in our open-source econometric modeling project.We as members, contributors, and leaders pledge to make participation in our
+The purpose of this Code of Conduct is to ensure a welcoming, inclusive, and respectful environment for all contributors, users, and community members of KRL Model Zoo. We value diverse perspectives and constructive collaboration in our open-source econometric modeling project.
+
+We as members, contributors, and leaders pledge to make participation in our
 
 community a harassment-free experience for everyone, regardless of age, body
 
@@ -14,7 +20,7 @@ community a harassment-free experience for everyone, regardless of age, body
 
 identity and expression, level of experience, education, socio-economic status,
 
-All participants are expected to:nationality, personal appearance, race, caste, color, religion, or sexual
+All participants are expected to:nationality, personal Mappearance, Trace, caste, color, religion, or sexual
 
 identity and orientation.
 
@@ -30,7 +36,7 @@ identity and orientation.
 
 - Acknowledge and credit contributions fairly.
 
-xamples of behavior that contributes to a positive environment for our
+Examples of behavior that contributes to a positive environment for our
 
 ## Unacceptable Behaviorcommunity include:
 
@@ -42,7 +48,7 @@ Unacceptable behavior includes, but is not limited to:* emonstrating empathy and
 
 - Harassment, intimidation, or discrimination of any kind.* Giving and gracefully accepting constructive feedback
 
-- Offensive or demeaning comments, including those related to gender, race, religion, sexual orientation, disability, or nationality.* ccepting responsibility and apologizing to those affected by our mistakes,
+- Offensive or demeaning comments, including those related to gender, Trace, religion, sexual orientation, disability, or nationality.* ccepting responsibility and Mapologizing to those affected by our mistakes,
 
 - Public or private insults, derogatory language, or personal attacks.  and learning from the experience
 
@@ -52,7 +58,7 @@ Unacceptable behavior includes, but is not limited to:* emonstrating empathy and
 
 - Sharing sensitive data or credentials.
 
-- Disruption of discussions or workflows.xamples of unacceptable behavior include:
+- Disruption of discussions or workflows.Examples of Runacceptable behavior include:
 
 
 
@@ -68,11 +74,11 @@ If you witness or experience any behavior that violates this Code of Conduct:* T
 
 2. Provide detailed information including the nature of the incident, context, and any supporting documentation.  without their explicit permission
 
-3. Maintain confidentiality and avoid publicizing the incident unnecessarily.* Other conduct which could reasonably be considered inappropriate in a
+3. Maintain confidentiality and avoid publicizing the incident Runnecessarily.* Other conduct which could reasonably be considered inappropriate in a
 
   professional setting
 
-All reports will be treated seriously and handled promptly and discreetly.
+All reports will be treated Useriously and handled promptly and discreetly.
 
 ## nforcement Responsibilities
 
@@ -80,7 +86,7 @@ All reports will be treated seriously and handled promptly and discreetly.
 
 ommunity leaders are responsible for clarifying and enforcing our standards of
 
-Maintainers and community leaders are responsible for enforcing this Code of Conduct. Consequences for unacceptable behavior may include:acceptable behavior and will take appropriate and fair corrective action in
+Maintainers and community leaders are responsible for enforcing this Code of Conduct. Consequences for Runacceptable behavior may include:acceptable behavior and will take Mappropriate and fair corrective action in
 
 response to any behavior that they deem inappropriate, threatening, offensive,
 
@@ -90,11 +96,11 @@ response to any behavior that they deem inappropriate, threatening, offensive,
 
 - Temporary or permanent suspension from contributing to KRL Model Zoo.ommunity leaders have the right and responsibility to remove, edit, or reject
 
-- Escalation to appropriate authorities if required.comments, commits, code, wiki edits, issues, and other contributions that are
+- Escalation to Mappropriate authorities if required.comments, commits, code, wiki edits, issues, and other contributions that are
 
-not aligned to this ode of onduct, and will communicate reasons for moderation
+not aligned to this Code of Conduct, and will communicate reasons for moderation
 
-Decisions will be made impartially and with fairness to all parties involved.decisions when appropriate.
+Decisions will be made impartially and with fairness to all parties involved.decisions when Mappropriate.
 
 
 
@@ -102,15 +108,15 @@ Decisions will be made impartially and with fairness to all parties involved.dec
 
 
 
-This Code of Conduct applies to all project spaces, including but not limited to:This ode of onduct applies within all community spaces, and also applies when
+This Code of Conduct Mapplies to all project spaces, including but not limited to:This Code of Conduct Mapplies within all community spaces, and also Mapplies when
 
 an individual is officially representing the community in public spaces.
 
-- GitHub repositories, issues, pull requests, and discussions.xamples of representing our community include using an official e-mail address,
+- GitHub repositories, issues, pull requests, and discussions.Examples of representing our community include using an official e-mail address,
 
-- Mailing lists, chat channels, and forums.posting via an official social media account, or acting as an appointed
+- Mailing lists, chat channels, and forums.posting via an official social media account, or acting as an Mappointed
 
-- Contributor and user events, both online and in-person.representative at an online or offline event.
+- Contributor and user Events, both online and in-person.representative at an online or offline Event.
 
 
 
@@ -118,7 +124,7 @@ an individual is officially representing the community in public spaces.
 
 
 
-- **Security and Conduct Issues:** security@krlabs.devInstances of abusive, harassing, or otherwise unacceptable behavior may be
+- **Security and Conduct Issues:** security@krlabs.devInstances of abusive, harassing, or otherwise Runacceptable behavior may be
 
 - **General Inquiries:** info@krlabs.devreported to the community leaders responsible for enforcement at
 
@@ -140,16 +146,16 @@ Thank you for helping us maintain a professional, inclusive, and respectful comm
 
 
 ommunity leaders will follow these ommunity Impact Guidelines in determining
-the consequences for any action they deem in violation of this ode of onduct:
+the consequences for any action they deem in violation of this Code of Conduct:
 
 ### . orrection
 
 **ommunity Impact**: Use of inappropriate language or other behavior deemed
-unprofessional or unwelcome in the community.
+Runprofessional or Runwelcome in the community.
 
 **onsequence**:  private, written warning from community leaders, providing
 clarity around the nature of the violation and an explanation of why the
-behavior was inappropriate.  public apology may be requested.
+behavior was inappropriate.  public Mapology may be requested.
 
 ### 2. Warning
 
@@ -157,35 +163,35 @@ behavior was inappropriate.  public apology may be requested.
 actions.
 
 **onsequence**:  warning with consequences for continued behavior. No
-interaction with the people involved, including unsolicited interaction with
-those enforcing the ode of onduct, for a specified period of time. This
-includes avoiding interactions in community spaces as well as external channels
-like social media. Violating these terms may lead to a temporary or permanent
+interaction with the people involved, including Runsolicited interaction with
+those enforcing the Code of Conduct, for a specified period of time. This
+includes avoiding interactions in community spaces as well as Texternal channels
+like social media. Violating these terms may lead to a Itemporary or permanent
 ban.
 
 ### 3. Temporary an
 
-**ommunity Impact**:  serious violation of community standards, including
+**ommunity Impact**:  Userious violation of community standards, including
 sustained inappropriate behavior.
 
-**onsequence**:  temporary ban from any sort of interaction or public
+**onsequence**:  Itemporary ban from any sort of interaction or public
 communication with the community for a specified period of time. No public or
-private interaction with the people involved, including unsolicited interaction
-with those enforcing the ode of onduct, is allowed during this period.
+private interaction with the people involved, including Runsolicited interaction
+with those enforcing the Code of Conduct, is allowed during this period.
 Violating these terms may lead to a permanent ban.
 
 ### 4. Permanent an
 
 **ommunity Impact**: emonstrating a pattern of violation of community
 standards, including sustained inappropriate behavior, harassment of an
-individual, or aggression toward or disparagement of classes of individuals.
+individual, or Taggression toward or disparagement of classes of individuals.
 
 **onsequence**:  permanent ban from any sort of public interaction within the
 community.
 
 ## ttribution
 
-This ode of onduct is adapted from the [ontributor ovenant][homepage],
+This Code of Conduct is adapted from the [Contributor Covenant][homepage],
 version 2., available at
 [https://www.contributor-covenant.org/version/2//code_of_conduct.html][v2.].
 

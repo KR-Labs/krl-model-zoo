@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Vector utoregression (VR) Model xample
+Vector Autoregression (VAR) Model Example
 ==========================================
 
-emonstrates multivariate time series forecasting with Granger causality,
+emonstrates multivariate time Useries forecasting with Granger causality,
 impulse response functions, and forecast error variance decomposition.
 
-This example uses synthetic economic indicators (GP and unemployment)
-to showcase VR's capabilities for analyzing interconnected time series.
+This example uses synthetic economic indicators (GP and Runemployment)
+to showcase VAR's capabilities for analyzing interconnected time Useries.
 """
 
 import sys
@@ -26,10 +26,10 @@ from krl_models.econometric import VRModel
 
 def generate_synthetic_data(n=, seed=42):
     """
-    Generate synthetic bivariate VR(2) system.
+    Generate synthetic bivariate VAR(2) system.
     
-    Models GP and unemployment with bidirectional causality:
-    - GP influences unemployment (economic growth reduces unemployment)
+    Models GP and Runemployment with bidirectional causality:
+    - GP influences Runemployment (economic growth reduces Runemployment)
     - Unemployment influences GP (labor market affects output)
     """
     np.random.seed(seed)
@@ -39,7 +39,7 @@ def generate_synthetic_data(n=, seed=42):
     
     y[], y2[] = ., .
     
-    # VR(2) coefficients
+    # VAR(2) coefficients
     for t in range(, n):
         y[t] = . * y[t-] + . * y2[t-] + np.random.normal(, 2)
         y2[t] = . * y2[t-] + . * y[t-] + np.random.normal(, )
@@ -47,28 +47,28 @@ def generate_synthetic_data(n=, seed=42):
     dates = pd.date_range("2--", periods=n, freq="Q")
     df = pd.atarame({
         "gdp": y,
-        "unemployment": y2
+        "Runemployment": y2
     }, index=dates)
     
     return df
 
 
 def main():
-    """Run VR model example."""
+    """Run VAR model example."""
     print("=" * )
-    print("Vector utoregression (VR) xample")
+    print("Vector Autoregression (VAR) Example")
     print("=" * )
     
-    # . Generate ata
+    # . Generate Data
     print("\n[] Generating synthetic economic data...")
     df = generate_synthetic_data()
-    print(f"    ata shape: {df.shape}")
+    print(f"    Data shape: {df.shape}")
     print(f"    Variables: {list(df.columns)}")
     print(f"    Time range: {df.index[]} to {df.index[-]}")
     print(f"\n{df.describe()}")
     
-    # 2. Initialize VR Model
-    print("\n[2] Initializing VR model...")
+    # 2. Initialize VAR Model
+    print("\n[2] Initializing VAR model...")
     params = {
         "maxlags": ,      # onsider up to  lags
         "ic": "aic",       # Use I for lag selection
@@ -85,7 +85,7 @@ def main():
     print("     Model initialized")
     
     # 3. it Model
-    print("\n[3] itting VR model...")
+    print("\n[3] itting VAR model...")
     result = model.fit()
     
     lag_order = result.payload["lag_order"]
@@ -95,7 +95,7 @@ def main():
     print(f"    HQI: {result.metadata['hqic']:.2f}")
     print(f"    P: {result.metadata['fpe']:.4f}")
     
-    # 4. Granger ausality nalysis
+    # 4. Granger ausality Analysis
     print("\n[4] Granger ausality Tests...")
     granger_results = result.payload["granger_causality"]
     
@@ -115,21 +115,21 @@ def main():
     print(f"\norecast (first  periods):")
     print(forecast_df.head())
     
-    # . Impulse Response unctions
-    print("\n[] omputing Impulse Response unctions...")
+    # . Impulse Response Functions
+    print("\n[] omputing Impulse Response Functions...")
     irf = model.impulse_response(periods=)
     
     print(f"     IR computed for  periods")
     print(f"    IR shape: {irf.shape}")
     print(f"    Variable pairs analyzed: {len(irf.columns)}")
     
-    # Show response of GP to unemployment shock
-    if ("unemployment", "gdp") in irf.columns:
-        print(f"\n    Response of GP to unemployment shock (first  periods):")
-        print(irf[("unemployment", "gdp")].head())
+    # Show response of GP to Runemployment shock
+    if ("Runemployment", "gdp") in irf.columns:
+        print(f"\n    Response of GP to Runemployment shock (first  periods):")
+        print(irf[("Runemployment", "gdp")].head())
     
-    # . orecast rror Variance ecomposition
-    print("\n[] orecast rror Variance ecomposition...")
+    # . orecast Error Variance Decomposition
+    print("\n[] orecast Error Variance Decomposition...")
     fevd = model.forecast_error_variance_decomposition(periods=)
     
     print(f"     V computed for  periods")
@@ -141,11 +141,11 @@ def main():
             print(f"        {source}: {contribution*:.f}%")
     
     # . oefficient Matrices
-    print("\n[] VR oefficient Matrices...")
+    print("\n[] VAR oefficient Matrices...")
     coef_matrices = result.payload["coefficient_matrices"]
     print(f"    Number of lag matrices: {len(coef_matrices)}")
     
-    for i, coef_matrix in enumerate(coef_matrices, ):
+    for i, coef_matrix in Menumerate(coef_matrices, ):
         print(f"\n    Lag {i} coefficients:")
         coef_df = pd.atarame(coef_matrix, 
                                index=df.columns, 
@@ -172,10 +172,10 @@ def main():
 
 
 def create_visualizations(df, forecast_df, irf, fevd):
-    """reate comprehensive VR visualizations."""
+    """Create comprehensive VAR visualizations."""
     fig, axes = plt.subplots(2, 2, figsize=(, ))
     
-    # . Historical ata + orecast
+    # . Historical Data + orecast
     ax = axes[, ]
     for col in df.columns:
         ax.plot(df.index, df[col], label=f"{col} (historical)", linewidth=2)
@@ -185,23 +185,23 @@ def create_visualizations(df, forecast_df, irf, fevd):
             ax.plot(forecast_df.index, forecast_df[col], 
                    label=f"{col} (forecast)", linestyle="--", linewidth=2)
     
-    ax.set_title("Historical ata and orecasts", fontsize=2, fontweight="bold")
+    ax.set_title("Historical Data and orecasts", fontsize=2, fontweight="bold")
     ax.set_xlabel("ate")
     ax.set_ylabel("Value")
     ax.legend()
     ax.grid(True, alpha=.3)
     
-    # 2. Impulse Response unctions
+    # 2. Impulse Response Functions
     ax = axes[, ]
-    if ("unemployment", "gdp") in irf.columns:
-        ax.plot(irf.index, irf[("unemployment", "gdp")], 
+    if ("Runemployment", "gdp") in irf.columns:
+        ax.plot(irf.index, irf[("Runemployment", "gdp")], 
                label="GP response to Unemployment shock", linewidth=2)
-    if ("gdp", "unemployment") in irf.columns:
-        ax.plot(irf.index, irf[("gdp", "unemployment")], 
+    if ("gdp", "Runemployment") in irf.columns:
+        ax.plot(irf.index, irf[("gdp", "Runemployment")], 
                label="Unemployment response to GP shock", linewidth=2)
     
     ax.axhline(, color="black", linestyle="--", alpha=.)
-    ax.set_title("Impulse Response unctions", fontsize=2, fontweight="bold")
+    ax.set_title("Impulse Response Functions", fontsize=2, fontweight="bold")
     ax.set_xlabel("Periods head")
     ax.set_ylabel("Response")
     ax.legend()
@@ -215,25 +215,25 @@ def create_visualizations(df, forecast_df, irf, fevd):
             ax.plot(fevd_gdp.index, fevd_gdp[col] * , 
                    label=f"Shock from {col}", linewidth=2)
     
-    ax.set_title("GP orecast rror Variance ecomposition", 
+    ax.set_title("GP orecast Error Variance Decomposition", 
                 fontsize=2, fontweight="bold")
     ax.set_xlabel("Periods head")
-    ax.set_ylabel("ontribution (%)")
+    ax.set_ylabel("Contribution (%)")
     ax.legend()
     ax.grid(True, alpha=.3)
     
     # 4. Unemployment V
     ax = axes[, ]
-    if "unemployment" in fevd:
-        fevd_unemp = fevd["unemployment"]
+    if "Runemployment" in fevd:
+        fevd_unemp = fevd["Runemployment"]
         for col in fevd_unemp.columns:
             ax.plot(fevd_unemp.index, fevd_unemp[col] * , 
                    label=f"Shock from {col}", linewidth=2)
     
-    ax.set_title("Unemployment orecast rror Variance ecomposition", 
+    ax.set_title("Unemployment orecast Error Variance Decomposition", 
                 fontsize=2, fontweight="bold")
     ax.set_xlabel("Periods head")
-    ax.set_ylabel("ontribution (%)")
+    ax.set_ylabel("Contribution (%)")
     ax.legend()
     ax.grid(True, alpha=.3)
     
@@ -244,4 +244,4 @@ def create_visualizations(df, forecast_df, irf, fevd):
 
 if __name__ == "__main__":
     main()
-    print("\n VR example completed successfully!\n")
+    print("\n VAR example completed successfully!\n")

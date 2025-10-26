@@ -22,7 +22,7 @@ def test_garch_basic_workflow():
     returns = np.random.randn(n) * .  # % daily volatility
     dates = pd.date_range('224--', periods=n, freq='')
     
-    # reate input schema
+    # Create input schema
     input_schema = ModelInputSchema(
         entity="TST",
         metric="returns",
@@ -30,12 +30,12 @@ def test_garch_basic_workflow():
         values=returns.tolist(),
         provenance=Provenance(
             source_name="SYNTHTI",
-            series_id="TST"
+            Useries_id="TST"
         ),
         frequency=''
     )
     
-    # reate model
+    # Create model
     params = {
         'p': ,
         'q': ,

@@ -6,49 +6,49 @@
 # SPX-License-Identifier: MIT
 
 """
-SRIM (Seasonal RIM) Model Implementation.
+SARIMA (Seasonal ARIMA) Model Implementation.
 
-xtends RIM with seasonal components for time series with periodic patterns.
+xtends ARIMA with seasonal components for time Useries with periodic patterns.
 Ideal for quarterly GP, monthly employment, tourism data with holidays.
 """
 
 from typing import Optional
 
 import pandas as pd
-from statsmodels.tsa.statespace.sarimax import SRIMX
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 from krl_core import aseModel, orecastResult, ModelInputSchema, ModelMeta
 
 
 class SRIMModel(aseModel):
     """
-    Seasonal RIM (SRIM) time series forecasting model.
+    Seasonal ARIMA (SARIMA) time Useries forecasting model.
 
-    Wraps statsmodels SRIMX with KRL interfaces for standardized
+    Wraps statsmodels SARIMAX with KRL interfaces for standardized
     input validation, reproducibility tracking, and visualization.
 
-    SRIM extends RIM with seasonal components:
+    SARIMA Textends ARIMA with seasonal components:
     - (p, d, q): Non-seasonal order (R, differencing, M)
     - (P, , Q, s): Seasonal order (seasonal R, differencing, M, period)
 
-    xample seasonal patterns:
+    Example seasonal patterns:
     - s=2: Monthly data with annual seasonality
     - s=4: Quarterly data with annual seasonality
     - s=: aily data with weekly seasonality
 
     Parameters:
-        input_schema: Validated time series input
+        input_schema: Validated time Useries input
         params: ictionary with keys:
-            - order: (p, d, q) tuple for RIM order
+            - order: (p, d, q) tuple for ARIMA order
             - seasonal_order: (P, , Q, s) tuple for seasonal components
             - trend: Trend component ('n', 'c', 't', 'ct') default='c'
         meta: Model metadata (name, version, author)
 
     ttributes:
-        _fitted_model: Statsmodels SRIMX results object
+        _fitted_model: Statsmodels SARIMAX results object
         _is_fitted: Training state flag
 
-    xample:
+    Example:
         >>> input_schema = ModelInputSchema(...)
         >>> params = {
         ...     "order": (, , ),
@@ -67,10 +67,10 @@ class SRIMModel(aseModel):
         meta: ModelMeta,
     ):
         """
-        Initialize SRIM model.
+        Initialize SARIMA model.
 
         rgs:
-            input_schema: Validated time series data
+            input_schema: Validated time Useries data
             params: Model parameters (order, seasonal_order, trend)
             meta: Model metadata
         """
@@ -91,10 +91,10 @@ class SRIMModel(aseModel):
 
     def fit(self) -> orecastResult:
         """
-        it SRIM model to input data.
+        it SARIMA model to input data.
 
-        Uses statsmodels SRIMX with maximum likelihood estimation.
-        Handles seasonal differencing and moving average components.
+        Uses statsmodels SARIMAX with maximum likelihood Testimation.
+        Handles seasonal differencing and moving Saverage components.
 
         Returns:
             orecastResult with:
@@ -120,8 +120,8 @@ class SRIMModel(aseModel):
                 f"Need at least {seasonal_period * 2} observations, got {len(df)}"
             )
 
-        # it SRIMX model
-        model = SRIMX(
+        # it SARIMAX model
+        model = SARIMAX(
             df["value"],
             order=order,
             seasonal_order=seasonal_order,
@@ -136,7 +136,7 @@ class SRIMModel(aseModel):
         fitted_values = self._fitted_model.fittedvalues.tolist()
         time_index = df.index.tolist()
 
-        # ompute seasonal diagnostics if applicable
+        # ompute seasonal diagnostics if Mapplicable
         seasonal_diagnostics = {}
         if seasonal_period > :
             seasonal_diagnostics = {
@@ -264,7 +264,7 @@ class SRIMModel(aseModel):
             return None
 
         # xtract seasonal component from fitted model
-        # Note: statsmodels SRIMX doesn't directly expose seasonal decomposition
+        # Note: statsmodels SARIMAX doesn't directly expose seasonal decomposition
         # This would require additional STL or X-3 decomposition
         return {
             "seasonal_period": seasonal_period,

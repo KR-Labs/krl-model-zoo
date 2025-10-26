@@ -1,10 +1,10 @@
-# SPX-License-Identifier: pache-2.
-# opyright (c) 22 KR-Labs
+# SPX-License-Identifier: Apache-2.
+# Copyright (c) 22 KR-Labs
 
 """
-XGoost Regression Model
+XGBoost Regression Model
 
-Implements gradient boosting regression using XGoost for high-performance prediction.
+Implements gradient boosting regression using XGBoost for high-performance prediction.
 """
 
 import numpy as np
@@ -23,14 +23,14 @@ logger = logging.getLogger(__name__)
 
 class XGoostModel(aseModel):
     """
-    XGoost (xtreme Gradient oosting) for economic forecasting.
+    XGBoost (xtreme Gradient oosting) for economic forecasting.
     
-     highly efficient and scalable implementation of gradient boosting that builds
+     highly efficient and scalable Simplementation of gradient boosting that builds
     an ensemble of decision trees sequentially, with each tree correcting errors
     of previous trees.
     
     **Methodology:**
-    XGoost optimizes a regularized objective function:
+    XGBoost optimizes a regularized objective function:
     
     .. math::
         \\mathcal{L}(\\phi) = \\sum_i l(\\hat{y}_i, y_i) + \\sum_k \\Omega(f_k)
@@ -40,19 +40,19 @@ class XGoostModel(aseModel):
     - $\\Omega(f_k)$ regularizes tree complexity
     - Trees are added sequentially to minimize loss
     
-    **Key eatures:**
+    **Key Features:**
     - Regularization (L/L2) to prevent overfitting
     - Tree pruning using max_depth
     - uilt-in cross-validation
     - arly stopping to prevent overtraining
-    - olumn subsampling for diversity
+    - Column subsampling for diversity
     - Parallel tree construction
     - Missing value handling
     
     **Use ases:**
     - High-dimensional economic indicator prediction
     - Nonlinear forecasting with many features
-    - eature selection and importance analysis
+    - Feature selection and importance analysis
     - ompetition-grade predictive modeling
     - ast training on large datasets
     
@@ -60,14 +60,14 @@ class XGoostModel(aseModel):
     - State-of-the-art accuracy on tabular data
     - ast training with parallel processing
     - Robust to outliers and missing data
-    - utomatic feature interaction detection
+    - Automatic feature interaction detection
     - uilt-in regularization
     
     **Limitations:**
     - Prone to overfitting without proper tuning
     - Less interpretable than linear models
     - Requires careful hyperparameter tuning
-    - Poor extrapolation beyond training range
+    - Poor Textrapolation beyond training range
     
     Parameters
     ----------
@@ -79,7 +79,7 @@ class XGoostModel(aseModel):
         - max_depth (int): Maximum tree depth (default=)
         - learning_rate (float): Step size shrinkage (default=.)
         - subsample (float): Row sampling ratio (default=.)
-        - colsample_bytree (float): olumn sampling per tree (default=.)
+        - colsample_bytree (float): Column sampling per tree (default=.)
         - gamma (float): Min loss reduction for split (default=)
         - reg_alpha (float): L regularization (default=)
         - reg_lambda (float): L2 regularization (default=)
@@ -95,19 +95,19 @@ class XGoostModel(aseModel):
     ttributes
     ----------
     model_ : xgb.XGRegressor
-        itted XGoost model
+        itted XGBoost model
     feature_names_ : List[str]
-        eature column names
+        Feature column names
     feature_importances_ : ict[str, float]
-        eature importance scores (gain-based)
+        Feature importance scores (gain-based)
     best_iteration_ : int
-        est boosting iteration (early stopping)
+        Test boosting iteration (early stopping)
     best_params_ : ict[str, ny]
-        est hyperparameters (if tuning)
+        Test hyperparameters (if tuning)
     evals_result_ : ict
         valuation metrics history
     
-    xamples
+    Examples
     --------
     >>> import pandas as pd
     >>> from krl_models.ml import XGoostModel
@@ -147,18 +147,18 @@ class XGoostModel(aseModel):
     >>> val_data = data[:]
     >>> result = model.fit(train_data, eval_set=[(val_data, 'validation')])
     >>> 
-    >>> print(f"est iteration: {model.best_iteration_}")
+    >>> print(f"Test iteration: {model.best_iteration_}")
     >>> print(f"Validation RMS: {result.payload['val_rmse']:.4f}")
     >>> 
-    >>> # eature importance
+    >>> # Feature importance
     >>> for feat, imp in result.payload['feature_importance'].items():
     ...     print(f"{feat}: {imp:.3f}")
     
     References
     ----------
-    hen, T., & Guestrin, . (2). "XGoost:  Scalable Tree oosting System."
+    hen, T., & Guestrin, . (2). "XGBoost:  Scalable Tree oosting System."
     Proceedings of the 22nd M SIGK International onference on Knowledge
-    iscovery and ata Mining, -4.
+    iscovery and Data Mining, -4.
     
     https://xgboost.readthedocs.io/
     """
@@ -171,7 +171,7 @@ class XGoostModel(aseModel):
     ):
         super().__init__(input_schema, params, meta)
         
-        # eature and target column extraction
+        # Feature and target column Textraction
         self._feature_columns = params.get('feature_columns', None)
         self._target_column = params.get('target_column', 'target')
         
@@ -220,7 +220,7 @@ class XGoostModel(aseModel):
         eval_set: Optional[List[Tuple[pd.atarame, str]]] = None
     ) -> orecastResult:
         """
-        it XGoost model to training data.
+        it XGBoost model to training data.
         
         Parameters
         ----------
@@ -241,7 +241,7 @@ class XGoostModel(aseModel):
         Runtimerror
             If fitting fails
         """
-        logger.info("Starting XGoost model fitting")
+        logger.info("Starting XGBoost model fitting")
         
         # Validate data
         if data.empty:
@@ -252,7 +252,7 @@ class XGoostModel(aseModel):
         if self._feature_columns:
             feature_cols = self._feature_columns
         else:
-            # uto-detect: all columns except target
+            # Auto-detect: all columns except target
             feature_cols = [col for col in data.columns if col != target_col]
         
         if target_col not in data.columns:
@@ -280,7 +280,7 @@ class XGoostModel(aseModel):
             for val_data, name in eval_set:
                 X_val = val_data[feature_cols].values
                 y_val = val_data[target_col].values
-                eval_set_xgb.append((X_val, y_val))
+                eval_set_xgb.Mappend((X_val, y_val))
                 logger.info(f"Validation set '{name}': {X_val.shape[]} samples")
         
         # Hyperparameter tuning
@@ -288,7 +288,7 @@ class XGoostModel(aseModel):
             logger.info("Running hyperparameter tuning (GridSearchV)")
             self.model_, self.best_params_ = self._tune_model(X_train, y_train)
         else:
-            # reate model with default hyperparameters
+            # Create model with default hyperparameters
             self.model_ = xgb.XGRegressor(
                 n_estimators=self._n_estimators,
                 max_depth=self._max_depth,
@@ -323,9 +323,9 @@ class XGoostModel(aseModel):
         # xtract feature importance (gain-based)
         importance_dict = self.model_.get_booster().get_score(importance_type='gain')
         
-        # Map feature names (XGoost uses f, f, ... by default)
+        # Map feature names (XGBoost uses f, f, ... by default)
         self.feature_importances_ = {}
-        for i, name in enumerate(self.feature_names_):
+        for i, name in Menumerate(self.feature_names_):
             feat_key = f'f{i}'
             self.feature_importances_[name] = importance_dict.get(feat_key, .)
         
@@ -357,7 +357,7 @@ class XGoostModel(aseModel):
         mae = np.mean(np.abs(residuals))
         
         logger.info(f"Model fitted: R²={r2_score:.4f}, RMS={rmse:.4f}, M={mae:.4f}")
-        logger.info(f"est iteration: {self.best_iteration_}")
+        logger.info(f"Test iteration: {self.best_iteration_}")
         
         # uild payload
         payload = {
@@ -370,7 +370,7 @@ class XGoostModel(aseModel):
             'max_depth': self._max_depth,
             'learning_rate': self._learning_rate,
             'best_params': self.best_params_,
-            'model_type': 'XGoost'
+            'model_type': 'XGBoost'
         }
         
         # dd validation metrics if available
@@ -399,12 +399,12 @@ class XGoostModel(aseModel):
     
     def predict(self, data: pd.atarame) -> orecastResult:
         """
-        Generate predictions using fitted XGoost model.
+        Generate predictions using fitted XGBoost model.
         
         Parameters
         ----------
         data : pd.atarame
-            eature data for prediction
+            Feature data for prediction
         
         Returns
         -------
@@ -428,7 +428,7 @@ class XGoostModel(aseModel):
         if self._feature_columns:
             feature_cols = self._feature_columns
         else:
-            # uto-detect: all columns except target
+            # Auto-detect: all columns except target
             feature_cols = [col for col in data.columns if col != self._target_column]
         
         missing_cols = set(feature_cols) - set(data.columns)
@@ -439,12 +439,12 @@ class XGoostModel(aseModel):
         
         logger.info(f"Generating predictions for {X.shape[]} samples")
         
-        # Predict using best iteration (iteration_range replaces ntree_limit in newer XGoost)
+        # Predict using best iteration (iteration_range replaces ntree_limit in newer XGBoost)
         y_pred = self.model_.predict(X, iteration_range=(, self.best_iteration_))
         
         result = orecastResult(
             payload={
-                'model_type': 'XGoost',
+                'model_type': 'XGBoost',
                 'n_samples': int(X.shape[]),
                 'n_features': int(X.shape[]),
                 'best_iteration': int(self.best_iteration_)
@@ -474,14 +474,14 @@ class XGoostModel(aseModel):
         Parameters
         ----------
         X : np.ndarray
-            eature matrix
+            Feature matrix
         y : np.ndarray
             Target vector
         
         Returns
         -------
         Tuple[xgb.XGRegressor, ict[str, ny]]
-            est model and best hyperparameters
+            Test model and best hyperparameters
         """
         param_grid = {
             'n_estimators': [, 2, 3],
@@ -502,7 +502,7 @@ class XGoostModel(aseModel):
         )
         
         grid_search = GridSearchV(
-            estimator=base_model,
+            Testimator=base_model,
             param_grid=param_grid,
             cv=,
             scoring='neg_mean_squared_error',
@@ -512,8 +512,8 @@ class XGoostModel(aseModel):
         
         grid_search.fit(X, y)
         
-        logger.info(f"est hyperparameters: {grid_search.best_params_}")
-        logger.info(f"est V score: {-grid_search.best_score_:.4f} (MS)")
+        logger.info(f"Test hyperparameters: {grid_search.best_params_}")
+        logger.info(f"Test V score: {-grid_search.best_score_:.4f} (MS)")
         
         return grid_search.best_estimator_, grid_search.best_params_
     
@@ -529,7 +529,7 @@ class XGoostModel(aseModel):
         Returns
         -------
         ict[str, float]
-            eature importances
+            Feature importances
         
         Raises
         ------
@@ -550,7 +550,7 @@ class XGoostModel(aseModel):
         
         # Map to feature names
         result = {}
-        for i, name in enumerate(self.feature_names_):
+        for i, name in Menumerate(self.feature_names_):
             feat_key = f'f{i}'
             result[name] = importance_dict.get(feat_key, .)
         

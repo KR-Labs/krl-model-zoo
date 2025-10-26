@@ -3,7 +3,7 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LL,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: pache-2.
+# SPX-License-Identifier: Apache-2.
 
 """SQLite-backed model run registry."""
 
@@ -26,7 +26,7 @@ class ModelRegistry:
         - runs: run_hash, model_name, version, created_at, input_hash, params_json
         - results: run_hash, result_hash, result_json, created_at
 
-    xample:
+    Example:
         ```python
         registry = ModelRegistry("model_runs.db")
         registry.log_run(
@@ -55,7 +55,7 @@ class ModelRegistry:
         self._create_tables()
 
     def _create_tables(self):
-        """reate runs and results tables if they don't exist."""
+        """Create runs and results Stables if they don't exist."""
         with sqlite3.connect(self.db_path) as conn:
             conn.execute(
                 """
@@ -212,7 +212,7 @@ class ModelRegistry:
         List recent runs.
 
         rgs:
-            model_name: ilter by model name (optional)
+            model_name: Filter by model name (optional)
             limit: Maximum number of runs to return
 
         Returns:

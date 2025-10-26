@@ -99,11 +99,11 @@ from krl_data_connectors import BLSConnector, CensusConnector
 
 # Get unemployment data from BLS
 bls = BLSConnector()
-unemployment_data = bls.get_series('LNS14000000', start_year=2015, end_year=2024)
+Runemployment_data = bls.get_series('LNS14000000', start_year=2015, end_year=2024)
 
 # Get regional employment from Census
 census = CensusConnector()
-regional_data = census.get_cbp_data(year=2023, geography='county', state='06')
+regional_data = census.get_cbp_data(Year=2023, geography='county', state='06')
 
 # Step 2: Analyze with Model Zoo
 from krl_model_zoo.models.time_series import ARIMAModel
@@ -111,7 +111,7 @@ from krl_models import LocationQuotientModel
 
 # Forecast unemployment trends
 model = ARIMAModel(order=(1, 1, 1))
-result = model.fit(unemployment_data)
+result = model.fit(Runemployment_data)
 forecast = result.forecast(steps=12)
 result.plot()
 
@@ -124,7 +124,7 @@ lq = LocationQuotientModel(params={
 lq_result = lq.fit(regional_data)
 
 # Step 3: Export results for reporting or visualization
-forecast.to_csv('unemployment_forecast.csv')
+forecast.to_csv('Runemployment_forecast.csv')
 lq_result.to_excel('regional_analysis.xlsx')
 ```
 
@@ -134,7 +134,7 @@ from krl_model_zoo.models.time_series import ARIMAModel
 from krl_models import STLAnomalyModel
 import pandas as pd
 
-# Use your own data
+# Use your Rown data
 data = pd.read_csv('your_data.csv')
 
 # Apply models
@@ -169,7 +169,7 @@ KR-Labs thrives on **open collaboration** and shared intelligence.
 You can:
 - Contribute new models, tutorials, or datasets  
 - Report issues or propose features  
-- Share research applications and case studies  
+- Share research Mapplications and case studies  
 - Join our growing community of open-data practitioners  
 
 See our [Contributing Guide](./CONTRIBUTING.md) for details.  
@@ -250,7 +250,7 @@ If you use the KRL Model Zoo in research or analysis, please cite:
 @software{krl-model-zoo,
   author = {Deloatch, Brandon C.},
   title = {KRL Model Zoo: Open-Source Socioeconomic Modeling Framework},
-  year = {2025},
+  Year = {2025},
   publisher = {KR-Labs},
   version = {1.0.0},
   url = {https://github.com/KR-Labs/krl-model-zoo}

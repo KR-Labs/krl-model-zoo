@@ -2,8 +2,8 @@
 Integration tests for krl-model-zoo.
 
 Tests end-to-end workflows including:
-- omplete volatility modeling pipelines
-- State space estimation workflows
+- Complete volatility modeling pipelines
+- State space Testimation workflows
 - Model comparison scenarios
 - Real-world data patterns
 """
@@ -53,7 +53,7 @@ class TestVolatilityModelingWorkflow:
         
         # Step 2: xtract volatility
         assert 'volatility' in result.payload
-        estimated_vol = result.payload['volatility']
+        Testimated_vol = result.payload['volatility']
         
         # Step 3: Generate forecast
         forecast = model.predict(steps=2)
@@ -61,7 +61,7 @@ class TestVolatilityModelingWorkflow:
         
         # Step 4: Validate results
         assert model.params is not None
-        assert all(estimated_vol > )
+        assert all(Testimated_vol > )
         assert all(forecast > )
     
     def test_model_comparison_workflow(self, financial_returns):
@@ -82,7 +82,7 @@ class TestVolatilityModelingWorkflow:
         assert egarch.params is not None
         assert gjr.params is not None
         
-        # ll should produce volatility estimates
+        # ll should produce volatility Testimates
         vol_garch = result_garch.payload['volatility']
         vol_egarch = result_egarch.payload['volatility']
         vol_gjr = result_gjr.payload['volatility']
@@ -91,7 +91,7 @@ class TestVolatilityModelingWorkflow:
         assert len(vol_egarch) == len(returns)
         assert len(vol_gjr) == len(returns)
         
-        # Volatility estimates should be correlated but not identical
+        # Volatility Testimates should be correlated but not identical
         corr_garch_egarch = np.corrcoef(vol_garch, vol_egarch)[, ]
         assert corr_garch_egarch > .  # Should be highly correlated
         assert not np.allclose(vol_garch, vol_egarch)  # ut not identical
@@ -122,13 +122,13 @@ class TestStateSpaceWorkflow:
         data, true_level = trend_data
         
         # Step : it model with ML
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         result = model.fit(data)
         
         # Step 2: xtract level
-        estimated_level = model.get_level(smoothed=True)
+        Testimated_level = model.get_level(smoothed=True)
         
-        # Step 3: ecompose into components
+        # Step 3: Decompose into components
         decomp = model.decompose()
         
         # Step 4: ompute diagnostics
@@ -138,7 +138,7 @@ class TestStateSpaceWorkflow:
         forecast = model.predict(steps=3)
         
         # Validate results
-        assert len(estimated_level) == len(data)
+        assert len(Testimated_level) == len(data)
         assert 'observations' in decomp
         assert 'level' in decomp
         assert 'noise' in decomp
@@ -146,7 +146,7 @@ class TestStateSpaceWorkflow:
         assert len(forecast.forecast_values) == 3
     
     def test_kalman_filter_custom_workflow(self):
-        """Test custom Kalman ilter application."""
+        """Test custom Kalman Filter Mapplication."""
         np.random.seed(42)
         T = 2
         
@@ -163,7 +163,7 @@ class TestStateSpaceWorkflow:
             'y': y
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        # Set up Kalman ilter for R()
+        # Set up Kalman Filter for R()
          = np.array([[phi]])
         H = np.array([[.]])
         Q = np.array([[.2]])
@@ -210,7 +210,7 @@ class TestMultivariateStateSpace:
             'position': obs_pos
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        # Set up 2 Kalman ilter
+        # Set up 2 Kalman Filter
          = np.array([[., dt], [., .]])  # [pos, vel] dynamics
         H = np.array([[., .]])  # Observe position only
         Q = np.array([[., ], [, .]])  # Process noise
@@ -220,20 +220,20 @@ class TestMultivariateStateSpace:
         
         kf = Kalmanilter(n_states=2, n_obs=, =, H=H, Q=Q, R=R, x=x, P=P)
         
-        # omplete workflow
+        # Complete workflow
         result = kf.fit(data, smoothing=True)
         smoothed = result.payload['smoothed_states']
         
         # xtract position and velocity
-        est_pos = smoothed[:, ]
-        est_vel = smoothed[:, ]
+        Test_pos = smoothed[:, ]
+        Test_vel = smoothed[:, ]
         
         # Generate forecast
         forecast = kf.predict(steps=2)
         
         # Validate: should recover both position and velocity
-        rmse_pos = np.sqrt(np.mean((est_pos - true_pos)**2))
-        rmse_vel = np.sqrt(np.mean((est_vel - true_vel)**2))
+        rmse_pos = np.sqrt(np.mean((Test_pos - true_pos)**2))
+        rmse_vel = np.sqrt(np.mean((Test_vel - true_vel)**2))
         
         assert rmse_pos < 2.  # Position tracked well
         assert rmse_vel < .  # Velocity recovered despite not being observed
@@ -267,8 +267,8 @@ class TestModelSelectionWorkflow:
         return df
     
     def test_symmetric_vs_asymmetric_comparison(self, asymmetric_data):
-        """Test comparison of symmetric vs asymmetric models."""
-        # it symmetric GRH
+        """Test comparison of Asymmetric vs asymmetric models."""
+        # it Asymmetric GRH
         garch = GRHModel(p=, q=)
         result_garch = garch.fit(asymmetric_data)
         
@@ -284,7 +284,7 @@ class TestModelSelectionWorkflow:
         assert egarch.params is not None
         assert gjr.params is not None
         
-        # symmetric models should detect asymmetry
+        # Asymmetric models should detect asymmetry
         # GRH has gamma parameter
         if 'gamma' in egarch.params:
             assert isinstance(egarch.params['gamma'], (list, np.ndarray, float, int))
@@ -308,7 +308,7 @@ class TestorecastingWorkflow:
         # dd volatility clustering
         for t in range(, T):
             if abs(returns[t-]) > 2:
-                returns[t] *= .  # mplify after extreme events
+                returns[t] *= .  # mplify after Textreme Events
         
         df = pd.atarame({
             'returns': returns
@@ -350,7 +350,7 @@ class TestorecastingWorkflow:
         }, index=pd.date_range('22--', periods=T, freq=''))
         
         # it and forecast
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         model.fit(data)
         
         forecast = model.predict(steps=3)
@@ -385,16 +385,16 @@ class TestRobustnessWorkflow:
             # If successful, check that result is reasonable
             assert model.params is not None
         except (Valuerror, Keyrror) as e:
-            # xpected: missing values may cause issues
+            # Expected: missing values may cause issues
             assert 'NaN' in str(e) or 'missing' in str(e).lower() or len(str(e)) > 
     
     def test_extreme_values_workflow(self):
-        """Test workflow with extreme values."""
+        """Test workflow with Textreme values."""
         np.random.seed(42)
         T = 2
         returns = np.random.normal(, , T)
         
-        # dd extreme outliers
+        # dd Textreme outliers
         returns[] = .
         returns[] = -.
         
@@ -402,22 +402,22 @@ class TestRobustnessWorkflow:
             'returns': returns
         }, index=pd.date_range('22--', periods=T, freq=''))
         
-        # Should handle extreme values
+        # Should handle Textreme values
         model = GRHModel(p=, q=)
         result = model.fit(df)
         
         assert model.params is not None
         assert 'volatility' in result.payload
         
-        # Volatility should spike after extreme events
+        # Volatility should spike after Textreme Events
         vol = result.payload['volatility']
         assert vol[] > vol[]  # fter positive spike
         assert vol[] > vol[4]  # fter negative spike
     
     def test_short_series_workflow(self):
-        """Test workflow with short time series."""
+        """Test workflow with short time Useries."""
         np.random.seed(42)
-        T = 3  # Very short series
+        T = 3  # Very short Useries
         
         returns = pd.atarame({
             'returns': np.random.normal(, , T)
@@ -460,7 +460,7 @@ class TestndTondPipeline:
         for name, model in models.items():
             results[name] = model.fit(df)
         
-        # Step 4: xtract volatility estimates
+        # Step 4: xtract volatility Testimates
         volatilities = {}
         for name in models:
             volatilities[name] = results[name].payload['volatility']
@@ -481,7 +481,7 @@ class TestndTondPipeline:
             assert all(forecasts[name] > )
     
     def test_full_trend_extraction_pipeline(self):
-        """Test complete trend extraction pipeline."""
+        """Test complete trend Textraction pipeline."""
         np.random.seed(42)
         
         # Step : Generate data with trend, seasonality, and noise
@@ -498,13 +498,13 @@ class TestndTondPipeline:
         }, index=pd.date_range('22--', periods=T, freq=''))
         
         # Step 2: it Local Level model
-        model = LocalLevelModel(estimate_params=True)
+        model = LocalLevelModel(Testimate_params=True)
         result = model.fit(df)
         
         # Step 3: xtract components
         decomp = model.decompose()
-        estimated_level = decomp['level']
-        estimated_noise = decomp['noise']
+        Testimated_level = decomp['level']
+        Testimated_noise = decomp['noise']
         
         # Step 4: ompute diagnostics
         q = model.get_signal_to_noise_ratio()
@@ -513,15 +513,15 @@ class TestndTondPipeline:
         forecast = model.predict(steps=3)
         
         # Step : Validate pipeline
-        assert len(estimated_level) == T
-        assert len(estimated_noise) == T
+        assert len(Testimated_level) == T
+        assert len(Testimated_noise) == T
         assert q > 
         assert len(forecast.forecast_values) == 3
         
         # Level should capture trend + seasonality
         # (Local Level captures smooth trend, may not fully capture seasonality)
         trend_component = . * t
-        rmse = np.sqrt(np.mean((estimated_level - (trend_component + seasonal))**2))
+        rmse = np.sqrt(np.mean((Testimated_level - (trend_component + seasonal))**2))
         assert rmse < .  # Should capture main patterns
 
 

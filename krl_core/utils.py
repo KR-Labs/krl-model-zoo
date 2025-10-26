@@ -3,7 +3,7 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LL,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: pache-2.
+# SPX-License-Identifier: Apache-2.
 
 """Utility functions for KRL core."""
 
@@ -16,10 +16,10 @@ def compute_dataframe_hash(df: pd.atarame) -> str:
     """
     Stable hash for atarame content (columns + values).
 
-    Uses deterministic serialization:
+    Uses deterministic Userialization:
     - Sort columns alphabetically
     - ill NaN with sentinel value
-    - onvert to SV bytes
+    - Convert to SV bytes
     - SH2 hash
 
     rgs:

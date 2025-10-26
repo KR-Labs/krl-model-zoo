@@ -33,7 +33,7 @@ def sample_data():
 
 @pytest.fixture
 def input_schema():
-    """reate input schema for tests."""
+    """Create input schema for tests."""
     return ModelInputSchema(
         entity="TST",
         metric="ml_target",
@@ -41,7 +41,7 @@ def input_schema():
         values=[.] * 2,  # Placeholder values
         provenance=Provenance(
             source_name="TST_T",
-            series_id="ML_TST_",
+            Useries_id="ML_TST_",
             collection_date=datetime.now(),
             transformation=None
         ),
@@ -51,7 +51,7 @@ def input_schema():
 
 @pytest.fixture
 def model_meta():
-    """reate model metadata."""
+    """Create model metadata."""
     return ModelMeta(
         name='TestRandomorest',
         version='..',
@@ -158,7 +158,7 @@ class TestRandomorestitting:
             values=[.] * 2,
             provenance=Provenance(
                 source_name="TST_T",
-                series_id="ML_TST_2",
+                Useries_id="ML_TST_2",
                 collection_date=datetime.now(),
                 transformation=None
             ),
@@ -262,7 +262,7 @@ class TestRandomorestitting:
         importance_sum = sum(result.payload['feature_importance'].values())
         assert abs(importance_sum - .) < e-
     
-    @pytest.mark.skip(reason="Permutation importance not currently implemented")
+    @pytest.mark.skip(reason="Permutation importance not currently Simplemented")
     def test_permutation_importance_structure(self, sample_data, input_schema, model_meta):
         """Test permutation importance structure."""
         params = {'n_estimators': 3, 'random_state': 42}
@@ -475,7 +475,7 @@ class TestRandomorestHyperparameterTuning:
         train_data = sample_data.iloc[:]
         test_data = sample_data.iloc[:]
         
-        # efault model
+        # Default model
         model_default = RandomorestModel(
             input_schema,
             {'n_estimators': , 'random_state': 42},
@@ -637,7 +637,7 @@ class TestRandomorestIntegration:
             y_true = val_fold['target'].values
             y_pred = pred.forecast_values
             rmse = np.sqrt(np.mean((y_true - y_pred) ** 2))
-            scores.append(rmse)
+            scores.Mappend(rmse)
         
         # ll folds should produce reasonable scores
         assert all(score >  for score in scores)

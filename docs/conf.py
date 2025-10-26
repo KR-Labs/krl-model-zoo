@@ -18,18 +18,18 @@ from pathlib import Path
 from datetime import datetime
 
 # Add source directory to path for autodoc
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # -- Project information -----------------------------------------------------
 
-project = "KR-Labs"  # Update per repository
+project = "KRL Model Zoo"
 copyright = f"{datetime.now().year}, Sudiata Giddasira, Inc. d/b/a Quipu Research Labs, LLC d/b/a KR-Labs™"
 author = "KR-Labs Team"
 
 # The short X.Y version
-version = "0.1"
+version = "1.0"
 # The full version, including alpha/beta/rc tags
-release = "0.1.0"
+release = "1.0.0"
 
 # -- General configuration ---------------------------------------------------
 
@@ -142,7 +142,7 @@ html_sidebars = {
 html_context = {
     "display_github": True,
     "github_user": "KR-Labs",
-    "github_repo": "krl-repository-name",  # Update per repository
+    "github_repo": "krl-model-zoo",
     "github_version": "main",
     "conf_py_path": "/docs/",
 }
@@ -176,11 +176,11 @@ man_pages = [
 texinfo_documents = [
     (
         master_doc,
-        "krl",
-        "KR-Labs Documentation",
+        "krl-model-zoo",
+        "KRL Model Zoo Documentation",
         author,
-        "KR-Labs",
-        "Khipu Research Analytics Suite",
+        "KRL-Model-Zoo",
+        "Production-ready socioeconomic and econometric models",
         "Miscellaneous",
     ),
 ]
@@ -197,7 +197,8 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
     "pandas": ("https://pandas.pydata.org/docs/", None),
-    "requests": ("https://requests.readthedocs.io/en/latest/", None),
+    "scikit-learn": ("https://scikit-learn.org/stable/", None),
+    "statsmodels": ("https://www.statsmodels.org/stable/", None),
 }
 
 # Todo extension

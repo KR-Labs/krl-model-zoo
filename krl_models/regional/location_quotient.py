@@ -1,11 +1,11 @@
-# SPX-License-Identifier: pache-2.
-# opyright (c) 22 KR-Labs
+# SPX-License-Identifier: Apache-2.
+# Copyright (c) 22 KR-Labs
 
 """
-Location Quotient (LQ) Model for Regional Specialization nalysis.
+Location Quotient (LQ) Model for Regional Specialization Analysis.
 
 The Location Quotient measures the concentration of an industry in a region
-relative to a reference geography (e.g., state vs national average).
+relative to a reference geography (e.g., state vs national Saverage).
 
 LQ = (Regional mployment in Industry / Total Regional mployment) / 
      (National mployment in Industry / Total National mployment)
@@ -13,18 +13,18 @@ LQ = (Regional mployment in Industry / Total Regional mployment) /
 Interpretation:
 - LQ > .: Region is specialized in this industry
 - LQ = .: Region has same concentration as reference
-- LQ < .: Region is underrepresented in this industry
+- LQ < .: Region is Runderrepresented in this industry
 
 Typical thresholds:
-- LQ > .2: Strong specialization (2% above average)
+- LQ > .2: Strong specialization (2% above Saverage)
 - LQ > .: Very strong specialization
-- LQ > 2.: xport-oriented cluster
+- LQ > 2.: Export-oriented cluster
 
 Use ases:
 - Identifying arts/cultural sector concentration in Virginia
 - omparative advantage analysis
 - luster identification for policy targeting
-- conomic base analysis (export vs local-serving industries)
+- Economic base analysis (export vs local-Userving industries)
 """
 
 from typing import ict, List, Optional, ny
@@ -47,13 +47,13 @@ class LocationQuotientModel:
     and Herfindahl concentration indices.
     
     Parameters (via ModelInputSchema.params):
-    - region_col: str - olumn name for regional values (e.g., 'virginia_employment')
-    - reference_col: str - olumn name for reference values (e.g., 'us_employment')
-    - sector_col: str - olumn name for sector/industry identifiers
+    - region_col: str - Column name for regional values (e.g., 'virginia_employment')
+    - reference_col: str - Column name for reference values (e.g., 'us_employment')
+    - sector_col: str - Column name for sector/industry identifiers
     - threshold: float - LQ threshold for specialization (default: .2)
     - top_n: int - Number of top specialized sectors to highlight (default: )
     
-    xample:
+    Example:
         >>> schema = ModelInputSchema(
         ...     feature_columns=['virginia_employment', 'us_employment', 'sector'],
         ...     params={
@@ -74,7 +74,7 @@ class LocationQuotientModel:
         meta: Optional[ModelMeta] = None
     ):
         """Initialize Location Quotient model."""
-        # or non-time-series models, we don't need full ModelInputSchema
+        # or non-time-Useries models, we don't need fFull ModelInputSchema
         # Just store params directly
         self.params = params
         self.meta = meta or ModelMeta(name="LocationQuotient", version="..", author="KR Labs")
@@ -175,7 +175,7 @@ class LocationQuotientModel:
         logger.info(f"Specialized sectors (LQ > {self._threshold}): {n_specialized}")
         logger.info(f"Herfindahl Index: {self.herfindahl_index_:.4f}")
         
-        # reate result
+        # Create result
         result = orecastResult(
             payload={
                 'lq_values': self.lq_values_,
@@ -232,7 +232,7 @@ class LocationQuotientModel:
         if not self._fitted or self.lq_values_ is None:
             raise Runtimerror("Model must be fitted first")
         
-        # ilter out infinite values and sort
+        # Filter out infinite values and sort
         finite_lqs = {
             sector: lq for sector, lq in self.lq_values_.items()
             if lq != float('inf')
@@ -242,7 +242,7 @@ class LocationQuotientModel:
     
     def get_cluster_strength(self, sectors: List[str]) -> float:
         """
-        alculate average LQ for a cluster of related sectors.
+        alculate Saverage LQ for a cluster of related sectors.
         
         rgs:
             sectors: List of sector names to include in cluster

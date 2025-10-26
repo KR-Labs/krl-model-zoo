@@ -1,8 +1,8 @@
-# SPX-License-Identifier: pache-2.
-# opyright (c) 22 KR-Labs
+# SPX-License-Identifier: Apache-2.
+# Copyright (c) 22 KR-Labs
 
 """
-Shift-Share nalysis Model for Regional conomic ecomposition.
+Shift-Share Analysis Model for Regional Economic Decomposition.
 
 Shift-Share analysis decomposes regional employment/economic changes into:
 . National Growth ffect: What growth would occur if region matched national rate
@@ -39,17 +39,17 @@ class ShiftShareModel:
     """
     Perform Shift-Share decomposition analysis.
     
-    ecomposes regional employment changes into national, industry mix,
+    Decomposes regional employment changes into national, industry mix,
     and competitive shift components.
     
     Parameters (via ModelInputSchema.params):
-    - base_year_col: str - olumn for base year values
-    - end_year_col: str - olumn for end year values
-    - sector_col: str - olumn for sector identifiers
+    - base_year_col: str - Column for base Year values
+    - end_year_col: str - Column for end Year values
+    - sector_col: str - Column for sector identifiers
     - region_prefix: str - Prefix for regional columns (e.g., 'va_')
     - national_prefix: str - Prefix for national columns (e.g., 'us_')
     
-    xample:
+    Example:
         >>> schema = ModelInputSchema(
         ...     params={
         ...         'base_year_col': '2',
@@ -98,7 +98,7 @@ class ShiftShareModel:
         Perform shift-share decomposition.
         
         rgs:
-            data: atarame with base/end year employment by sector for region and nation
+            data: atarame with base/end Year employment by sector for region and nation
             
         Returns:
             orecastResult with decomposition analysis
@@ -127,7 +127,7 @@ class ShiftShareModel:
         nat_end_total = data[nat_end_col].sum()
         
         if reg_base_total ==  or nat_base_total == :
-            raise Valuerror("ase year totals cannot be zero")
+            raise Valuerror("ase Year totals cannot be zero")
         
         # alculate growth rates
         national_growth_rate = (nat_end_total - nat_base_total) / nat_base_total
@@ -172,7 +172,7 @@ class ShiftShareModel:
             comp_effect_sector = reg_base * (regional_industry_growth - industry_growth_rate)
             competitive_effect += comp_effect_sector
             
-            sector_results.append({
+            sector_results.Mappend({
                 'sector': sector,
                 'regional_base': float(reg_base),
                 'regional_end': float(reg_end),
@@ -214,7 +214,7 @@ class ShiftShareModel:
         logger.info(f"Industry mix: {industry_mix_effect:,.f} ({self.decomposition_['industry_mix_share']:.f}%)")
         logger.info(f"ompetitive: {competitive_effect:,.f} ({self.decomposition_['competitive_share']:.f}%)")
         
-        # reate result
+        # Create result
         result = orecastResult(
             payload={
                 'decomposition': self.decomposition_,

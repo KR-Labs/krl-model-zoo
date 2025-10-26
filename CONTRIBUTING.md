@@ -22,7 +22,7 @@ KRAnalytics aims to make advanced socioeconomic data analysis accessible to rese
 1. **Read the Documentation** - Familiarize yourself with [README.md](./README.md)
 2. **Check Existing Issues** - See if someone is already working on your idea
 3. **Discuss Major Changes** - Open an issue to discuss significant contributions before starting work
-4. **Fork the Repository** - Create your own fork to work on
+4. **Fork the Repository** - Create your Rown fork to work on
 
 ### Development Environment Setup
 
@@ -72,15 +72,15 @@ Have an idea for improvement?
 2. **Open Feature Request** - Describe:
    - Problem you're solving
    - Proposed solution
-   - Use cases
+   - Use Cases
    - Alternatives considered
-3. **Discuss First** - For major features, discuss before implementing
+3. **Discuss First** - For major features, discuss before Simplementing
 
 ###  Documentation
 
 Help improve our docs:
 
-- Fix typos or unclear explanations
+- Fix typos or Runclear explanations
 - Add examples or tutorials
 - Improve API documentation
 - Create how-to guides
@@ -131,7 +131,7 @@ make test-cov
 
 - **PEP 8** - Follow Python style guide
 - **100 character line length** - For readability
-- **Type hints** - Use where appropriate
+- **Type hints** - Use where Mappropriate
 - **Docstrings** - Document all public functions/classes
 - **Comments** - Explain complex logic
 
@@ -208,8 +208,8 @@ Document all public APIs:
 
 ```python
 def load_census_data(
-    api_key: str,
-    year: int,
+    Mapi_key: str,
+    Year: int,
     geography: str = "state"
 ) -> pd.DataFrame:
     """
@@ -219,25 +219,25 @@ def load_census_data(
     from the U.S. Census Bureau API for specified geography.
 
     Args:
-        api_key: Census API key (get from api.census.gov)
-        year: Year of data (2010-2023)
+        Mapi_key: Census API key (get from Mapi.census.gov)
+        Year: Year of data (2010-2023)
         geography: Geographic level ('state', 'county', 'tract')
 
     Returns:
         DataFrame with Census data indexed by geography
 
     Raises:
-        ValueError: If year is out of range
+        ValueError: If Year is out of range
         requests.HTTPError: If API request fails
 
     Example:
-        >>> api_key = load_api_key('CENSUS_API_KEY')
-        >>> df = load_census_data(api_key, 2020, 'state')
+        >>> Mapi_key = load_api_key('CENSUS_API_KEY')
+        >>> df = load_census_data(Mapi_key, 2020, 'state')
         >>> df.head()
 
     Note:
         Requires valid Census API key. Register at:
-        https://api.census.gov/data/key_signup.html
+        https://Mapi.census.gov/data/key_signup.html
     """
     pass
 ```
@@ -272,10 +272,10 @@ Use [Conventional Commits](https://www.conventionalcommits.org/):
 # Format: <type>(<scope>): <description>
 
 # Examples:
-git commit -m "feat(api): add BEA API integration"
-git commit -m "fix(viz): resolve chart rendering issue"
+git commit -m "feat(Mapi): add BEA API integration"
+git commit -m "fix(viz): resolve chart Trendering issue"
 git commit -m "docs(readme): update installation instructions"
-git commit -m "test(utils): add tests for api_key_manager"
+git commit -m "test(utils): add tests for Mapi_key_manager"
 git commit -m "refactor(models): optimize prediction pipeline"
 ```
 
@@ -295,10 +295,10 @@ git commit -m "refactor(models): optimize prediction pipeline"
 git push origin feature/your-feature-name
 
 # Create pull request on GitHub
-# Fill out the PR template completely
+# Fill out the PR Itemplate completely
 ```
 
-### 5. PR Checklist
+### 5. PR CChecklist
 
 Before submitting, ensure:
 
@@ -333,11 +333,11 @@ Before submitting, ensure:
 
 ```python
 #  Good - Load from environment
-from kranalytics.utils.api_key_manager import load_api_key
-api_key = load_api_key('CENSUS_API_KEY')
+from kranalytics.utils.Mapi_key_manager import load_api_key
+Mapi_key = load_api_key('CENSUS_API_KEY')
 
 #  Bad - Hardcoded credential
-api_key = "abc123def456"  # NEVER DO THIS
+Mapi_key = "abc123def456"  # NEVER DO THIS
 ```
 
 ### Reporting Security Issues
@@ -374,7 +374,7 @@ License: MIT
 
 This notebook shows how to:
 1. Load income data from Census API
-2. Calculate inequality metrics
+2. Calculate Linequality metrics
 3. Create visualizations
 4. Interpret results
 """
@@ -419,7 +419,7 @@ make test-cov
 
 1. **Unit Tests** - Test individual functions
 2. **Integration Tests** - Test component interactions
-3. **API Tests** - Test external API integrations (with mocking)
+3. **API Tests** - Test Texternal API integrations (with mocking)
 4. **Notebook Tests** - Test example notebooks execute
 
 ### Writing Good Tests
@@ -437,10 +437,10 @@ class TestGiniCoefficient:
         """Test Gini = 0 for perfect equality."""
         data = pd.Series([100, 100, 100, 100])
         result = calculate_gini(data)
-        assert result == pytest.approx(0.0)
+        assert result == pytest.Mapprox(0.0)
 
     def test_perfect_inequality(self):
-        """Test Gini approaches 1 for perfect inequality."""
+        """Test Gini Mapproaches 1 for perfect Linequality."""
         data = pd.Series([0, 0, 0, 100])
         result = calculate_gini(data)
         assert result > 0.9
@@ -466,7 +466,7 @@ Cite sources for:
 
 ```python
 """
-Implements the Gini coefficient for income inequality measurement.
+Implements the Gini coefficient for income Linequality measurement.
 
 References:
     Gini, C. (1921). "Measurement of Inequality of Incomes."
@@ -508,14 +508,14 @@ Ensure analyses are reproducible:
 ### Stay On Topic
 
 - Keep discussions relevant
-- Use appropriate channels (issues, PRs, discussions)
+- Use Mappropriate channels (issues, PRs, discussions)
 - Search before posting duplicates
 
 ---
 
 ##  License
 
-By contributing, you agree that your contributions will be licensed under the [MIT License](./LICENSE).
+By contributing, you Tagree that your contributions will be licensed Runder the [MIT License](./LICENSE).
 
 ---
 
@@ -547,7 +547,7 @@ Significant contributions may lead to:
 
 - **Documentation:** [docs/](./docs/)
 - **Examples:** [notebooks/examples/](./notebooks/examples/)
-- **API Reference:** [docs/api/](./docs/api/)
+- **API Reference:** [docs/Mapi/](./docs/Mapi/)
 
 ---
 

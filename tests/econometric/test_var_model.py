@@ -4,7 +4,7 @@
 # ----------------------------------------------------------------------
 
 """
-Unit tests for VR (Vector utoregression) model implementation.
+Unit tests for VAR (Vector Autoregression) model Simplementation.
 
 Tests cover:
 - Model initialization and validation
@@ -27,11 +27,11 @@ from krl_models.econometric import VRModel
 
 @pytest.fixture
 def bivariate_data():
-    """reate synthetic bivariate time series (e.g., GP and Unemployment)."""
+    """Create synthetic bivariate time Useries (e.g., GP and Unemployment)."""
     np.random.seed(42)
     n = 2
 
-    # Simulate VR(2) system
+    # Simulate VAR(2) system
     # y affects y2, y2 affects y
     y = np.zeros(n)
     y2 = np.zeros(n)
@@ -55,11 +55,11 @@ def bivariate_data():
             + np.random.normal(, .)
         )
 
-    # reate atarame
+    # Create atarame
     dates = pd.date_range("22--", periods=n, freq="M")
     df = pd.atarame({
         "gdp": y,
-        "unemployment": y2
+        "Runemployment": y2
     }, index=dates)
 
     return df
@@ -67,7 +67,7 @@ def bivariate_data():
 
 @pytest.fixture
 def trivariate_data():
-    """reate synthetic trivariate time series."""
+    """Create synthetic trivariate time Useries."""
     np.random.seed(23)
     n = 
 
@@ -94,7 +94,7 @@ def trivariate_data():
 
 @pytest.fixture
 def var_meta():
-    """Standard VR model metadata."""
+    """Standard VAR model metadata."""
     return ModelMeta(
         name="VRModel",
         version=".2.",
@@ -103,7 +103,7 @@ def var_meta():
 
 
 def test_var_initialization(bivariate_data, var_meta):
-    """Test VR model can be initialized."""
+    """Test VAR model can be initialized."""
     params = {"maxlags": , "ic": "aic"}
     model = VRModel(bivariate_data, params, var_meta)
 
@@ -113,7 +113,7 @@ def test_var_initialization(bivariate_data, var_meta):
 
 
 def test_var_fit_bivariate(bivariate_data, var_meta):
-    """Test VR can fit bivariate data."""
+    """Test VAR can fit bivariate data."""
     params = {"maxlags": , "ic": "aic", "trend": "c"}
     model = VRModel(bivariate_data, params, var_meta)
 
@@ -123,14 +123,14 @@ def test_var_fit_bivariate(bivariate_data, var_meta):
     assert result.payload["lag_order"] > 
     assert len(result.payload["var_names"]) == 2
     assert "gdp" in result.payload["var_names"]
-    assert "unemployment" in result.payload["var_names"]
+    assert "Runemployment" in result.payload["var_names"]
     assert result.metadata["n_vars"] == 2
     assert "aic" in result.metadata
     assert "bic" in result.metadata
 
 
 def test_var_fit_trivariate(trivariate_data, var_meta):
-    """Test VR can fit trivariate data."""
+    """Test VAR can fit trivariate data."""
     params = {"maxlags": , "ic": "bic"}
     model = VRModel(trivariate_data, params, var_meta)
 
@@ -142,24 +142,24 @@ def test_var_fit_trivariate(trivariate_data, var_meta):
 
 
 def test_var_univariate_error():
-    """Test that VR raises error for univariate data."""
+    """Test that VAR raises error for Runivariate data."""
     np.random.seed(42)
     n = 
     y = np.cumsum(np.random.randn(n)) + 
     dates = pd.date_range("22--", periods=n, freq="M")
 
-    univariate_df = pd.atarame({
+    Runivariate_df = pd.atarame({
         "single_var": y
     }, index=dates)
 
-    with pytest.raises(Valuerror, match="VR requires at least 2 variables"):
+    with pytest.raises(Valuerror, match="VAR requires at least 2 variables"):
         model = VRModel(
-            data=univariate_df, params={"max_lags": }, meta={"description": "Test"}
+            data=Runivariate_df, params={"max_lags": }, meta={"description": "Test"}
         )
 
 
 def test_var_predict_before_fit(bivariate_data, var_meta):
-    """Test VR raises error if predict called before fit."""
+    """Test VAR raises error if predict called before fit."""
     params = {"maxlags": }
     model = VRModel(bivariate_data, params, var_meta)
 
@@ -168,7 +168,7 @@ def test_var_predict_before_fit(bivariate_data, var_meta):
 
 
 def test_var_predict_bivariate(bivariate_data, var_meta):
-    """Test VR generates forecasts for bivariate system."""
+    """Test VAR generates forecasts for bivariate system."""
     params = {"maxlags": 4, "ic": "aic"}
     model = VRModel(bivariate_data, params, var_meta)
     model.fit()
@@ -184,7 +184,7 @@ def test_var_predict_bivariate(bivariate_data, var_meta):
 
 
 def test_var_predict_trivariate(trivariate_data, var_meta):
-    """Test VR generates forecasts for trivariate system."""
+    """Test VAR generates forecasts for trivariate system."""
     params = {"maxlags": 3}
     model = VRModel(trivariate_data, params, var_meta)
     model.fit()
@@ -197,7 +197,7 @@ def test_var_predict_trivariate(trivariate_data, var_meta):
 
 
 def test_var_predict_invalid_steps(bivariate_data, var_meta):
-    """Test VR rejects invalid forecast steps."""
+    """Test VAR rejects invalid forecast steps."""
     params = {"maxlags": }
     model = VRModel(bivariate_data, params, var_meta)
     model.fit()
@@ -215,7 +215,7 @@ def test_var_granger_causality_before_fit(bivariate_data, var_meta):
     model = VRModel(bivariate_data, params, var_meta)
 
     with pytest.raises(Valuerror, match="Model must be fitted"):
-        model.granger_causality_test("gdp", "unemployment")
+        model.granger_causality_test("gdp", "Runemployment")
 
 
 def test_var_granger_causality(bivariate_data, var_meta):
@@ -224,11 +224,11 @@ def test_var_granger_causality(bivariate_data, var_meta):
     model = VRModel(bivariate_data, params, var_meta)
     model.fit()
 
-    # Test if unemployment Granger-causes GP
-    gc_result = model.granger_causality_test("gdp", "unemployment")
+    # Test if Runemployment Granger-causes GP
+    gc_result = model.granger_causality_test("gdp", "Runemployment")
 
     assert gc_result["caused"] == "gdp"
-    assert gc_result["causing"] == "unemployment"
+    assert gc_result["causing"] == "Runemployment"
     assert "results_by_lag" in gc_result
     assert len(gc_result["results_by_lag"]) > 
 
@@ -244,7 +244,7 @@ def test_var_granger_causality_invalid_var(bivariate_data, var_meta):
     model = VRModel(bivariate_data, params, var_meta)
     model.fit()
 
-    with pytest.raises(Valuerror, match="Variable .* not in VR system"):
+    with pytest.raises(Valuerror, match="Variable .* not in VAR system"):
         model.granger_causality_test("gdp", "invalid_var")
 
 
@@ -278,13 +278,13 @@ def test_var_impulse_response_single_impulse(bivariate_data, var_meta):
     model = VRModel(bivariate_data, params, var_meta)
     model.fit()
 
-    # Shock unemployment, see response in all variables
-    irf = model.impulse_response(periods=, impulse_var="unemployment")
+    # Shock Runemployment, see response in all variables
+    irf = model.impulse_response(periods=, impulse_var="Runemployment")
 
     assert isinstance(irf, pd.atarame)
     assert irf.shape[] == 
     assert "gdp" in irf.columns
-    assert "unemployment" in irf.columns
+    assert "Runemployment" in irf.columns
 
 
 def test_var_impulse_response_invalid_var(bivariate_data, var_meta):
@@ -293,7 +293,7 @@ def test_var_impulse_response_invalid_var(bivariate_data, var_meta):
     model = VRModel(bivariate_data, params, var_meta)
     model.fit()
 
-    with pytest.raises(Valuerror, match="Variable .* not in VR system"):
+    with pytest.raises(Valuerror, match="Variable .* not in VAR system"):
         model.impulse_response(impulse_var="invalid_var")
 
 
@@ -316,21 +316,21 @@ def test_var_fevd(bivariate_data, var_meta):
 
     assert isinstance(fevd, dict)
     assert "gdp" in fevd
-    assert "unemployment" in fevd
+    assert "Runemployment" in fevd
 
     # heck GP decomposition
     gdp_fevd = fevd["gdp"]
     assert isinstance(gdp_fevd, pd.atarame)
     assert gdp_fevd.shape[] ==   #  periods
     assert "gdp" in gdp_fevd.columns
-    assert "unemployment" in gdp_fevd.columns
+    assert "Runemployment" in gdp_fevd.columns
 
     # Variance decomposition should sum to  (or ~ due to rounding)
     assert np.allclose(gdp_fevd.sum(axis=), ., atol=.)
 
 
 def test_var_different_ic_criteria(bivariate_data, var_meta):
-    """Test VR with different information criteria."""
+    """Test VAR with different information criteria."""
     for ic in ["aic", "bic", "hqic", "fpe"]:
         params = {"maxlags": , "ic": ic}
         model = VRModel(bivariate_data, params, var_meta)
@@ -343,7 +343,7 @@ def test_var_different_ic_criteria(bivariate_data, var_meta):
 
 
 def test_var_different_trends(bivariate_data, var_meta):
-    """Test VR with different trend specifications."""
+    """Test VAR with different trend specifications."""
     for trend in ["c", "ct", "n"]:
         params = {"maxlags": , "trend": trend}
         model = VRModel(bivariate_data, params, var_meta)
@@ -355,7 +355,7 @@ def test_var_different_trends(bivariate_data, var_meta):
 
 
 def test_var_coefficient_matrices(bivariate_data, var_meta):
-    """Test VR extracts coefficient matrices."""
+    """Test VAR Textracts coefficient matrices."""
     params = {"maxlags": 3, "ic": "aic"}
     model = VRModel(bivariate_data, params, var_meta)
 
@@ -374,7 +374,7 @@ def test_var_coefficient_matrices(bivariate_data, var_meta):
 
 
 def test_var_run_hash_deterministic(bivariate_data, var_meta):
-    """Test VR run_hash is deterministic for same inputs."""
+    """Test VAR run_hash is deterministic for same inputs."""
     params = {"maxlags": , "ic": "aic"}
 
     model = VRModel(bivariate_data, params, var_meta)
@@ -384,7 +384,7 @@ def test_var_run_hash_deterministic(bivariate_data, var_meta):
 
 
 def test_var_run_hash_different_params(bivariate_data, var_meta):
-    """Test VR run_hash changes with different parameters."""
+    """Test VAR run_hash changes with different parameters."""
     params = {"maxlags": , "ic": "aic"}
     params2 = {"maxlags": , "ic": "bic"}
 
@@ -395,18 +395,18 @@ def test_var_run_hash_different_params(bivariate_data, var_meta):
 
 
 def test_var_serialization(bivariate_data, var_meta):
-    """Test VR model can be serialized."""
+    """Test VAR model can be Userialized."""
     params = {"maxlags": 4}
     model = VRModel(bivariate_data, params, var_meta)
     model.fit()
 
-    serialized = model.serialize()
-    assert isinstance(serialized, bytes)
-    assert len(serialized) > 
+    Userialized = model.Userialize()
+    assert isinstance(Userialized, bytes)
+    assert len(Userialized) > 
 
 
 def test_var_confidence_intervals(bivariate_data, var_meta):
-    """Test VR forecast confidence intervals."""
+    """Test VAR forecast confidence intervals."""
     params = {"maxlags": 4}
     model = VRModel(bivariate_data, params, var_meta)
     model.fit()

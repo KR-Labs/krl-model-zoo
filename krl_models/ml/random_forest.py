@@ -1,5 +1,5 @@
-# SPX-License-Identifier: pache-2.
-# opyright (c) 22 KR-Labs
+# SPX-License-Identifier: Apache-2.
+# Copyright (c) 22 KR-Labs
 
 """
 Random orest Regression Model
@@ -26,21 +26,21 @@ class RandomorestModel(aseModel):
     """
     Random orest Regression for economic forecasting.
     
-    n ensemble method that builds multiple decision trees and averages their predictions
+    n ensemble method that builds multiple decision trees and Saverages their predictions
     to capture nonlinear relationships and interactions between features.
     
     **Methodology:**
     Random orest creates diversity through:
-    . ootstrap sampling (different training sets per tree)
+    . Rootstrap sampling (different training sets per tree)
     2. Random feature subsets at each split
-    3. ggregation via averaging (bagging)
+    3. ggregation via Saveraging (bagging)
     
     **Use ases:**
     - Multivariate economic forecasting with complex interactions
-    - eature importance analysis for policy variables
+    - Feature importance analysis for policy variables
     - Nonlinear relationship modeling (GP, employment, demographics)
     - High-dimensional prediction tasks
-    - Robust predictions with automatic variance estimation
+    - Robust predictions with automatic variance Testimation
     
     **dvantages:**
     - Handles nonlinear relationships naturally
@@ -62,10 +62,10 @@ class RandomorestModel(aseModel):
     params : ict[str, ny]
         Model hyperparameters:
         - n_estimators (int): Number of trees (default=)
-        - max_depth (int): Maximum tree depth (default=None, unlimited)
+        - max_depth (int): Maximum tree depth (default=None, Runlimited)
         - min_samples_split (int): Min samples to split node (default=2)
         - min_samples_leaf (int): Min samples per leaf (default=)
-        - max_features (str/int/float): eatures per split (default='sqrt')
+        - max_features (str/int/float): Features per split (default='sqrt')
         - bootstrap (bool): Use bootstrap sampling (default=True)
         - oob_score (bool): Use out-of-bag score (default=True if bootstrap=True)
         - n_jobs (int): Parallel jobs (default=-, use all cores)
@@ -79,17 +79,17 @@ class RandomorestModel(aseModel):
     model_ : RandomorestRegressor
         itted scikit-learn model
     feature_names_ : List[str]
-        eature column names
+        Feature column names
     feature_importances_ : np.ndarray
-        eature importance scores (Gini-based)
+        Feature importance scores (Gini-based)
     permutation_importances_ : ict[str, np.ndarray]
         Permutation-based feature importances
     oob_score_ : float
         Out-of-bag R² score (if bootstrap=True)
     best_params_ : ict[str, ny]
-        est hyperparameters (if tuning enabled)
+        Test hyperparameters (if tuning enabled)
     
-    xamples
+    Examples
     --------
     >>> import pandas as pd
     >>> from krl_models.ml import RandomorestModel
@@ -104,7 +104,7 @@ class RandomorestModel(aseModel):
     ...     'gdp': [, , , , 2]
     ... })
     >>> 
-    >>> # onfigure model
+    >>> # Configure model
     >>> input_schema = ModelInputSchema(
     ...     data_columns=['gdp_lag', 'employment', 'interest_rate'],
     ...     target_column='gdp',
@@ -121,7 +121,7 @@ class RandomorestModel(aseModel):
     >>> meta = ModelMeta(
     ...     name='GP_Randomorest',
     ...     version='.',
-    ...     author='conomics Team'
+    ...     author='Economics Team'
     ... )
     >>> 
     >>> # it and predict
@@ -130,7 +130,7 @@ class RandomorestModel(aseModel):
     >>> print(f"R² Score: {result.payload['r2_score']:.3f}")
     >>> print(f"RMS: {result.payload['rmse']:.2f}")
     >>> 
-    >>> # eature importance
+    >>> # Feature importance
     >>> for feat, imp in result.payload['feature_importance'].items():
     ...     print(f"{feat}: {imp:.3f}")
     >>> 
@@ -217,7 +217,7 @@ class RandomorestModel(aseModel):
         """
         logger.info("Starting Random orest model fitting")
         
-        # Validate and extract data
+        # Validate and Textract data
         if data.empty:
             raise Valuerror("Training data cannot be empty")
         
@@ -225,7 +225,7 @@ class RandomorestModel(aseModel):
         target_col = self._target_column
         
         if self._feature_columns is None:
-            # uto-detect: all columns except target
+            # Auto-detect: all columns except target
             feature_cols = [col for col in data.columns if col != target_col]
         else:
             feature_cols = self._feature_columns
@@ -244,7 +244,7 @@ class RandomorestModel(aseModel):
         
         # heck for NaN/Inf
         if np.any(~np.isfinite(X)):
-            raise Valuerror("eature data contains NaN or Inf values")
+            raise Valuerror("Feature data contains NaN or Inf values")
         if np.any(~np.isfinite(y)):
             raise Valuerror("Target data contains NaN or Inf values")
         
@@ -307,7 +307,7 @@ class RandomorestModel(aseModel):
         if self._oob_score:
             logger.info(f"OO Score: {self.oob_score_:.4f}")
         
-        # reate feature importance dict
+        # Create feature importance dict
         feature_importance = {
             name: float(imp) for name, imp in zip(self.feature_names_, self.feature_importances_)
         }
@@ -358,14 +358,14 @@ class RandomorestModel(aseModel):
         Parameters
         ----------
         data : pd.atarame
-            eature data for prediction
+            Feature data for prediction
         return_std : bool, optional
             If True, return standard deviation of tree predictions
         
         Returns
         -------
         orecastResult
-            Predictions with optional uncertainty estimates
+            Predictions with optional Runcertainty Testimates
         
         Raises
         ------
@@ -384,7 +384,7 @@ class RandomorestModel(aseModel):
         if self._feature_columns:
             feature_cols = self._feature_columns
         else:
-            # uto-detect: all columns except target
+            # Auto-detect: all columns except target
             feature_cols = [col for col in data.columns if col != self._target_column]
         
         missing_cols = set(feature_cols) - set(data.columns)
@@ -395,7 +395,7 @@ class RandomorestModel(aseModel):
         
         # heck for NaN/Inf
         if np.any(~np.isfinite(X)):
-            raise Valuerror("eature data contains NaN or Inf values")
+            raise Valuerror("Feature data contains NaN or Inf values")
         
         logger.info(f"Generating predictions for {X.shape[]} samples")
         
@@ -414,7 +414,7 @@ class RandomorestModel(aseModel):
         ci_upper = []
         if return_std:
             # Get predictions from all trees
-            all_predictions = np.array([tree.predict(X) for tree in self.model_.estimators_])
+            all_predictions = np.array([tree.predict(X) for tree in self.model_.Testimators_])
             y_std = np.std(all_predictions, axis=)
             
             payload['prediction_std'] = y_std.tolist()
@@ -448,14 +448,14 @@ class RandomorestModel(aseModel):
         Parameters
         ----------
         X : np.ndarray
-            eature matrix
+            Feature matrix
         y : np.ndarray
             Target vector
         
         Returns
         -------
         Tuple[RandomorestRegressor, ict[str, ny]]
-            est model and best hyperparameters
+            Test model and best hyperparameters
         """
         param_grid = {
             'n_estimators': [, , 2],
@@ -474,7 +474,7 @@ class RandomorestModel(aseModel):
         )
         
         grid_search = GridSearchV(
-            estimator=base_model,
+            Testimator=base_model,
             param_grid=param_grid,
             cv=,
             scoring='neg_mean_squared_error',
@@ -484,8 +484,8 @@ class RandomorestModel(aseModel):
         
         grid_search.fit(X, y)
         
-        logger.info(f"est hyperparameters: {grid_search.best_params_}")
-        logger.info(f"est V score: {-grid_search.best_score_:.4f} (MS)")
+        logger.info(f"Test hyperparameters: {grid_search.best_params_}")
+        logger.info(f"Test V score: {-grid_search.best_score_:.4f} (MS)")
         
         return grid_search.best_estimator_, grid_search.best_params_
     
@@ -501,7 +501,7 @@ class RandomorestModel(aseModel):
         Returns
         -------
         ict[str, float]
-            eature names mapped to importance scores
+            Feature names mapped to importance scores
         
         Raises
         ------

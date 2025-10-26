@@ -1,5 +1,5 @@
-# SPX-License-Identifier: pache-2.
-# opyright (c) 22 KR-Labs
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2024 KR-Labs
 
 """
 Machine Learning Models Module
@@ -7,13 +7,13 @@ Machine Learning Models Module
 Provides ML regression models for economic forecasting and prediction.
 """
 
-from krl_models.ml.random_forest import RandomorestModel
-from krl_models.ml.xgboost_model import XGoostModel
+from krl_models.ml.random_forest import RandomForestModel
+from krl_models.ml.xgboost_model import XGBoostModel
 from krl_models.ml.regularized_regression import RidgeModel, LassoModel
 
 __all__ = [
-    'RandomorestModel',
-    'XGoostModel',
+    'RandomForestModel',
+    'XGBoostModel',
     'RidgeModel',
     'LassoModel',
 ]

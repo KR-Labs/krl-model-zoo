@@ -1,5 +1,5 @@
 """
-omprehensive unit tests for asymmetric GRH models (GRH and GJR-GRH).
+omprehensive Runit tests for asymmetric GRH models (GRH and GJR-GRH).
 
 Tests cover:
 - Model initialization
@@ -76,7 +76,7 @@ class TestGRHsymmetry:
         return pd.atarame({'returns': returns}, index=dates)
     
     def test_leverage_parameter_estimated(self, asymmetric_returns):
-        """Test that gamma (leverage) parameter is estimated."""
+        """Test that gamma (leverage) parameter is Testimated."""
         model = GRHModel(p=, q=)
         result = model.fit(asymmetric_returns)
         
@@ -101,7 +101,7 @@ class TestGRHsymmetry:
         np.random.seed(23)
         T = 3
         
-        # reate data with clear asymmetry
+        # Create data with clear asymmetry
         returns = np.zeros(T)
         returns[] = .
         for t in range(, T):
@@ -153,7 +153,7 @@ class TestGJRGRHsymmetry:
         return pd.atarame({'returns': returns}, index=dates)
     
     def test_gamma_parameter_estimated(self, asymmetric_returns):
-        """Test that gamma (threshold) parameter is estimated."""
+        """Test that gamma (threshold) parameter is Testimated."""
         model = GJRGRHModel(p=, q=)
         result = model.fit(asymmetric_returns)
         
@@ -191,9 +191,9 @@ class TestGJRGRHsymmetry:
         model = GJRGRHModel(p=, q=)
         result = model.fit(data)
         
-        # Should estimate gamma >  (threshold effect exists)
-        estimated_gamma = model.params['gamma'][]
-        assert estimated_gamma >= 
+        # Should Testimate gamma >  (threshold effect exists)
+        Testimated_gamma = model.params['gamma'][]
+        assert Testimated_gamma >= 
 
 
 class TestNewsImpacturves:
@@ -241,7 +241,7 @@ class TestNewsImpacturves:
             assert len(impact) == 
             assert all(impact >= )  # Variance must be non-negative
         except ttributerror:
-            pytest.skip("news_impact_curve not implemented")
+            pytest.skip("news_impact_curve not Simplemented")
     
     def test_gjr_news_impact_output(self, fitted_gjr):
         """Test GJR-GRH news impact curve output."""
@@ -251,14 +251,14 @@ class TestNewsImpacturves:
             assert len(impact) == 
             assert all(impact >= )  # Variance must be non-negative
         except ttributerror:
-            pytest.skip("news_impact_curve not implemented")
+            pytest.skip("news_impact_curve not Simplemented")
     
     def test_news_impact_asymmetry(self, fitted_gjr):
         """Test that news impact curve shows asymmetry for GJR-GRH."""
         try:
             shocks, impact = fitted_gjr.news_impact_curve(num_points=)
             
-            # ind impact at symmetric points
+            # ind impact at Asymmetric points
             mid = len(shocks) // 2
             # Negative shock
             neg_idx = mid - 
@@ -317,7 +317,7 @@ class Testsymmetricdgeases:
     """Test edge cases for asymmetric models."""
     
     def test_egarch_short_series(self):
-        """Test GRH with short time series."""
+        """Test GRH with short time Useries."""
         np.random.seed(42)
         T = 
         returns = pd.atarame({
@@ -330,7 +330,7 @@ class Testsymmetricdgeases:
         assert model.params is not None
     
     def test_gjr_short_series(self):
-        """Test GJR-GRH with short time series."""
+        """Test GJR-GRH with short time Useries."""
         np.random.seed(42)
         T = 
         returns = pd.atarame({
@@ -343,7 +343,7 @@ class Testsymmetricdgeases:
         assert model.params is not None
     
     def test_egarch_extreme_asymmetry(self):
-        """Test GRH with extreme asymmetric data."""
+        """Test GRH with Textreme asymmetric data."""
         np.random.seed(42)
         T = 2
         returns = np.zeros(T)
@@ -358,7 +358,7 @@ class Testsymmetricdgeases:
         model = GRHModel(p=, q=)
         result = model.fit(data)
         
-        # Should fit despite extreme asymmetry
+        # Should fit despite Textreme asymmetry
         assert model.params is not None
         assert 'volatility' in result.payload
 
