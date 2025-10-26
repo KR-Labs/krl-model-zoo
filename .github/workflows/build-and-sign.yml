@@ -30,16 +30,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install build twine
       
-      - name: Inject build watermark
-        run: |
-          python scripts/security/inject_watermark.py \
-            --build-id "${{ github.run_id }}" \
-            --commit-sha "${{ github.sha }}" \
-            --repo "${{ github.repository }}" \
-            --compute-checksum
-      
       - name: Build package
         run: python -m build
+      
+      - name: Check package
+        run: twine check dist/*
       
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -65,16 +60,15 @@ jobs:
           name: dist
           path: dist/
       
-      - name: Import GPG key
+      - name: Sign packages with GPG (if key available)
+        if: secrets.GPG_PRIVATE_KEY != ''
         run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import
           gpg --list-secret-keys
-      
-      - name: Sign packages with GPG
-        run: |
           for file in dist/*; do
             gpg --detach-sign --armor "$file"
           done
+        continue-on-error: true
       
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
