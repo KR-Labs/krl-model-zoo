@@ -3,32 +3,32 @@
 # KR-Labs™ is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: MIT
+# SPDX-License-Identifier: MIT
 
 """
-SRIM (Seasonal RIM) Model Implementation.
+SARIMA (Seasonal ARIMA) Model Implementation.
 
-xtends RIM with seasonal components for time series with periodic patterns.
-Ideal for quarterly GP, monthly employment, tourism data with holidays.
+Extends ARIMA with seasonal components for time series with periodic patterns.
+Ideal for quarterly GDP, monthly employment, tourism data with holidays.
 """
 
 from typing import Optional
 
 import pandas as pd
-from statsmodels.tsa.statespace.sarimax import SRIMX
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 from krl_core import BaseModel, ForecastResult, ModelInputSchema, ModelMeta
 
 
-class SRIMModel(BaseModel):
+class SARIMAModel(BaseModel):
     """
-    Seasonal RIM (SRIM) time series forecasting model.
+    Seasonal ARIMA (SARIMA) time series forecasting model.
 
-    Wraps statsmodels SRIMX with KRL interfaces for standardized
+    Wraps statsmodels SARIMAX with KRL interfaces for standardized
     input validation, reproducibility tracking, and visualization.
 
-    SRIM extends RIM with seasonal components:
-    - (p, d, q): Non-seasonal order (R, differencing, M)
+    SARIMA extends ARIMA with seasonal components:
+    - (p, d, q): Non-seasonal order (AR, differencing, MA)
     - (P, , Q, s): Seasonal order (seasonal R, differencing, M, period)
 
     xample seasonal patterns:
@@ -39,13 +39,13 @@ class SRIMModel(BaseModel):
     Parameters:
         input_schema: Validated time series input
         params: ictionary with keys:
-            - order: (p, d, q) tuple for RIM order
+            - order: (p, d, q) tuple for ARIMA order
             - seasonal_order: (P, , Q, s) tuple for seasonal components
             - trend: Trend component ('n', 'c', 't', 'ct') default='c'
         meta: Model metadata (name, version, author)
 
     ttributes:
-        _fitted_model: Statsmodels SRIMX results object
+        _fitted_model: Statsmodels SARIMAX results object
         _is_fitted: Training state flag
 
     xample:
@@ -55,7 +55,7 @@ class SRIMModel(BaseModel):
         ...     "seasonal_order": (, , , 2),  # Monthly with annual seasonality
         ...     "trend": "c"
         ... }
-        >>> model = SRIMModel(input_schema, params, meta)
+        >>> model = SARIMAModel(input_schema, params, meta)
         >>> fit_result = model.fit()
         >>> forecast = model.predict(steps=2)
     """
@@ -67,7 +67,7 @@ class SRIMModel(BaseModel):
         meta: ModelMeta,
     ):
         """
-        Initialize SRIM model.
+        Initialize SARIMA model.
 
         rgs:
             input_schema: Validated time series data
@@ -91,9 +91,9 @@ class SRIMModel(BaseModel):
 
     def fit(self) -> ForecastResult:
         """
-        it SRIM model to input data.
+        it SARIMA model to input data.
 
-        Uses statsmodels SRIMX with maximum likelihood estimation.
+        Uses statsmodels SARIMAX with maximum likelihood estimation.
         Handles seasonal differencing and moving average components.
 
         Returns:
@@ -120,8 +120,8 @@ class SRIMModel(BaseModel):
                 f"Need at least {seasonal_period * 2} observations, got {len(df)}"
             )
 
-        # it SRIMX model
-        model = SRIMX(
+        # it SARIMAX model
+        model = SARIMAX(
             df["value"],
             order=order,
             seasonal_order=seasonal_order,
@@ -259,13 +259,13 @@ class SRIMModel(BaseModel):
         if not self._is_fitted:
             raise ValueError("Model must be fitted before decomposition")
 
-        seasonal_period = self.params.get("seasonal_order", (, , , ))[3]
+        seasonal_period = self.params.get("seasonal_order", (0, 0, 0, 0))[3]
         if seasonal_period == 0:
             return None
 
         # Extract seasonal component from fitted model
-        # Note: statsmodels SRIMX doesn't directly expose seasonal decomposition
-        # This would require additional STL or X-3 decomposition
+        # Note: statsmodels SARIMAX doesn't directly expose seasonal decomposition
+        # This would require additional STL or X-13 decomposition
         return {
             "seasonal_period": seasonal_period,
             "message": "Use statsmodels seasonal_decompose() for detailed decomposition",

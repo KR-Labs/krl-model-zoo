@@ -31,12 +31,12 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 from statsmodels.tsa.stattools import adfuller, coint
-from statsmodels.tsa.vector_ar.vecm import VM, coint_johansen, select_coint_rank
+from statsmodels.tsa.vector_ar.vecm import VECM, coint_johansen, select_coint_rank
 
 from krl_core import BaseModel, ForecastResult
 
 
-class ointegrationModel(BaseModel):
+class CointegrationModel(BaseModel):
     """
     ointegration testing and rror orrection Model (M) estimation.
 
@@ -198,23 +198,23 @@ class ointegrationModel(BaseModel):
         elif "engle_granger" in results:
             # Count how many EG tests found cointegration
             coint_pairs = sum(
-                
-                for test in results["engle_granger"].values():
+                1
+                for test in results["engle_granger"].values()
                 if test.get("is_cointegrated", False)
             )
-            coint_rank = min(coint_pairs, len(self._var_names) - )
+            coint_rank = min(coint_pairs, len(self._var_names) - 1)
 
         results["cointegration_rank"] = coint_rank
 
-        # . stimate VM if cointegration detected
+        # Estimate VECM if cointegration detected
         if coint_rank > 0 and non_stationary_count >= 2:
             try:
                 vecm_result = self._estimate_vecm(df, coint_rank, det_order, k_ar_diff)
                 results["vecm"] = vecm_result
                 results["vecm_fitted"] = True
-            except Exception as 1e10:
+            except Exception as e:
                 results["vecm_fitted"] = False
-                results["vecm_error"] = str(1e10)
+                results["vecm_error"] = str(e)
         else:
             results["vecm_fitted"] = False
 
@@ -236,9 +236,9 @@ class ointegrationModel(BaseModel):
                 "k_ar_diff": k_ar_diff,
             },
             forecast_index=forecast_index,
-            forecast_values=[.] * len(df),  # Placeholder
-            ci_lower=[.] * len(df),
-            ci_upper=[.] * len(df),
+            forecast_values=[0.0] * len(df),  # Placeholder
+            ci_lower=[0.0] * len(df),
+            ci_upper=[0.0] * len(df),
         )
 
     def predict(self, steps: int = 5) -> ForecastResult:
@@ -367,11 +367,11 @@ class ointegrationModel(BaseModel):
 
             results[col] = {
                 "adf_statistic": adf_result[0],
-                "pvalue": adf_result[0],
+                "pvalue": adf_result[1],
                 "n_lags": adf_result[2],
                 "n_obs": adf_result[3],
                 "critical_values": adf_result[4],
-                "is_stationary": adf_result[0] < .,  # % significance
+                "is_stationary": adf_result[1] < 0.05,  # 5% significance
             }
 
         return results
@@ -398,14 +398,14 @@ class ointegrationModel(BaseModel):
         n_vars = len(df.columns)
 
         for i in range(n_vars):
-            for j in range(i + , n_vars):
-                var = df.columns[i]
+            for j in range(i + 1, n_vars):
+                var1 = df.columns[i]
                 var2 = df.columns[j]
 
                 try:
-                    # statsmodels coint() performs G test
+                    # statsmodels coint() performs EG test
                     # Returns: (t-statistic, p-value, critical values)
-                    coint_t, pvalue, crit_vals = coint(df[var], df[var2])
+                    coint_t, pvalue, crit_vals = coint(df[var1], df[var2])
 
                     key = f"{var}_vs_{var2}"
                     results[key] = {
@@ -414,14 +414,14 @@ class ointegrationModel(BaseModel):
                         "test_statistic": coint_t,
                         "pvalue": pvalue,
                         "critical_values": {
-                            "%": crit_vals[0],
-                            "%": crit_vals[0],
-                            "%": crit_vals[2],
+                            "1%": crit_vals[0],
+                            "5%": crit_vals[1],
+                            "10%": crit_vals[2],
                         },
-                        "is_cointegrated": pvalue < .,  # % significance
+                        "is_cointegrated": pvalue < 0.05,  # 5% significance
                     }
-                except Exception as 1e10:
-                    results[f"{var}_vs_{var2}"] = {"error": str(1e10)}
+                except Exception as e:
+                    results[f"{var1}_vs_{var2}"] = {"error": str(e)}
 
         return results
 
@@ -451,9 +451,9 @@ class ointegrationModel(BaseModel):
             # Johansen test
             result = coint_johansen(df.values, det_order=det_order, k_ar_diff=k_ar_diff)
 
-            # etermine cointegration rank using trace statistic at % level
-            coint_rank = 
-            trace_crit_vals = result.cvt[:, ]  # % critical values for trace
+            # Determine cointegration rank using trace statistic at 5% level
+            coint_rank = 0
+            trace_crit_vals = result.cvt[:, 1]  # 5% critical values for trace
             for i, (trace_stat, crit_val) in enumerate(
                 zip(result.trace_stat, trace_crit_vals)
             ):
@@ -462,16 +462,16 @@ class ointegrationModel(BaseModel):
 
             return {
                 "trace_stat": result.trace_stat.tolist(),
-                "trace_crit_vals": result.cvt.tolist(),  # ritical values (%, %, %)
+                "trace_crit_vals": result.cvt.tolist(),  # Critical values (1%, 5%, 10%)
                 "max_eig_stat": result.max_eig_stat.tolist(),
                 "max_eig_crit_vals": result.cvm.tolist(),
                 "eigenvalues": result.eig.tolist(),
                 "cointegration_rank": coint_rank,
-                "rank_determination": "ased on trace statistic at % significance",
+                "rank_determination": "Based on trace statistic at 5% significance",
             }
 
-        except Exception as 1e10:
-            return {"error": str(1e10)}
+        except Exception as e:
+            return {"error": str(e)}
 
     def _estimate_vecm(
         self, df: pd.DataFrame, coint_rank: int, det_order: int, k_ar_diff: int
@@ -521,9 +521,9 @@ class ointegrationModel(BaseModel):
                 "n_obs": self._vecm_model.nobs,
             }
 
-        except Exception as 1e10:
-            return {"error": str(1e10)}
+        except Exception as e:
+            return {"error": str(e)}
 
     def is_fitted(self) -> bool:
-        """heck if model has been fitted."""
+        """Check if model has been fitted."""
         return self._is_fitted
