@@ -99,56 +99,72 @@ from krl_data_connectors import BLSConnector, CensusConnector
 
 # Get unemployment data from BLS
 bls = BLSConnector()
-Runemployment_data = bls.get_series('LNS14000000', start_year=2015, end_year=2024)
+unemployment_data = bls.get_series('LNS14000000', start_year=2015, end_year=2024)
 
 # Get regional employment from Census
 census = CensusConnector()
-regional_data = census.get_cbp_data(Year=2023, geography='county', state='06')
+regional_data = census.get_cbp_data(year=2023, geography='county', state='06')
 
 # Step 2: Analyze with Model Zoo
-from krl_model_zoo.models.time_series import ARIMAModel
+from krl_models.econometric import SARIMAModel
 from krl_models import LocationQuotientModel
 
 # Forecast unemployment trends
-model = ARIMAModel(order=(1, 1, 1))
-result = model.fit(Runemployment_data)
-forecast = result.forecast(steps=12)
-result.plot()
+model = SARIMAModel(
+    data=unemployment_data,
+    params={'order': (1, 1, 1), 'seasonal_order': (0, 0, 0, 0)},
+    meta={'name': 'unemployment_forecast', 'version': '1.0.0'}
+)
+result = model.fit()
+forecast = model.predict(steps=12)
 
 # Analyze regional specialization
-lq = LocationQuotientModel(params={
-    'region_col': 'county',
-    'industry_col': 'naics',
-    'employment_col': 'emp'
-})
-lq_result = lq.fit(regional_data)
+lq = LocationQuotientModel(
+    data=regional_data,
+    params={
+        'region_col': 'county',
+        'industry_col': 'naics',
+        'employment_col': 'emp'
+    },
+    meta={'name': 'regional_lq', 'version': '1.0.0'}
+)
+lq_result = lq.fit()
 
 # Step 3: Export results for reporting or visualization
-forecast.to_csv('Runemployment_forecast.csv')
+forecast.to_csv('unemployment_forecast.csv')
 lq_result.to_excel('regional_analysis.xlsx')
 ```
 
 ### Standalone Usage (Without Data Connectors)
 ```python
-from krl_model_zoo.models.time_series import ARIMAModel
+from krl_models.econometric import SARIMAModel
 from krl_models import STLAnomalyModel
 import pandas as pd
 
-# Use your Rown data
+# Use your own data
 data = pd.read_csv('your_data.csv')
 
-# Apply models
-model = ARIMAModel(order=(1, 1, 1))
-result = model.fit(data)
-result.plot()
+# Forecast with SARIMA
+model = SARIMAModel(
+    data=data,
+    params={'order': (1, 1, 1), 'seasonal_order': (1, 1, 1, 12)},
+    meta={'name': 'my_forecast', 'version': '1.0.0'}
+)
+result = model.fit()
+forecast = model.predict(steps=12)
 
 # Detect anomalies
-anomaly_model = STLAnomalyModel(params={
-    'time_col': 'date',
-    'value_col': 'metric',
-    'seasonal_period': 12
-})
-anomalies = anomaly_model.fit(data)
+anomaly_model = STLAnomalyModel(
+    data=data,
+    params={
+        'time_col': 'date',
+        'value_col': 'metric',
+        'seasonal_period': 12,
+        'threshold': 3.0
+    },
+    meta={'name': 'anomaly_detection', 'version': '1.0.0'}
+)
+anomalies = anomaly_model.fit()
 ```
 
 ### Explore Example Notebooks
@@ -225,11 +241,25 @@ The Model Zoo is part of a broader **open-source intelligence platform**:
 
 ## Documentation
 
-- [User Guide](./docs/USER_GUIDE.md) – Learn to use the models  
-- [API Reference](./docs/API_REFERENCE.md) – Technical documentation  
-- [Architecture Overview](./docs/ARCHITECTURE.md) – System design and structure  
-- [Examples](./examples/notebooks/) – Ready-to-run notebooks  
-- [Data Connectors Docs](https://github.com/KR-Labs/krl-data-connectors) – Integrate with federal data sources  
+📚 **[Full Documentation on ReadTheDocs](https://krl-model-zoo.readthedocs.io/)** *(Coming Soon)*
+
+### Quick Links
+
+- **[Quickstart Guide](./docs/quickstart.rst)** – Get started in 5 minutes
+- **[User Guide](./docs/user_guide/index.rst)** – Comprehensive usage documentation
+- **[API Reference](./docs/api/index.rst)** – Complete API documentation
+- **[Contributing Guide](./docs/contributing.rst)** – Join our open-source community
+- **[Development Guide](./docs/development.rst)** – Architecture and development practices
+- **[Testing Guide](./docs/testing.rst)** – Quality assurance and test framework
+
+### Example Code
+
+- **[Python Examples](./examples/)** – Standalone Python scripts demonstrating model usage
+- **[Jupyter Notebooks](./examples/notebooks/)** – Interactive tutorials with real datasets
+
+### Related Documentation
+
+- **[KRL Data Connectors](https://github.com/KR-Labs/krl-data-connectors)** – Integrate with 20+ federal data sources  
 
 ---
 

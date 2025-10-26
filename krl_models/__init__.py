@@ -1,27 +1,27 @@
-# SPX-License-Identifier: Apache-2.
-# Copyright (c) 22 KR-Labs
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2025 KR-Labs
 
 """
-KRL Models - omain-specific model Simplementations.
+KRL Models - Domain-specific model implementations.
 
 This package contains specialized models organized by analytical domain:
-- econometric: lassical econometric models (SARIMA, VAR, etc.)
-- causal: ausal inference models (i, R, etc.)
-- ml: Machine learning models (R, XGBoost, etc.)
+- econometric: Classical econometric models (SARIMA, VAR, etc.)
+- causal: Causal inference models (DiD, RDD, etc.)
+- ml: Machine learning models (RF, XGBoost, etc.)
 - regional: Regional specialization tools (LQ, shift-share)
-- anomaly: Anomaly detection methods (STL, Isolation orest)
+- anomaly: Anomaly detection methods (STL, Isolation Forest)
 """
 
-__version__ = ".2.-dev"
+__version__ = "0.2.0-dev"
 
 # Import regional models for convenience
 from krl_models.regional import LocationQuotientModel, ShiftShareModel
 # Import anomaly detection models
-from krl_models.anomaly import STLAnomalyModel, IsolationForestnomalyModel
+from krl_models.anomaly import STLAnomalyModel, IsolationForestAnomalyModel
 
 __all__ = [
     'LocationQuotientModel',
     'ShiftShareModel',
     'STLAnomalyModel',
-    'IsolationForestnomalyModel',
+    'IsolationForestAnomalyModel',
 ]
