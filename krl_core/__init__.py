@@ -16,11 +16,12 @@ diverse analytical domains.
 from krl_core.base_model import BaseModel, ModelMetadata
 from krl_core.model_input_schema import ModelInputSchema, Provenance
 from krl_core.model_registry import ModelRegistry
-from krl_core.plotly_adapter import PlotlySchemaAdapter
+from krl_core.plotly_adapter import PlotlyAdapter
 from krl_core.results import BaseResult, CausalResult, ClassificationResult, ForecastResult
 
-# Alias for backwards compatibility
+# Aliases for backwards compatibility
 ModelMeta = ModelMetadata
+PlotlySchemaAdapter = PlotlyAdapter
 
 __version__ = "1.0.0"
 __all__ = [
@@ -34,5 +35,6 @@ __all__ = [
     "CausalResult",
     "ClassificationResult",
     "ModelRegistry",
-    "PlotlySchemaAdapter",
+    "PlotlyAdapter",
+    "PlotlySchemaAdapter",  # Backwards compatibility alias
 ]

@@ -17,9 +17,53 @@ Ensures type safety and provides feature engineering utilities.
 """
 
 from typing import Dict, Any, Optional, List, Union
+from datetime import datetime
 import numpy as np
 import pandas as pd
 from pydantic import BaseModel, Field, field_validator
+
+
+class Provenance(BaseModel):
+    """
+    Data provenance tracking for model inputs.
+    
+    Tracks the origin, collection date, and transformations applied to data.
+    Essential for reproducibility and audit trails.
+    
+    Attributes
+    ----------
+    source_name : str
+        Name of data source (e.g., "BLS", "FRED", "Internal DB")
+    series_id : str, optional
+        Unique identifier for the data series
+    collection_date : datetime
+        When the data was collected/accessed
+    transformation : str, optional
+        Description of transformations applied (e.g., "log", "diff", "seasonal_adj")
+    url : str, optional
+        URL to data source or API endpoint
+    notes : str, optional
+        Additional notes about data provenance
+    
+    Examples
+    --------
+    >>> prov = Provenance(
+    ...     source_name="FRED",
+    ...     series_id="UNRATE",
+    ...     collection_date=datetime.now(),
+    ...     transformation="None",
+    ...     url="https://fred.stlouisfed.org/series/UNRATE"
+    ... )
+    """
+    source_name: str
+    series_id: Optional[str] = None
+    collection_date: datetime
+    transformation: Optional[str] = None
+    url: Optional[str] = None
+    notes: Optional[str] = None
+    
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class ModelInputSchema(BaseModel):
