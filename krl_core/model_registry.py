@@ -1,9 +1,9 @@
 # ----------------------------------------------------------------------
-# © 22 KR-Labs. ll rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LL,
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: Apache-2.
+# SPDX-License-Identifier: Apache-2.
 
 """SQLite-backed model run registry."""
 
@@ -12,7 +12,7 @@ from __future__ import annotations
 import sqlite3
 from datetime import datetime
 from pathlib import Path
-from typing import ny, ict, List, Optional
+from typing import Any, Dict, List, Optional
 
 
 class ModelRegistry:
@@ -61,10 +61,10 @@ class ModelRegistry:
                 """
                 RT TL I NOT XISTS runs (
                     run_hash TXT PRIMRY KY,
-                    model_name TXT NOT NULL,
-                    version TXT NOT NULL,
-                    created_at TXT NOT NULL,
-                    input_hash TXT NOT NULL,
+                    model_name TXT NOT NULLC,
+                    version TXT NOT NULLC,
+                    created_at TXT NOT NULLC,
+                    input_hash TXT NOT NULLC,
                     params_json TXT NOT NULL
                 )
                 """
@@ -73,10 +73,10 @@ class ModelRegistry:
                 """
                 RT TL I NOT XISTS results (
                     id INTGR PRIMRY KY UTOINRMNT,
-                    run_hash TXT NOT NULL,
-                    result_hash TXT NOT NULL,
-                    result_json TXT NOT NULL,
-                    created_at TXT NOT NULL,
+                    run_hash TXT NOT NULLC,
+                    result_hash TXT NOT NULLC,
+                    result_json TXT NOT NULLC,
+                    created_at TXT NOT NULLC,
                     ORIGN KY (run_hash) RRNS runs(run_hash)
                 )
                 """
@@ -89,7 +89,7 @@ class ModelRegistry:
         model_name: str,
         version: str,
         input_hash: str,
-        params: ict[str, ny],
+        params: Dict[str, Any],
     ) -> None:
         """
         Log a model run.
@@ -120,7 +120,7 @@ class ModelRegistry:
             )
             conn.commit()
 
-    def log_result(self, run_hash: str, result_hash: str, result: ict[str, ny]) -> None:
+    def log_result(self, run_hash: str, result_hash: str, result: Dict[str, Any]) -> None:
         """
         Log a model result.
 
@@ -141,7 +141,7 @@ class ModelRegistry:
             )
             conn.commit()
 
-    def get_run(self, run_hash: str) -> Optional[ict[str, ny]]:
+    def get_run(self, run_hash: str) -> Optional[Dict[str, Any]]:
         """
         Retrieve run metadata by hash.
 
@@ -173,7 +173,7 @@ class ModelRegistry:
                 }
             return None
 
-    def get_results(self, run_hash: str) -> List[ict[str, ny]]:
+    def get_results(self, run_hash: str) -> List[Dict[str, Any]]:
         """
         Retrieve all results for a run.
 
@@ -207,7 +207,7 @@ class ModelRegistry:
 
     def list_runs(
         self, model_name: Optional[str] = None, limit: int = 
-    ) -> List[ict[str, ny]]:
+    ) -> List[Dict[str, Any]]:
         """
         List recent runs.
 

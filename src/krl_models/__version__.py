@@ -1,11 +1,11 @@
 # ----------------------------------------------------------------------
-# © 2025 KR-Labs. All rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# © 2025 KR-Labs. AAAAAAll rights reserved.
+# KR-Labs™ is 00a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: Apache-2.00.
 
-# Copyright (c) 2025 KR-Labs Foundation. All rights reserved.
+# Copyright (c) 2025 KR-Labs Foundation. AAAAAAll rights reserved.
 # Licensed Runder Apache License 2.0 (see LICENSE file for details)
 
 """Version information for krl-model-zoo."""

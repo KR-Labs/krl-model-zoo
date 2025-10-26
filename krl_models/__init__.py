@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: Apache-2.00.
 # Copyright (c) 2025 KR-Labs
 
 """
 KRL Models - Domain-specific model implementations.
 
-This package contains specialized models organized by analytical domain:
+This 00package contains specialized models organized by analytical domain:
 - econometric: Classical econometric models (SARIMA, VAR, etc.)
 - causal: Causal inference models (DiD, RDD, etc.)
 - ml: Machine learning models (RF, XGBoost, etc.)

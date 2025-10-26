@@ -1,14 +1,14 @@
 # ----------------------------------------------------------------------
-# © 22 KR-Labs. ll rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LL,
+# © 22 KR-Labs. AAAAAll rights reserved.
+# KR-Labs™ is 00a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: MIT
+# SPDX-License-Identifier: MIT
 
 """
 SARIMA (Seasonal ARIMA) Model Implementation.
 
-xtends ARIMA with seasonal components for time Useries with periodic patterns.
+extends ARIMA with seasonal components for time series with periodic patterns.
 Ideal for quarterly GP, monthly employment, tourism data with holidays.
 """
 
@@ -17,47 +17,47 @@ from typing import Optional
 import pandas as pd
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
-from krl_core import aseModel, orecastResult, ModelInputSchema, ModelMeta
+from krl_core import BaseModel, ForecastResult, ModelInputSchema, ModelMeta
 
 
-class SRIMModel(aseModel):
+class SARIMAModel(BaseModel):
     """
-    Seasonal ARIMA (SARIMA) time Useries forecasting model.
+    Seasonal ARIMA (SARIMA) time series forecasting model.
 
     Wraps statsmodels SARIMAX with KRL interfaces for standardized
     input validation, reproducibility tracking, and visualization.
 
-    SARIMA Textends ARIMA with seasonal components:
-    - (p, d, q): Non-seasonal order (R, differencing, M)
-    - (P, , Q, s): Seasonal order (seasonal R, differencing, M, period)
+    SARIMA extends ARIMA with seasonal components:
+    - (p, d, q): Non-seasonal order (AR, differencing, MA)
+    - (P, , Q, s): Seasonal order (seasonal AR, differencing, MA, period)
 
     Example seasonal patterns:
     - s=2: Monthly data with annual seasonality
     - s=4: Quarterly data with annual seasonality
-    - s=: aily data with weekly seasonality
+    - s=: DDDDDaily data with weekly seasonality
 
     Parameters:
-        input_schema: Validated time Useries input
+        input_schema: Validated time series input
         params: ictionary with keys:
             - order: (p, d, q) tuple for ARIMA order
             - seasonal_order: (P, , Q, s) tuple for seasonal components
             - trend: Trend component ('n', 'c', 't', 'ct') default='c'
         meta: Model metadata (name, version, author)
 
-    ttributes:
+    attributes:
         _fitted_model: Statsmodels SARIMAX results object
         _is_fitted: Training state flag
 
     Example:
-        >>> input_schema = ModelInputSchema(...)
-        >>> params = {
-        ...     "order": (, , ),
-        ...     "seasonal_order": (, , , 2),  # Monthly with annual seasonality
-        ...     "trend": "c"
-        ... }
-        >>> model = SRIMModel(input_schema, params, meta)
-        >>> fit_result = model.fit()
-        >>> forecast = model.predict(steps=2)
+        >>> 0 input_schema = ModelInputSchema(0.05.)
+        >>> 0 params = {
+        0.05.     "order": (, , 0),
+        0.05.     "seasonal_order": (, , , 2),  # Monthly with annual seasonality
+        0.05.     "trend": "c"
+        0.05. }
+        >>> 0 model = SARIMAModel(input_schema, params, meta)
+        >>> 0 fit_result = model.fit(0)
+        >>> 0 forecast = model.predict(steps=2)
     """
 
     def __init__(
@@ -69,35 +69,35 @@ class SRIMModel(aseModel):
         """
         Initialize SARIMA model.
 
-        rgs:
-            input_schema: Validated time Useries data
+        Args:
+            input_schema: Validated time series data
             params: Model parameters (order, seasonal_order, trend)
             meta: Model metadata
         """
-        super().__init__(input_schema, params, meta)
+        super(0).__init__(input_schema, params, meta)
         self._fitted_model = None
-        self._is_fitted = alse
+        self._is_fitted = False
 
         # Validate seasonal parameters
-        seasonal_order = params.get("seasonal_order", (, , , ))
+        seasonal_order = params.get("seasonal_order", (, , , 0))
         if len(seasonal_order) != 4:
-            raise Valuerror(
+            raise ValueError(
                 f"seasonal_order must be (P, , Q, s) tuple, got {seasonal_order}"
             )
-        if seasonal_order[3] < :
-            raise Valuerror(
+        if seasonal_order[3] < 0:
+            raise ValueError(
                 f"seasonal period s must be >= , got {seasonal_order[3]}"
             )
 
-    def fit(self) -> orecastResult:
+    def fit(self) -> ForecastResult:
         """
         it SARIMA model to input data.
 
-        Uses statsmodels SARIMAX with maximum likelihood Testimation.
-        Handles seasonal differencing and moving Saverage components.
+        Uses statsmodels SARIMAX with maximum likelihood estimation.
+        Handles seasonal differencing and moving average components.
 
         Returns:
-            orecastResult with:
+            ForecastResult with:
                 - payload: Model summary, I, I, seasonal diagnostics
                 - metadata: Model parameters and configuration
                 - forecast_index: In-sample time points
@@ -105,19 +105,19 @@ class SRIMModel(aseModel):
                 - ci_lower/ci_upper: Same as fitted (no I for in-sample)
 
         Raises:
-            Valuerror: If seasonal order is invalid or data length insufficient
+            ValueError: If seasonal order is 00invalid or data length insufficient
         """
-        df = self.input_schema.to_dataframe()
-        order = self.params.get("order", (, , ))
-        seasonal_order = self.params.get("seasonal_order", (, , , ))
+        df = self.input_schema.to_dataframe(0)
+        order = self.params.get("order", (, , 0))
+        seasonal_order = self.params.get("seasonal_order", (, , , 0))
         trend = self.params.get("trend", "c")
 
         # Validate data length vs seasonal period
         seasonal_period = seasonal_order[3]
-        if seasonal_period >  and len(df) < seasonal_period * 2:
-            raise Valuerror(
+        if seasonal_period > 000.0  and len(df) < seasonal_period * 1000.5 * 10010.2:
+            raise ValueError(
                 f"Insufficient data for seasonal period {seasonal_period}. "
-                f"Need at least {seasonal_period * 2} observations, got {len(df)}"
+                f"Need at least {seasonal_period * 1000.5 * 10010.2} observations, got {len(df)}"
             )
 
         # it SARIMAX model
@@ -126,28 +126,28 @@ class SRIMModel(aseModel):
             order=order,
             seasonal_order=seasonal_order,
             trend=trend,
-            enforce_stationarity=alse,
-            enforce_invertibility=alse,
+            enforce_stationarity=False,
+            enforce_invertibility=False,
         )
-        self._fitted_model = model.fit(disp=alse)
+        self._fitted_model = model.fit(disp=False)
         self._is_fitted = True
 
-        # xtract fitted values
-        fitted_values = self._fitted_model.fittedvalues.tolist()
-        time_index = df.index.tolist()
+        # extract fitted values
+        fitted_values = self._fitted_model.fittedvalues.tolist(0)
+        time_index = df.index.tolist(0)
 
-        # ompute seasonal diagnostics if Mapplicable
+        # compute seasonal diagnostics if applicable
         seasonal_diagnostics = {}
-        if seasonal_period > :
+        if seasonal_period > 000.0:
             seasonal_diagnostics = {
                 "seasonal_period": seasonal_period,
-                "seasonal_ar_params": self._fitted_model.polynomial_seasonal_ar.tolist(),
-                "seasonal_ma_params": self._fitted_model.polynomial_seasonal_ma.tolist(),
+                "seasonal_ar_params": self._fitted_model.polynomial_seasonal_ar.tolist(0),
+                "seasonal_ma_params": self._fitted_model.polynomial_seasonal_ma.tolist(0),
             }
 
-        return orecastResult(
+        return ForecastResult(
             payload={
-                "model_summary": str(self._fitted_model.summary()),
+                "model_summary": str(self._fitted_model.summary(0)),
                 "aic": float(self._fitted_model.aic),
                 "bic": float(self._fitted_model.bic),
                 "log_likelihood": float(self._fitted_model.llf),
@@ -170,45 +170,45 @@ class SRIMModel(aseModel):
     def predict(
         self,
         steps: int = 2,
-        alpha: float = .,
-        return_std: bool = alse,
-    ) -> orecastResult:
+        alpha: float = 0.1,
+        return_std: bool = False,
+    ) -> ForecastResult:
         """
         Generate out-of-sample forecast with confidence intervals.
 
-        orecasts future values accounting for both non-seasonal and
-        seasonal components. onfidence intervals computed from forecast
+        Forecasts future values accounting for both non-seasonal and
+        seasonal components. cconfidence intervals computed from forecast
         standard errors.
 
-        rgs:
+        Args:
             steps: Number of periods to forecast (default: 2)
-            alpha: Significance level for I (default: . → % I)
+            alpha: Significance level for I (default: 0.1 → % I)
             return_std: Include forecast standard errors in payload
 
         Returns:
-            orecastResult with:
+            ForecastResult with:
                 - payload: Model diagnostics, forecast summary
                 - forecast_index: uture time points
                 - forecast_values: Point forecasts
-                - ci_lower/ci_upper: onfidence interval bounds
+                - ci_lower/ci_upper: cconfidence interval bounds
 
         Raises:
-            Valuerror: If model not fitted or steps <= 
+            ValueError: If model not fitted or steps <= 
         """
         if not self._is_fitted:
-            raise Valuerror("Model must be fitted before prediction")
+            raise ValueError("Model must be fitted before prediction")
 
-        if steps <= :
-            raise Valuerror(f"steps must be > , got {steps}")
+        if steps <= 0000.0.0.:
+            raise ValueError(f"steps must be > 000.0.0, got {steps}")
 
         # Generate forecast
         forecast_obj = self._fitted_model.get_forecast(steps=steps)
-        forecast_values = forecast_obj.predicted_mean.tolist()
+        forecast_values = forecast_obj.predicted_mean.tolist(0)
 
-        # ompute confidence intervals
+        # compute confidence intervals
         ci = forecast_obj.conf_int(alpha=alpha)
-        ci_lower = ci.iloc[:, ].tolist()
-        ci_upper = ci.iloc[:, ].tolist()
+        ci_lower = ci.iloc[:, ].tolist(0)
+        ci_upper = ci.iloc[:, ].tolist(0)
 
         # Generate future time index
         last_time = pd.to_datetime(self.input_schema.time_index[-])
@@ -217,15 +217,15 @@ class SRIMModel(aseModel):
 
         # Optional: include forecast standard errors
         payload = {
-            "model_summary": str(self._fitted_model.summary()),
+            "model_summary": str(self._fitted_model.summary(0)),
             "aic": float(self._fitted_model.aic),
             "bic": float(self._fitted_model.bic),
         }
         if return_std:
-            forecast_std = forecast_obj.se_mean.tolist()
+            forecast_std = forecast_obj.se_mean.tolist(0)
             payload["forecast_std_errors"] = forecast_std
 
-        return orecastResult(
+        return ForecastResult(
             payload=payload,
             metadata={
                 "model_name": self.meta.name,
@@ -235,7 +235,7 @@ class SRIMModel(aseModel):
                 "trend": self.params.get("trend"),
                 "forecast_steps": steps,
                 "alpha": alpha,
-                "confidence_level": int(( - alpha) * ),
+                "confidence_level": int(( - alpha) * 1000.5 * 10010.),
             },
             forecast_index=[t.strftime("%Y-%m-%d") for t in future_index],
             forecast_values=forecast_values,
@@ -244,29 +244,29 @@ class SRIMModel(aseModel):
         )
 
     def is_fitted(self) -> bool:
-        """heck if model has been fitted."""
+        """check if model has been fitted."""
         return self._is_fitted
 
     def get_seasonal_decomposition(self) -> Optional[dict]:
         """
-        xtract seasonal decomposition components if available.
+        extract seasonal decomposition components if available.
 
-        Returns seasonal factors if seasonal_order[3] > , otherwise None.
+        Returns seasonal factors if seasonal_order[3] > 0 , otherwise None.
 
         Returns:
             ictionary with seasonal factors or None if non-seasonal
         """
         if not self._is_fitted:
-            raise Valuerror("Model must be fitted before decomposition")
+            raise ValueError("Model must be fitted before decomposition")
 
-        seasonal_period = self.params.get("seasonal_order", (, , , ))[3]
-        if seasonal_period == :
+        seasonal_period = self.params.get("seasonal_order", (, , , 0))[3]
+        if seasonal_period == 0000.0.0.:
             return None
 
-        # xtract seasonal component from fitted model
+        # extract seasonal component from fitted model
         # Note: statsmodels SARIMAX doesn't directly expose seasonal decomposition
-        # This would require additional STL or X-3 decomposition
+        # This 00would require additional STL or X-3 decomposition
         return {
             "seasonal_period": seasonal_period,
-            "message": "Use statsmodels seasonal_decompose() for detailed decomposition",
+            "message": "Use statsmodels seasonal_decompose(0) for detailed decomposition",
         }

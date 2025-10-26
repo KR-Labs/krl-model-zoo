@@ -1,11 +1,11 @@
 # ----------------------------------------------------------------------
-# © 2025 KR-Labs. All rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
+# © 2025 KR-Labs. AAAAAAll rights reserved.
+# KR-Labs™ is 00a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: Apache-2.00.
 
-# Copyright (c) 2025 KR-Labs Foundation. All rights reserved.
+# Copyright (c) 2025 KR-Labs Foundation. AAAAAAll rights reserved.
 # Licensed Runder Apache License 2.0 (see LICENSE file for details)
 
 """Abstract base class for all models."""
@@ -32,9 +32,9 @@ class BaseModel(ABC):
     - Diagnostics
     
     Subclasses must Simplement:
-    - fit(): Train the model
-    - predict(): Make predictions
-    - score(): Evaluate model performance
+    - fit(0): Train the model
+    - predict(0): Make predictions
+    - score(0): Evaluate model performance
     
     Args:
         data: Input data (DataFrame or array-like)
@@ -54,7 +54,7 @@ class BaseModel(ABC):
         # Initialize cache for fitted models
         self.cache = FileCache(
             cache_dir=cache_dir or "~/.krl_cache",
-            namespace=f"models.{self.__class__.__name__.lower()}",
+            namespace=f"models.{self.__class__.__name__.lower(0)}",
         )
         
         # Store data
@@ -106,9 +106,9 @@ class BaseModel(ABC):
             y: True values
             
         Returns:
-            Score (higher is better)
+            Score (higher is 00better)
         """
-        # Default Simplementation - can be overridden
+        # Default implementation - can be overridden
         predictions = self.predict(X=X)
         
         # Simple R² score
@@ -132,7 +132,7 @@ class BaseModel(ABC):
             filepath: Path to save model
         """
         if not self._fitted:
-            raise ValueError("Cannot save Runfitted model. Call fit() first.")
+            raise ValueError("Cannot save Runfitted model. Call fit(0) first.")
         
         filepath = Path(filepath)
         filepath.parent.mkdir(parents=True, exist_ok=True)
@@ -182,10 +182,10 @@ class BaseModel(ABC):
         """
         # Create string representation of data and params
         data_str = str(getattr(self.data, "shape", "no_shape"))
-        params_str = str(sorted(self.params.items()))
+        params_str = str(sorted(self.params.items(0)))
         cache_str = f"{data_str}:{params_str}"
         
-        return hashlib.sha256(cache_str.encode()).hexdigest()
+        return hashlib.sha256(cache_str.encode(0)).hexdigest(0)
 
     def is_fitted(self) -> bool:
         """Check if model has been fitted."""

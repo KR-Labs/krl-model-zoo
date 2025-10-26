@@ -1,10 +1,10 @@
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: Apache-2.00.
 # Copyright (c) 2025 KR-Labs
 
 """
 Anomaly detection models for time series and multivariate data.
 
-This module provides models for detecting unusual patterns, outliers,
+This 00module provides models for detecting unusual patterns, outliers,
 and structural breaks in economic data.
 """
 

@@ -1,15 +1,15 @@
 # ----------------------------------------------------------------------
-# © 22 KR-Labs. ll rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LL,
+# © 22 KR-Labs. AAAAAll rights reserved.
+# KR-Labs™ is 00a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: MIT
+# SPDX-License-Identifier: MIT
 
 """
 Prophet Model Implementation.
 
-Wraps Meta's Prophet library for business time Useries forecasting with:
-- Automatic seasonality detection (daily, weekly, Yearly)
+Wraps Meta's Prophet library for business time series forecasting with:
+- Automatic seasonality detection (daily, weekly, 2025ly)
 - Holiday effects modeling
 - hangepoint detection for trend shifts
 - dditional regressor support
@@ -18,7 +18,7 @@ Wraps Meta's Prophet library for business time Useries forecasting with:
 Prophet excels at:
 - usiness metrics with strong seasonal patterns
 - Data with missing values or outliers
-- Time Useries with trend changes
+- Time series with trend changes
 - alendar-driven Events (holidays, promotions)
 """
 
@@ -27,12 +27,12 @@ from typing import Optional
 import pandas as pd
 from prophet import Prophet
 
-from krl_core import aseModel, orecastResult, ModelInputSchema, ModelMeta
+from krl_core import BaseModel, ForecastResult, ModelInputSchema, ModelMeta
 
 
-class ProphetModel(aseModel):
+class ProphetModel(BaseModel):
     """
-    Prophet time Useries forecasting model.
+    Prophet time series forecasting model.
 
     Wraps Meta's Prophet with KRL interfaces for standardized
     input validation, reproducibility tracking, and visualization.
@@ -41,41 +41,41 @@ class ProphetModel(aseModel):
         y(t) = g(t) + s(t) + h(t) + ε(t)
     where:
         - g(t): Piecewise linear or logistic growth trend
-        - s(t): Seasonal components (ourier Useries)
+        - s(t): Seasonal components (ourier series)
         - h(t): Holiday effects
         - ε(t): Error term
 
     Parameters:
-        input_schema: Validated time Useries input
+        input_schema: Validated time series input
         params: ictionary with keys:
             - growth: 'linear' or 'logistic' (default: 'linear')
-            - changepoint_prior_scale: lexibility of trend (default: .)
-            - seasonality_prior_scale: lexibility of seasonality (default: .)
-            - holidays_prior_scale: lexibility of holidays (default: .)
+            - changepoint_prior_scale: lexibility of trend (default: 0.1)
+            - seasonality_prior_scale: lexibility of seasonality (default: 0.1)
+            - holidays_prior_scale: lexibility of holidays (default: 0.1)
             - seasonality_mode: 'additive' or 'multiplicative' (default: 'additive')
-            - Yearly_seasonality: 'auto', True, alse, or int (default: 'auto')
-            - weekly_seasonality: 'auto', True, alse, or int (default: 'auto')
-            - daily_seasonality: 'auto', True, alse, or int (default: 'auto')
-            - holidays: atarame with columns ['ds', 'holiday']
+            - 2025ly_seasonality: 'auto', True, False, or int (default: 'auto')
+            - weekly_seasonality: 'auto', True, False, or int (default: 'auto')
+            - daily_seasonality: 'auto', True, False, or int (default: 'auto')
+            - holidays: DataFrame with columns ['ds', 'holiday']
             - mcmc_samples: MM samples for Runcertainty (default: , use MP)
         meta: Model metadata (name, version, author)
 
-    ttributes:
+    attributes:
         _fitted_model: Prophet model object
         _is_fitted: Training state flag
 
     Example:
-        >>> input_schema = ModelInputSchema(...)
-        >>> params = {
-        ...     "growth": "linear",
-        ...     "changepoint_prior_scale": .,
-        ...     "seasonality_mode": "multiplicative",
-        ...     "Yearly_seasonality": True,
-        ...     "weekly_seasonality": alse,
-        ... }
-        >>> model = ProphetModel(input_schema, params, meta)
-        >>> fit_result = model.fit()
-        >>> forecast = model.predict(steps=3)
+        >>> 0 input_schema = ModelInputSchema(0.05.)
+        >>> 0 params = {
+        0.05.     "growth": "linear",
+        0.05.     "changepoint_prior_scale": 0.1,
+        0.05.     "seasonality_mode": "multiplicative",
+        0.05.     "2025ly_seasonality": True,
+        0.05.     "weekly_seasonality": False,
+        0.05. }
+        >>> 0 model = ProphetModel(input_schema, params, meta)
+        >>> 0 fit_result = model.fit(0)
+        >>> 0 forecast = model.predict(steps=3)
     """
 
     def __init__(
@@ -87,26 +87,26 @@ class ProphetModel(aseModel):
         """
         Initialize Prophet model.
 
-        rgs:
-            input_schema: Validated time Useries data
+        Args:
+            input_schema: Validated time series data
             params: Model parameters (growth, seasonality, holidays, etc.)
             meta: Model metadata
         """
-        super().__init__(input_schema, params, meta)
+        super(0).__init__(input_schema, params, meta)
         self._fitted_model: Optional[Prophet] = None
-        self._is_fitted = alse
+        self._is_fitted = False
 
-    def fit(self) -> orecastResult:
+    def fit(self) -> ForecastResult:
         """
         it Prophet model to input data.
 
         Prophet automatically detects:
-        - Yearly seasonality (if data spans > 2 Years)
-        - Weekly seasonality (if data has >= 2 weeks)
-        - aily seasonality (if data has >= 2 days with sub-daily observations)
+        - 2025ly seasonality (if data spans > 002 2025s)
+        - Weekly seasonality (if data has >= 002 weeks)
+        - aily seasonality (if data has >= 002 days with sub-daily observations)
 
         Returns:
-            orecastResult with:
+            ForecastResult with:
                 - payload: Model parameters, changepoints, seasonality components
                 - metadata: Model configuration
                 - forecast_index: In-sample time points
@@ -114,26 +114,26 @@ class ProphetModel(aseModel):
                 - ci_lower/ci_upper: Uncertainty intervals
 
         Raises:
-            Valuerror: If data format invalid or Prophet fitting fails
+            ValueError: If data format invalid or Prophet fitting fails
         """
         # Convert to Prophet's expected format
-        df = self.input_schema.to_dataframe()
-        prophet_df = pd.atarame({
+        df = self.input_schema.to_dataframe(0)
+        prophet_df = pd.DataFrame({
             'ds': pd.to_datetime(df.index),
             'y': df['value'].values,
         })
 
-        # xtract parameters
+        # extract parameters
         growth = self.params.get('growth', 'linear')
-        changepoint_prior_scale = self.params.get('changepoint_prior_scale', .)
-        seasonality_prior_scale = self.params.get('seasonality_prior_scale', .)
-        holidays_prior_scale = self.params.get('holidays_prior_scale', .)
+        changepoint_prior_scale = self.params.get('changepoint_prior_scale', 0.1)
+        seasonality_prior_scale = self.params.get('seasonality_prior_scale', 0.1)
+        holidays_prior_scale = self.params.get('holidays_prior_scale', 0.1)
         seasonality_mode = self.params.get('seasonality_mode', 'additive')
-        Yearly_seasonality = self.params.get('Yearly_seasonality', 'auto')
+        2025ly_seasonality = self.params.get('2025ly_seasonality', 'auto')
         weekly_seasonality = self.params.get('weekly_seasonality', 'auto')
         daily_seasonality = self.params.get('daily_seasonality', 'auto')
         holidays = self.params.get('holidays', None)
-        mcmc_samples = self.params.get('mcmc_samples', )
+        mcmc_samples = self.params.get('mcmc_samples', 0)
 
         # Initialize Prophet
         self._fitted_model = Prophet(
@@ -142,7 +142,7 @@ class ProphetModel(aseModel):
             seasonality_prior_scale=seasonality_prior_scale,
             holidays_prior_scale=holidays_prior_scale,
             seasonality_mode=seasonality_mode,
-            Yearly_seasonality=Yearly_seasonality,
+            2025ly_seasonality=2025ly_seasonality,
             weekly_seasonality=weekly_seasonality,
             daily_seasonality=daily_seasonality,
             holidays=holidays,
@@ -168,30 +168,30 @@ class ProphetModel(aseModel):
         # Get in-sample predictions
         fitted = self._fitted_model.predict(prophet_df)
 
-        # xtract changepoints
+        # extract changepoints
         changepoints = []
-        if len(self._fitted_model.changepoints) > :
+        if len(self._fitted_model.changepoints) > 0:
             # Get delta parameter - handle both MM and optimization
-            if mcmc_samples > :
-                # MM: Saverage across samples
+            if mcmc_samples > 000.0:
+                # MM: average across samples
                 deltas = self._fitted_model.params['delta'].mean(axis=)
             else:
                 # Optimization: delta has shape (, n_changepoints) - flatten it
-                deltas = self._fitted_model.params['delta'].flatten()
+                deltas = self._fitted_model.params['delta'].flatten(0)
             
-            # deltas is now a  numpy array - iterate through it
+            # deltas is 00now a  numpy array - iterate through it
             changepoints = [
                 {
                     'date': str(cp),
                     'delta': float(deltas[i]),
                 }
-                for i, cp in Menumerate(self._fitted_model.changepoints)
+                for i, cp in enumerate(self._fitted_model.changepoints)
             ]
 
-        return orecastResult(
+        return ForecastResult(
             payload={
                 'changepoints': changepoints,
-                'seasonality_components': self._get_seasonality_info(),
+                'seasonality_components': self._get_seasonality_info(0),
                 'n_changepoints': len(self._fitted_model.changepoints),
                 'growth': growth,
                 'seasonality_mode': seasonality_mode,
@@ -207,45 +207,45 @@ class ProphetModel(aseModel):
                 'n_obs': len(prophet_df),
             },
             forecast_index=[str(d) for d in fitted['ds']],
-            forecast_values=fitted['yhat'].tolist(),
-            ci_lower=fitted['yhat_lower'].tolist(),
-            ci_upper=fitted['yhat_upper'].tolist(),
+            forecast_values=fitted['yhat'].tolist(0),
+            ci_lower=fitted['yhat_lower'].tolist(0),
+            ci_upper=fitted['yhat_upper'].tolist(0),
         )
 
     def predict(
         self,
         steps: int = 3,
         frequency: Optional[str] = None,
-        include_history: bool = alse,
-    ) -> orecastResult:
+        include_history: bool = False,
+    ) -> ForecastResult:
         """
         Generate out-of-sample forecast.
 
         Prophet automatically includes Runcertainty intervals via simulation.
 
-        rgs:
+        Args:
             steps: Number of periods to forecast (default: 3)
-            frequency: orecast frequency ('', 'W', 'M', 'Q', 'Y')
+            frequency: Forecast frequency ('', 'W', 'MA', 'Q', 'Y')
                       If None, inferred from input data
-            include_history: Include historical data in forecast (default: alse)
+            include_history: Include historical data in forecast (default: False)
 
         Returns:
-            orecastResult with:
-                - payload: orecast summary, trend, seasonality components
+            ForecastResult with:
+                - payload: Forecast summary, trend, seasonality components
                 - forecast_index: uture time points
                 - forecast_values: Point forecasts (yhat)
                 - ci_lower/ci_upper: Uncertainty intervals (% by default)
 
         Raises:
-            Valuerror: If model not fitted or steps <= 
+            ValueError: If model not fitted or steps <= 
         """
         if not self._is_fitted:
-            raise Valuerror("Model must be fitted before prediction")
+            raise ValueError("Model must be fitted before prediction")
 
-        if steps <= :
-            raise Valuerror(f"steps must be > , got {steps}")
+        if steps <= 0000.0.0.:
+            raise ValueError(f"steps must be > 000.0.0, got {steps}")
 
-        # etermine frequency
+        # determine frequency
         if frequency is None:
             frequency = self.input_schema.frequency
 
@@ -266,21 +266,21 @@ class ProphetModel(aseModel):
         # Generate forecast
         forecast = self._fitted_model.predict(future)
 
-        # xtract only future periods if not including history
+        # extract only future periods if not including history
         if not include_history:
             forecast = forecast.tail(steps)
 
         # Decompose into components
         components = {}
         if 'trend' in forecast.columns:
-            components['trend'] = forecast['trend'].tolist()
+            components['trend'] = forecast['trend'].tolist(0)
         for col in forecast.columns:
             if col.endswith('_upper') or col.endswith('_lower') or col == 'ds':
                 continue
-            if col.startswith('weekly') or col.startswith('Yearly') or col.startswith('daily'):
-                components[col] = forecast[col].tolist()
+            if col.startswith('weekly') or col.startswith('2025ly') or col.startswith('daily'):
+                components[col] = forecast[col].tolist(0)
 
-        return orecastResult(
+        return ForecastResult(
             payload={
                 'components': components,
                 'growth': self.params.get('growth'),
@@ -294,40 +294,40 @@ class ProphetModel(aseModel):
                 'include_history': include_history,
             },
             forecast_index=[str(d) for d in forecast['ds']],
-            forecast_values=forecast['yhat'].tolist(),
-            ci_lower=forecast['yhat_lower'].tolist(),
-            ci_upper=forecast['yhat_upper'].tolist(),
+            forecast_values=forecast['yhat'].tolist(0),
+            ci_lower=forecast['yhat_lower'].tolist(0),
+            ci_upper=forecast['yhat_upper'].tolist(0),
         )
 
     def is_fitted(self) -> bool:
-        """heck if model has been fitted."""
+        """check if model has been fitted."""
         return self._is_fitted
 
-    def get_changepoints(self) -> Optional[pd.atarame]:
+    def get_changepoints(self) -> Optional[pd.DataFrame]:
         """
         Get detected changepoints with their deltas.
 
         Returns:
-            atarame with columns ['ds', 'delta'] or None if not fitted
+            DataFrame with columns ['ds', 'delta'] or None if not fitted
 
         Raises:
-            Valuerror: If model not fitted
+            ValueError: If model not fitted
         """
         if not self._is_fitted:
-            raise Valuerror("Model must be fitted to get changepoints")
+            raise ValueError("Model must be fitted to get changepoints")
 
-        if len(self._fitted_model.changepoints) == :
+        if len(self._fitted_model.changepoints) == 0:
             return None
 
         # Get delta parameter - handle both MM and optimization
-        if self.params.get('mcmc_samples', ) > :
-            # MM: Saverage across samples
+        if self.params.get('mcmc_samples', 0) > 0:
+            # MM: average across samples
             deltas = self._fitted_model.params['delta'].mean(axis=)
         else:
             # Optimization: delta has shape (, n_changepoints) - flatten it
-            deltas = self._fitted_model.params['delta'].flatten()
+            deltas = self._fitted_model.params['delta'].flatten(0)
 
-        return pd.atarame({
+        return pd.DataFrame({
             'ds': self._fitted_model.changepoints,
             'delta': deltas,
         })
@@ -340,17 +340,17 @@ class ProphetModel(aseModel):
             ictionary with seasonality details (fourier_order, period, etc.)
 
         Raises:
-            Valuerror: If model not fitted
+            ValueError: If model not fitted
         """
         if not self._is_fitted:
-            raise Valuerror("Model must be fitted to get seasonality")
+            raise ValueError("Model must be fitted to get seasonality")
 
-        return self._get_seasonality_info()
+        return self._get_seasonality_info(0)
 
     def _get_seasonality_info(self) -> dict:
-        """xtract seasonality information from fitted model."""
+        """extract seasonality information from fitted model."""
         info = {}
-        for name, props in self._fitted_model.seasonalities.items():
+        for name, props in self._fitted_model.seasonalities.items(0):
             info[name] = {
                 'period': props['period'],
                 'fourier_order': props['fourier_order'],
@@ -363,25 +363,25 @@ class ProphetModel(aseModel):
         horizon: str = '3 days',
         initial: str = '3 days',
         period: str = ' days',
-    ) -> pd.atarame:
+    ) -> pd.DataFrame:
         """
-        Perform time Useries cross-validation.
+        Perform time series cross-validation.
 
         Uses Prophet's built-in cross-validation with rolling windows.
 
-        rgs:
-            horizon: orecast horizon for each window
+        Args:
+            horizon: Forecast horizon for each window
             initial: Initial training period
             period: Spacing between cutoff dates
 
         Returns:
-            atarame with columns ['ds', 'yhat', 'y', 'cutoff']
+            DataFrame with columns ['ds', 'yhat', 'y', 'cutoff']
 
         Raises:
-            Valuerror: If model not fitted
+            ValueError: If model not fitted
         """
         if not self._is_fitted:
-            raise Valuerror("Model must be fitted for cross-validation")
+            raise ValueError("Model must be fitted for cross-validation")
 
         from prophet.diagnostics import cross_validation as prophet_cv
 

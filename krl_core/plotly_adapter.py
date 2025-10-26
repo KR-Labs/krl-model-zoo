@@ -1,19 +1,19 @@
 # ----------------------------------------------------------------------
-# © 22 KR-Labs. ll rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LL,
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: Apache-2.
+# SPDX-License-Identifier: Apache-2.
 
 """Plotly schema adapter for model results."""
 
 from __future__ import annotations
 
-from typing import ny, ict, List
+from typing import Any, Dict, List
 
 import pandas as pd
 
-from .results import aseResult, orecastResult
+from .results import BaseResult, orecastResult
 
 
 class PlotlySchemadapter:
@@ -43,7 +43,7 @@ class PlotlySchemadapter:
         title: str = "orecast",
         xaxis_title: str = "Time",
         yaxis_title: str = "Value",
-    ) -> ict[str, ny]:
+    ) -> Dict[str, Any]:
         """
         Generate forecast plot with confidence intervals.
 
@@ -73,7 +73,7 @@ class PlotlySchemadapter:
                     "mode": "lines",
                     "name": "Upper I",
                     "line": {"color": "rgba(3, , , .3)", "width": , "dash": "dash"},
-                    "showlegend": alse,
+                    "showlegend": False,
                 },
                 {
                     "x": result.forecast_index,
@@ -84,7 +84,7 @@ class PlotlySchemadapter:
                     "line": {"color": "rgba(3, , , .3)", "width": , "dash": "dash"},
                     "fill": "tonexty",
                     "fillcolor": "rgba(3, , , .2)",
-                    "showlegend": alse,
+                    "showlegend": False,
                 },
             ],
             "layout": {
@@ -101,7 +101,7 @@ class PlotlySchemadapter:
         residuals: List[float],
         time_index: List[str],
         title: str = "Residuals",
-    ) -> ict[str, ny]:
+    ) -> Dict[str, Any]:
         """
         Generate residual diagnostic plot.
 
@@ -146,7 +146,7 @@ class PlotlySchemadapter:
         features: List[str],
         importance: List[float],
         title: str = "Feature Importance",
-    ) -> ict[str, ny]:
+    ) -> Dict[str, Any]:
         """
         Generate feature importance bar chart.
 
@@ -187,7 +187,7 @@ class PlotlySchemadapter:
         title: str = "Line Plot",
         xaxis_title: str = "X",
         yaxis_title: str = "Y",
-    ) -> ict[str, ny]:
+    ) -> Dict[str, Any]:
         """
         Generate generic line plot.
 

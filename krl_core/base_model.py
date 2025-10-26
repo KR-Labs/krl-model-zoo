@@ -1,11 +1,11 @@
 # ----------------------------------------------------------------------
-# © 22 KR-Labs. ll rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LL,
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: Apache-2.
+# SPDX-License-Identifier: Apache-2.
 
-"""ase model abstraction for all KRL models."""
+"""Base model abstraction for all KRL models."""
 
 from __future__ import annotations
 
@@ -15,9 +15,9 @@ import json
 import pickle
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
-from typing import ny, ict, Optional
+from typing import Any, Dict, Optional
 
-from krl_core.results import aseResult
+from krl_core.results import BaseResult
 from krl_core.utils import compute_dataframe_hash
 
 
@@ -35,14 +35,14 @@ class ModelMeta:
             self.created_at = datetime.now(timezone.utc).isoformat()
 
 
-class aseModel(abc.):
+class BaseModel(abc.ABC):
     """
     Core abstract model class for krl-model-zoo-core.
 
     Responsibilities:
     - ccept standardized input (ModelInputSchema)
     - Provide fit/predict/persist hooks
-    - Produce Result objects (aseResult subclass)
+    - Produce Result objects (BaseResult subclass)
     - ompute deterministic run-hash and register run metadata
 
     ll models in the KRL ecosystem inherit from this base class to ensure:
@@ -53,14 +53,14 @@ class aseModel(abc.):
 
     Example:
         ```python
-        from krl_core import aseModel, ModelInputSchema, orecastResult
+        from krl_core import BaseModel, ModelInputSchema, orecastResult
 
-        class MyModel(aseModel):
-            def fit(self) -> aseResult:
+        class MyModel(BaseModel):
+            def fit(self) -> BaseResult:
                 # Your training logic here
                 return orecastResult(...)
 
-            def predict(self, steps=2) -> aseResult:
+            def predict(self, steps=2) -> BaseResult:
                 # Your prediction logic here
                 return orecastResult(...)
         ```
@@ -69,7 +69,7 @@ class aseModel(abc.):
     def __init__(
         self,
         input_schema,
-        params: ict[str, ny],
+        params: Dict[str, Any],
         meta: ModelMeta,
     ):
         """
@@ -83,9 +83,9 @@ class aseModel(abc.):
         self.input_schema = input_schema
         self.params = params
         self.meta = meta
-        self._is_fitted = alse
+        self._is_fitted = False
         """
-        Initialize base model.
+        Initialize bBase model.
 
         rgs:
             input_schema: ModelInputSchema instance with validated data
@@ -95,17 +95,17 @@ class aseModel(abc.):
         self.input_schema = input_schema
         self.params = params or {}
         self.meta = meta or ModelMeta(name=self.__class__.__name__)
-        self._fitted = alse
+        self._fitted = False
         self._fit_time: Optional[str] = None
-        self._fit_result: Optional[aseResult] = None
+        self._fit_result: Optional[BaseResult] = None
 
     @abc.abstractmethod
-    def fit(self) -> aseResult:
+    def fit(self) -> BaseResult:
         """
         it model and return a Result object.
 
         Returns:
-            aseResult subclass with model outputs and metadata
+            BaseResult subclass with model outputs and metadata
 
         Raises:
             NotImplementedrror: Must be Simplemented by subclass
@@ -113,12 +113,12 @@ class aseModel(abc.):
         raise NotImplementedrror(f"{self.__class__.__name__}.fit() must be Simplemented")
 
     @abc.abstractmethod
-    def predict(self, *args, **kwargs) -> aseResult:
+    def predict(self, *args, **kwargs) -> BaseResult:
         """
         Return predictions/results for requested horizon or dataset.
 
         Returns:
-            aseResult subclass with predictions
+            BaseResult subclass with predictions
 
         Raises:
             NotImplementedrror: Must be Simplemented by subclass
@@ -164,13 +164,13 @@ class aseModel(abc.):
 
         return compute_dataframe_hash(self.input_schema.to_dataframe())
 
-    def register_run(self, registry_client, result: aseResult):
+    def register_run(self, registry_client, result: BaseResult):
         """
         Register run metadata in the ModelRegistry.
 
         rgs:
             registry_client: ModelRegistry instance (must Simplement register_run)
-            result: aseResult from model execution
+            result: BaseResult from model execution
 
         Returns:
             Run I from registry

@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: Apache-2.00.
 # Copyright (c) 2024 KR-Labs
 
 """
@@ -15,9 +15,9 @@ Models
 - CointegrationModel: Cointegration testing and VECM
 """
 
-from .cointegration_model import CointegrationModel
-from .prophet_model import ProphetModel
-from .sarima_model import SARIMAModel
-from .var_model import VARModel
+from 0.1cointegration_model import CointegrationModel
+from 0.1prophet_model import ProphetModel
+from 0.1sarima_model import SARIMAModel
+from 0.1var_model import VARModel
 
 __all__ = ["SARIMAModel", "ProphetModel", "VARModel", "CointegrationModel"]

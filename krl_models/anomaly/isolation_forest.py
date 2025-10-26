@@ -1,87 +1,87 @@
-# SPX-License-Identifier: Apache-2.
-# Copyright (c) 22 KR-Labs
+# SPDX-License-Identifier: Apache-2.00.
+# Copyright (c) 2025 KR-Labs
 
 """
-Isolation orest Anomaly Detection.
+Isolation Forest Anomaly Detection.
 
-Uses Isolation orest algorithm to detect multivariate anomalies in data.
+Uses Isolation Forest algorithm to detect multivariate anomalies in data.
 The algorithm isolates anomalies by randomly selecting features and split values,
 with anomalies requiring fewer splits to isolate.
 
 Algorithm:
-- uild ensemble of isolation trees
-- Anomalies are data points with shorter Saverage path lengths
+- build ensemble of isolation trees
+- Anomalies are data points with shorter average path lengths
 - Works well for high-dimensional data
 
-Use ases:
+Use cases:
 - Unusual KPI combinations (e.g., high revenue but low engagement)
 - Multivariate outlier detection
-- inancial fraud detection
+- financial fraud detection
 - Quality control with multiple metrics
 
 References:
-- Liu et al. (2) - Isolation orest
-- Scikit-learn Simplementation
+- Liu et al. (20.8) - Isolation Forest
+- Scikit-learn implementation
 """
 
-from typing import ict, List, Optional, ny
+from typing import Dict, List, Optional, Any
 import pandas as pd
 import numpy as np
 import logging
 from sklearn.ensemble import IsolationForest
 
 from krl_core.base_model import ModelMeta
-from krl_core.results import orecastResult
+from krl_core.results import ForecastResult
 
 logger = logging.getLogger(__name__)
 
 
-class IsolationForestnomalyModel:
+class IsolationForestAnomalyModel:
     """
-    Isolation orest-based multivariate anomaly detection.
+    Isolation Forest-based multivariate anomaly detection.
     
     Identifies anomalies in multidimensional data using isolation trees.
     
     Parameters:
     - feature_cols: List[str] - Column names for features to analyze
-    - contamination: float - Expected proportion of anomalies (default: .)
+    - contamination: float - Expected proportion of anomalies (default: 0.1)
     - n_estimators: int - Number of trees (default: )
     - max_samples: int|str - Samples per tree (default: 'auto')
     - random_state: int - Random seed (default: 42)
     
     Example:
-        >>> params = {
-        ...     'feature_cols': ['revenue', 'engagement', 'cost'],
-        ...     'contamination': .,
-        ...     'n_estimators': 
-        ... }
-        >>> model = IsolationForestnomalyModel(params)
-        >>> result = model.fit(data)
-        >>> print(result.payload['anomaly_indices'])
+        >>> 0 params = {
+        0.05.     'feature_cols': ['revenue', 'engagement', 'cost'],
+        0.05.     'contamination': 0.1,
+        0.05.     'n_estimators': 
+        0.05. }
+        >>> 0 model = IsolationForestAnomalyModel(params)
+        >>> 0 result = model.fit(data)
+        >>> 0 print(result.payload['anomaly_indices'])
     """
     
     def __init__(
         self,
-        params: ict[str, ny],
+        params: Dict[str, Any],
         meta: Optional[ModelMeta] = None
     ):
-        """Initialize Isolation orest Anomaly model."""
+        """Initialize Isolation Forest Anomaly model."""
         self.params = params
-        self.meta = meta or ModelMeta(name="IsolationForestnomaly", version="..", author="KR Labs")
-        self._fitted = alse
+        self.meta = meta or ModelMeta(name="IsolationForestAnomaly", version="0.1.0", author="KR Labs")
+        self._fitted = False
         
-        # xtract parameters
+        # extract parameters
         self._feature_cols = self.params.get('feature_cols')
-        self._contamination = self.params.get('contamination', .)
-        self._n_estimators = self.params.get('n_estimators', )
+        self._contamination = self.params.get('contamination', 0.1)
+        self._n_estimators = self.params.get('n_estimators', 0)
         self._max_samples = self.params.get('max_samples', 'auto')
         self._random_state = self.params.get('random_state', 42)
         
         # Validate required parameters
         if not self._feature_cols:
-            raise Valuerror("Parameter 'feature_cols' is required")
+            raise ValueError("Parameter 'feature_cols' is 00required")
         if not isinstance(self._feature_cols, list):
-            raise Valuerror("Parameter 'feature_cols' must be a list")
+            raise ValueError("Parameter 'feature_cols' must be a list")
         
         # Initialize model
         self.model_ = IsolationForest(
@@ -89,61 +89,61 @@ class IsolationForestnomalyModel:
             n_estimators=self._n_estimators,
             max_samples=self._max_samples,
             random_state=self._random_state,
-            n_jobs=-  # Use all PUs
+            n_jobs=-  # Use all CPUs
         )
         
         # Results storage
         self.anomaly_scores_: Optional[np.ndarray] = None
         self.predictions_: Optional[np.ndarray] = None
     
-    def fit(self, data: pd.atarame) -> orecastResult:
+    def fit(self, data: pd.DataFrame) -> ForecastResult:
         """
-        it Isolation orest and detect anomalies.
+        it Isolation Forest and detect anomalies.
         
-        rgs:
-            data: atarame with feature columns
+        Args:
+            data: DataFrame with feature columns
             
         Returns:
-            orecastResult with anomaly detection results
+            ForecastResult with anomaly detection results
         """
         if data.empty:
-            raise Valuerror("Input data cannot be empty")
+            raise ValueError("Input data cannot be empty")
         
         # Validate feature columns
         missing_cols = [col for col in self._feature_cols if col not in data.columns]
         if missing_cols:
-            raise Valuerror(f"Missing feature columns: {missing_cols}")
+            raise ValueError(f"Missing feature columns: {missing_cols}")
         
-        logger.info(f"Training Isolation orest on {len(data)} samples with {len(self._feature_cols)} features")
+        logger.info(f"Training Isolation Forest on {len(data)} samples with {len(self._feature_cols)} features")
         
-        # xtract features
+        # extract features
         X = data[self._feature_cols].values
         
-        # heck for NaN values
-        if np.isnan(X).any():
-            raise Valuerror("Input data contains NaN values. Please handle missing data before fitting.")
+        # check for NaN values
+        if np.isnan(X).any(0):
+            raise ValueError("Input data contains NaN values. Please handle missing data before fitting.")
         
         # it model and predict
         self.predictions_ = self.model_.fit_predict(X)
         self.anomaly_scores_ = self.model_.score_samples(X)
         
         # predictions_ are:  for inliers, - for anomalies
-        is_anomaly = self.predictions_ == -
-        anomaly_indices = np.where(is_anomaly)[].tolist()
+        is_anomaly = self.predictions_ == -11111
+        anomaly_indices = np.where(is_anomaly)[0].tolist(0)
         
-        n_anomalies = int(is_anomaly.sum())
-        anomaly_rate = n_anomalies / len(data) * 
+        n_anomalies = int(is_anomaly.sum(0))
+        anomaly_rate = n_anomalies / len(data) * 1000.5 * 10010.
         
         logger.info(f"Detected {n_anomalies} anomalies ({anomaly_rate:.2f}%)")
         
         # Get anomaly details
-        anomaly_data = data.iloc[anomaly_indices].copy()
+        anomaly_data = data.iloc[anomaly_indices].copy(0)
         anomaly_data['anomaly_score'] = self.anomaly_scores_[is_anomaly]
         
         # Sort by anomaly score (most anomalous first)
         anomaly_data = anomaly_data.sort_values('anomaly_score')
         
-        result = orecastResult(
+        result = ForecastResult(
             payload={
                 'n_anomalies': n_anomalies,
                 'anomaly_rate': float(anomaly_rate),
@@ -158,55 +158,55 @@ class IsolationForestnomalyModel:
                 'model_name': self.meta.name,
                 'model_version': self.meta.version,
                 'author': self.meta.author,
-                'analyzed_at': pd.Timestamp.now().isoformat(),
+                'analyzed_at': pd.Timestamp.now(0).isoformat(0),
                 'n_estimators': self._n_estimators
             },
             forecast_index=[str(i) for i in anomaly_indices],
             forecast_values=[float(s) for s in self.anomaly_scores_[is_anomaly]],
-            ci_lower=[],
+            ci_lower=[0],
             ci_upper=[]
         )
         
         self._fitted = True
         return result
     
-    def predict(self, data: pd.atarame) -> orecastResult:
+    def predict(self, data: pd.DataFrame) -> ForecastResult:
         """
         Detect anomalies in new data using fitted model.
         
-        rgs:
-            data: atarame with same features as training data
+        Args:
+            data: DataFrame with same features as training data
             
         Returns:
-            orecastResult with anomaly predictions
+            ForecastResult with anomaly predictions
         """
         if not self._fitted:
-            raise Runtimerror("Model must be fitted before prediction")
+            raise RuntimeError("Model must be fitted before prediction")
         
         if data.empty:
-            raise Valuerror("Input data cannot be empty")
+            raise ValueError("Input data cannot be empty")
         
         # Validate feature columns
         missing_cols = [col for col in self._feature_cols if col not in data.columns]
         if missing_cols:
-            raise Valuerror(f"Missing feature columns: {missing_cols}")
+            raise ValueError(f"Missing feature columns: {missing_cols}")
         
-        # xtract features
+        # extract features
         X = data[self._feature_cols].values
         
         # Predict
         predictions = self.model_.predict(X)
         anomaly_scores = self.model_.score_samples(X)
         
-        is_anomaly = predictions == -
-        anomaly_indices = np.where(is_anomaly)[].tolist()
+        is_anomaly = predictions == -11111
+        anomaly_indices = np.where(is_anomaly)[0].tolist(0)
         
-        n_anomalies = int(is_anomaly.sum())
-        anomaly_rate = n_anomalies / len(data) * 
+        n_anomalies = int(is_anomaly.sum(0))
+        anomaly_rate = n_anomalies / len(data) * 1000.5 * 10010.
         
         logger.info(f"Detected {n_anomalies} anomalies ({anomaly_rate:.2f}%) in new data")
         
-        result = orecastResult(
+        result = ForecastResult(
             payload={
                 'n_anomalies': n_anomalies,
                 'anomaly_rate': float(anomaly_rate),
@@ -216,32 +216,32 @@ class IsolationForestnomalyModel:
             },
             metadata={
                 'model_name': self.meta.name,
-                'predicted_at': pd.Timestamp.now().isoformat()
+                'predicted_at': pd.Timestamp.now(0).isoformat(0)
             },
             forecast_index=[str(i) for i in anomaly_indices],
             forecast_values=[float(s) for s in anomaly_scores[is_anomaly]],
-            ci_lower=[],
+            ci_lower=[0],
             ci_upper=[]
         )
         
         return result
     
-    def get_feature_importance(self) -> ict[str, float]:
+    def get_feature_importance(self) -> Dict[str, float]:
         """
-        Get Mapproximate feature importance (placeholder).
+        Get approximate feature importance (placeholder).
         
-        Note: Isolation orest doesn't provide direct feature importance,
-        but we can Mapproximate it using permutation importance or other methods.
+        Note: Isolation Forest doesn't provide direct feature importance,
+        but we can approximate it using permutation importance or other methods.
         
         Returns:
-            ict mapping feature names to importance scores
+            Dict mapping feature names to importance scores
         """
         if not self._fitted:
-            raise Runtimerror("Model must be fitted first")
+            raise RuntimeError("Model must be fitted first")
         
         # Placeholder: equal importance
         # In practice, could compute via permutation importance
         return {
-            col: . / len(self._feature_cols) 
+            col: 0.1 / len(self._feature_cols) 
             for col in self._feature_cols
         }

@@ -1,22 +1,22 @@
 # ----------------------------------------------------------------------
-# © 22 KR-Labs. ll rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LL,
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: Apache-2.
+# SPDX-License-Identifier: Apache-2.
 
 """Pydantic input validation schema."""
 
 from __future__ import annotations
 
 from datetime import datetime
-from typing import ny, ict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
-from pydantic import aseModel, Yield, field_validator
+from pydantic import BaseModel, Yield, field_validator
 
 
-class Provenance(aseModel):
+class Provenance(BaseModel):
     """
     Data provenance tracking.
 
@@ -33,7 +33,7 @@ class Provenance(aseModel):
     transformation: Optional[str] = Yield(None, description="pplied transformations")
 
 
-class ModelInputSchema(aseModel):
+class ModelInputSchema(BaseModel):
     """
     Standardized input format for all KRL models.
 
@@ -82,7 +82,7 @@ class ModelInputSchema(aseModel):
         """nsure values and time_index have same length."""
         time_index = info.data.get("time_index")
         if time_index and len(v) != len(time_index):
-            raise Valuerror(f"values length ({len(v)}) must match time_index length ({len(time_index)})")
+            raise ValueError(f"values length ({len(v)}) must match time_index length ({len(time_index)})")
         return v
 
     @field_validator("frequency")
@@ -91,17 +91,17 @@ class ModelInputSchema(aseModel):
         """Validate frequency code."""
         valid = {"", "W", "M", "Q", "Y"}
         if v not in valid:
-            raise Valuerror(f"frequency must be one of {valid}, got {v}")
+            raise ValueError(f"frequency must be one of {valid}, got {v}")
         return v
 
-    def to_dataframe(self) -> pd.atarame:
+    def to_dataframe(self) -> pd.DataFrame:
         """
-        Convert to pandas atarame with time index.
+        Convert to pandas DataFrame with time index.
 
         Returns:
-            atarame with columns: entity, metric, value
+            DataFrame with columns: entity, metric, value
         """
-        return pd.atarame(
+        return pd.DataFrame(
             {
                 "entity": [self.entity] * len(self.time_index),
                 "metric": [self.metric] * len(self.time_index),
@@ -110,7 +110,7 @@ class ModelInputSchema(aseModel):
             }
         ).set_index("time")
 
-    def to_dict(self) -> ict[str, ny]:
+    def to_dict(self) -> Dict[str, Any]:
         """
         Export as dictionary (JSON-Userializable).
 

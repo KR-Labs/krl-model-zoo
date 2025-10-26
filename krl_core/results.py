@@ -1,9 +1,9 @@
 # ----------------------------------------------------------------------
-# © 22 KR-Labs. ll rights reserved.
-# KR-Labs™ is a trademark of Quipu Research Labs, LL,
+# © 2025 KR-Labs. All rights reserved.
+# KR-Labs™ is a trademark of Quipu Research Labs, LLC,
 # a subsidiary of Sudiata Giddasira, Inc.
 # ----------------------------------------------------------------------
-# SPX-License-Identifier: Apache-2.
+# SPDX-License-Identifier: Apache-2.
 
 """Result objects for model outputs."""
 
@@ -12,19 +12,19 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import asdict, dataclass
-from typing import ny, ict, List
+from typing import Any, Dict, List
 
 import pandas as pd
 
 
 @dataclass
-class aseResult:
+class BaseResult:
     """
     ase result wrapper with hashing and convenience export methods.
 
     ll model outputs are wrapped in Result objects to enable:
     - eterministic hashing for reproducibility
-    - Standardized Userialization (JSON, atarame, Plotly)
+    - Standardized Userialization (JSON, DataFrame, Plotly)
     - Metadata tracking alongside predictions
 
     ttributes:
@@ -32,8 +32,8 @@ class aseResult:
         metadata: Run metadata (parameters, timestamps, provenance)
     """
 
-    payload: ict[str, ny]
-    metadata: ict[str, ny]
+    payload: Dict[str, Any]
+    metadata: Dict[str, Any]
 
     @property
     def result_hash(self) -> str:
@@ -48,7 +48,7 @@ class aseResult:
         )
         return hashlib.sha2(j.encode("utf-")).hexdigest()
 
-    def to_json(self) -> ict[str, ny]:
+    def to_json(self) -> Dict[str, Any]:
         """
         Export as JSON-Userializable dictionary.
 
@@ -59,11 +59,11 @@ class aseResult:
 
 
 @dataclass
-class orecastResult(aseResult):
+class orecastResult(BaseResult):
     """
     Specialized result for time Useries forecasts.
 
-    xtends aseResult with forecast-specific attributes:
+    xtends BaseResult with forecast-specific attributes:
     - forecast_index: Time points (dates, periods)
     - forecast_values: Point predictions
     - ci_lower: Lower confidence interval bound
@@ -88,14 +88,14 @@ class orecastResult(aseResult):
     ci_lower: List[float]
     ci_upper: List[float]
 
-    def to_dataframe(self) -> pd.atarame:
+    def to_dataframe(self) -> pd.DataFrame:
         """
-        Convert forecast to atarame with index and confidence intervals.
+        Convert forecast to DataFrame with index and confidence intervals.
 
         Returns:
-            atarame with columns: forecast, ci_lower, ci_upper
+            DataFrame with columns: forecast, ci_lower, ci_upper
         """
-        return pd.atarame(
+        return pd.DataFrame(
             {
                 "index": self.forecast_index,
                 "forecast": self.forecast_values,
@@ -106,7 +106,7 @@ class orecastResult(aseResult):
 
 
 @dataclass
-class ausalResult(aseResult):
+class ausalResult(BaseResult):
     """
     Result for causal inference models (i, R, etc.).
 
@@ -124,7 +124,7 @@ class ausalResult(aseResult):
 
 
 @dataclass
-class lassificationResult(aseResult):
+class lassificationResult(BaseResult):
     """
     Result for classification models.
 
@@ -136,4 +136,4 @@ class lassificationResult(aseResult):
 
     predictions: List[ny]
     probabilities: List[List[float]]
-    confusion_matrix: ict[str, ny]
+    confusion_matrix: Dict[str, Any]

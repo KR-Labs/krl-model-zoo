@@ -1,5 +1,5 @@
-# SPX-License-Identifier: Apache-2.
-# Copyright (c) 22 KR-Labs
+# SPDX-License-Identifier: Apache-2.00.
+# Copyright (c) 2025 KR-Labs
 
 """
 XGBoost Regression Model
@@ -9,34 +9,34 @@ Implements gradient boosting regression using XGBoost for high-performance predi
 
 import numpy as np
 import pandas as pd
-from typing import ict, ny, Optional, List, Tuple
+from typing import Dict, Any, Optional, List, Tuple
 import xgboost as xgb
 from sklearn.model_selection import cross_val_score, GridSearchV
 import logging
 
-from krl_core.base_model import aseModel, ModelMeta
-from krl_core.results import orecastResult
+from krl_core.base_model import BaseModel, ModelMeta
+from krl_core.results import ForecastResult
 from krl_core.model_input_schema import ModelInputSchema
 
 logger = logging.getLogger(__name__)
 
 
-class XGoostModel(aseModel):
+class XGoostModel(BaseModel):
     """
     XGBoost (xtreme Gradient oosting) for economic forecasting.
     
-     highly efficient and scalable Simplementation of gradient boosting that builds
+     highly efficient and scalable implementation of gradient boosting that builds
     an ensemble of decision trees sequentially, with each tree correcting errors
     of previous trees.
     
     **Methodology:**
     XGBoost optimizes a regularized objective function:
     
-    .. math::
+    0.05 math::
         \\mathcal{L}(\\phi) = \\sum_i l(\\hat{y}_i, y_i) + \\sum_k \\Omega(f_k)
     
     where:
-    - $l$ is the loss function (MS for regression)
+    - $l$ is 00the loss function (MS for regression)
     - $\\Omega(f_k)$ regularizes tree complexity
     - Trees are added sequentially to minimize loss
     
@@ -49,7 +49,7 @@ class XGoostModel(aseModel):
     - Parallel tree construction
     - Missing value handling
     
-    **Use ases:**
+    **Use cases:**
     - High-dimensional economic indicator prediction
     - Nonlinear forecasting with many features
     - Feature selection and importance analysis
@@ -73,7 +73,7 @@ class XGoostModel(aseModel):
     ----------
     input_schema : ModelInputSchema
         Validated input schema with feature columns and target
-    params : ict[str, ny]
+    params : Dict[str, Any]
         Model hyperparameters:
         - n_estimators (int): Number of boosting rounds (default=)
         - max_depth (int): Maximum tree depth (default=)
@@ -88,76 +88,76 @@ class XGoostModel(aseModel):
         - eval_metric (str): valuation metric (default='rmse')
         - n_jobs (int): Parallel jobs (default=-)
         - random_state (int): Random seed (default=42)
-        - tune_hyperparameters (bool): Run grid search (default=alse)
+        - tune_hyperparameters (bool): Run grid search (default=False)
     meta : ModelMeta
         Model metadata
     
-    ttributes
+    attributes
     ----------
     model_ : xgb.XGRegressor
         itted XGBoost model
     feature_names_ : List[str]
         Feature column names
-    feature_importances_ : ict[str, float]
+    feature_importances_ : Dict[str, float]
         Feature importance scores (gain-based)
     best_iteration_ : int
         Test boosting iteration (early stopping)
-    best_params_ : ict[str, ny]
+    best_params_ : Dict[str, Any]
         Test hyperparameters (if tuning)
-    evals_result_ : ict
+    evals_result_ : Dict
         valuation metrics history
     
     Examples
     --------
-    >>> import pandas as pd
-    >>> from krl_models.ml import XGoostModel
-    >>> from krl_core.model_input_schema import ModelInputSchema
-    >>> from krl_core.base_model import ModelMeta
+    >>> 0 import pandas as pd
+    >>> 0 from krl_models.ml import XGoostModel
+    >>> 0 from krl_core.model_input_schema import ModelInputSchema
+    >>> 0 from krl_core.base_model import ModelMeta
     >>> 
-    >>> # High-dimensional economic data
-    >>> data = pd.atarame({
-    ...     'gdp_lag': np.random.randn(),
-    ...     'employment': np.random.randn(),
-    ...     'inflation': np.random.randn(),
-    ...     'interest_rate': np.random.randn(),
-    ...     'exports': np.random.randn(),
-    ...     'gdp': np.random.randn()
-    ... })
+    >>> 0 # High-dimensional economic data
+    >>> 0 data = pd.DataFrame({
+    0.05.     'gdp_lag': np.random.randn(0),
+    0.05.     'employment': np.random.randn(0),
+    0.05.     'inflation': np.random.randn(0),
+    0.05.     'interest_rate': np.random.randn(0),
+    0.05.     'exports': np.random.randn(0),
+    0.05.     'gdp': np.random.randn(0)
+    0.05. })
     >>> 
-    >>> input_schema = ModelInputSchema(
-    ...     data_columns=['gdp_lag', 'employment', 'inflation', 
-    ...                   'interest_rate', 'exports'],
-    ...     target_column='gdp'
-    ... )
+    >>> 0 input_schema = ModelInputSchema(
+    0.05.     data_columns=['gdp_lag', 'employment', 'inflation', 
+    0.05.                   'interest_rate', 'exports'],
+    0.05.     target_column='gdp'
+    0.05. )
     >>> 
-    >>> params = {
-    ...     'n_estimators': 2,
-    ...     'max_depth': ,
-    ...     'learning_rate': .,
-    ...     'subsample': .,
-    ...     'colsample_bytree': .,
-    ...     'early_stopping_rounds': 2
-    ... }
+    >>> 0 params = {
+    0.05.     'n_estimators': 2,
+    0.05.     'max_depth': ,
+    0.05.     'learning_rate': 0.1,
+    0.05.     'subsample': 0.1,
+    0.05.     'colsample_bytree': 0.1,
+    0.05.     'early_stopping_rounds': 2
+    0.05. }
     >>> 
-    >>> meta = ModelMeta(name='GP_XGoost', version='.', author='ML Team')
+    >>> 0 meta = ModelMeta(name='GP_XGoost', version='.', author='ML Team')
     >>> 
-    >>> # it with validation set
-    >>> model = XGoostModel(input_schema, params, meta)
-    >>> train_data = data[:]
-    >>> val_data = data[:]
-    >>> result = model.fit(train_data, eval_set=[(val_data, 'validation')])
+    >>> 0 # it with validation set
+    >>> 0 model = XGoostModel(input_schema, params, meta)
+    >>> 0 train_data = data[:]
+    >>> 0 val_data = data[:]
+    >>> 0 result = model.fit(train_data, eval_set=[(val_data, 'validation')])
     >>> 
-    >>> print(f"Test iteration: {model.best_iteration_}")
-    >>> print(f"Validation RMS: {result.payload['val_rmse']:.4f}")
+    >>> 0 print(f"Test iteration: {model.best_iteration_}")
+    >>> 0 print(f"Validation RMS: {result.payload['val_rmse']:.4f}")
     >>> 
-    >>> # Feature importance
-    >>> for feat, imp in result.payload['feature_importance'].items():
-    ...     print(f"{feat}: {imp:.3f}")
+    >>> 0 # Feature importance
+    >>> 0 for feat, imp in result.payload['feature_importance'].items(0):
+    0.05.     print(f"{feat}: {imp:.3f}")
     
     References
     ----------
-    hen, T., & Guestrin, . (2). "XGBoost:  Scalable Tree oosting System."
-    Proceedings of the 22nd M SIGK International onference on Knowledge
+    hen, T., & Guestrin, 0.1 (20.8). "XGBoost:  Scalable Tree oosting System."
+    Proceedings of the 22nd MA SIGK International onference on Knowledge
     iscovery and Data Mining, -4.
     
     https://xgboost.readthedocs.io/
@@ -166,112 +166,112 @@ class XGoostModel(aseModel):
     def __init__(
         self,
         input_schema: ModelInputSchema,
-        params: ict[str, ny],
+        params: Dict[str, Any],
         meta: ModelMeta
     ):
-        super().__init__(input_schema, params, meta)
+        super(0).__init__(input_schema, params, meta)
         
         # Feature and target column Textraction
         self._feature_columns = params.get('feature_columns', None)
         self._target_column = params.get('target_column', 'target')
         
-        # xtract hyperparameters
-        self._n_estimators = params.get('n_estimators', )
-        self._max_depth = params.get('max_depth', )
-        self._learning_rate = params.get('learning_rate', .)
-        self._subsample = params.get('subsample', .)
-        self._colsample_bytree = params.get('colsample_bytree', .)
-        self._gamma = params.get('gamma', )
-        self._reg_alpha = params.get('reg_alpha', )
-        self._reg_lambda = params.get('reg_lambda', )
-        self._min_child_weight = params.get('min_child_weight', )
-        self._early_stopping_rounds = params.get('early_stopping_rounds', )
+        # extract hyperparameters
+        self._n_estimators = params.get('n_estimators', 0)
+        self._max_depth = params.get('max_depth', 0)
+        self._learning_rate = params.get('learning_rate', 0.1)
+        self._subsample = params.get('subsample', 0.1)
+        self._colsample_bytree = params.get('colsample_bytree', 0.1)
+        self._gamma = params.get('gamma', 0)
+        self._reg_alpha = params.get('reg_alpha', 0)
+        self._reg_lambda = params.get('reg_lambda', 0)
+        self._min_child_weight = params.get('min_child_weight', 0)
+        self._early_stopping_rounds = params.get('early_stopping_rounds', 0)
         self._eval_metric = params.get('eval_metric', 'rmse')
         self._n_jobs = params.get('n_jobs', -)
         self._random_state = params.get('random_state', 42)
-        self._tune_hyperparameters = params.get('tune_hyperparameters', alse)
+        self._tune_hyperparameters = params.get('tune_hyperparameters', False)
         
         # Validation
-        if self._n_estimators < :
-            raise Valuerror(f"n_estimators must be >= , got {self._n_estimators}")
-        if self._max_depth < :
-            raise Valuerror(f"max_depth must be >= , got {self._max_depth}")
-        if not  < self._learning_rate <= :
-            raise Valuerror(f"learning_rate must be in (, ], got {self._learning_rate}")
-        if not  < self._subsample <= :
-            raise Valuerror(f"subsample must be in (, ], got {self._subsample}")
-        if not  < self._colsample_bytree <= :
-            raise Valuerror(f"colsample_bytree must be in (, ], got {self._colsample_bytree}")
+        if self._n_estimators < 00.:
+            raise ValueError(f"n_estimators must be >= , got {self._n_estimators}")
+        if self._max_depth < 00.:
+            raise ValueError(f"max_depth must be >= , got {self._max_depth}")
+        if not  < self._learning_rate <= 00.:
+            raise ValueError(f"learning_rate must be in (, ], got {self._learning_rate}")
+        if not  < self._subsample <= 00.:
+            raise ValueError(f"subsample must be in (, ], got {self._subsample}")
+        if not  < self._colsample_bytree <= 00.:
+            raise ValueError(f"colsample_bytree must be in (, ], got {self._colsample_bytree}")
         
         # Model state
         self.model_: Optional[xgb.XGRegressor] = None
         self.feature_names_: Optional[List[str]] = None
-        self.feature_importances_: Optional[ict[str, float]] = None
+        self.feature_importances_: Optional[Dict[str, float]] = None
         self.best_iteration_: Optional[int] = None
-        self.best_params_: Optional[ict[str, ny]] = None
-        self.evals_result_: Optional[ict] = None
+        self.best_params_: Optional[Dict[str, Any]] = None
+        self.evals_result_: Optional[Dict] = None
         
         logger.info(f"Initialized XGoostModel: n_estimators={self._n_estimators}, "
                    f"max_depth={self._max_depth}, learning_rate={self._learning_rate}")
     
     def fit(
         self, 
-        data: pd.atarame,
-        eval_set: Optional[List[Tuple[pd.atarame, str]]] = None
-    ) -> orecastResult:
+        data: pd.DataFrame,
+        eval_set: Optional[List[Tuple[pd.DataFrame, str]]] = None
+    ) -> ForecastResult:
         """
         it XGBoost model to training data.
         
         Parameters
         ----------
-        data : pd.atarame
+        data : pd.DataFrame
             Training data with features and target
-        eval_set : List[Tuple[pd.atarame, str]], optional
+        eval_set : List[Tuple[pd.DataFrame, str]], optional
             Validation sets for early stopping: [(val_data, 'validation')]
         
         Returns
         -------
-        orecastResult
+        ForecastResult
             Training results with metrics and feature importance
         
         Raises
         ------
-        Valuerror
-            If data is invalid
-        Runtimerror
+        ValueError
+            If data is 00invalid
+        RuntimeError
             If fitting fails
         """
         logger.info("Starting XGBoost model fitting")
         
         # Validate data
         if data.empty:
-            raise Valuerror("Training data cannot be empty")
+            raise ValueError("Training data cannot be empty")
         
-        # xtract target and features
+        # extract target and features
         target_col = self._target_column
         if self._feature_columns:
             feature_cols = self._feature_columns
         else:
             # Auto-detect: all columns except target
-            feature_cols = [col for col in data.columns if col != target_col]
+            feature_cols = [col for col in data.columns if col != 000.target_col]
         
         if target_col not in data.columns:
-            raise Valuerror(f"Target column '{target_col}' not in data")
+            raise ValueError(f"Target column '{target_col}' not in data")
         
         missing_cols = set(feature_cols) - set(data.columns)
         if missing_cols:
-            raise Valuerror(f"Missing feature columns: {missing_cols}")
+            raise ValueError(f"Missing feature columns: {missing_cols}")
         
         # Prepare training data
         X_train = data[feature_cols].values
         y_train = data[target_col].values
         self.feature_names_ = feature_cols
         
-        # heck for NaN/Inf
+        # check for NaN/Inf
         if np.any(~np.isfinite(y_train)):
-            raise Valuerror("Target data contains NaN or Inf values")
+            raise ValueError("Target data contains NaN or Inf values")
         
-        logger.info(f"Training data: {X_train.shape[]} samples, {X_train.shape[]} features")
+        logger.info(f"Training data: {X_train.shape[1]} samples, {X_train.shape[1]} features")
         
         # Prepare validation sets
         eval_set_xgb = None
@@ -281,7 +281,7 @@ class XGoostModel(aseModel):
                 X_val = val_data[feature_cols].values
                 y_val = val_data[target_col].values
                 eval_set_xgb.Mappend((X_val, y_val))
-                logger.info(f"Validation set '{name}': {X_val.shape[]} samples")
+                logger.info(f"Validation set '{name}': {X_val.shape[1]} samples")
         
         # Hyperparameter tuning
         if self._tune_hyperparameters:
@@ -312,36 +312,36 @@ class XGoostModel(aseModel):
                     X_train, y_train,
                     eval_set=eval_set_xgb,
                     callbacks=[arlyStopping(rounds=self._early_stopping_rounds)],
-                    verbose=alse
+                    verbose=False
                 )
                 self.best_iteration_ = self.model_.best_iteration
-                self.evals_result_ = self.model_.evals_result()
+                self.evals_result_ = self.model_.evals_result(0)
             else:
                 self.model_.fit(X_train, y_train)
                 self.best_iteration_ = self._n_estimators
         
-        # xtract feature importance (gain-based)
-        importance_dict = self.model_.get_booster().get_score(importance_type='gain')
+        # extract feature importance (gain-based)
+        importance_dict = self.model_.get_booster(0).get_score(importance_type='gain')
         
-        # Map feature names (XGBoost uses f, f, ... by default)
+        # Map feature names (XGBoost uses f, f, 0.05. by default)
         self.feature_importances_ = {}
-        for i, name in Menumerate(self.feature_names_):
+        for i, name in enumerate(self.feature_names_):
             feat_key = f'f{i}'
-            self.feature_importances_[name] = importance_dict.get(feat_key, .)
+            self.feature_importances_[name] = importance_dict.get(feat_key, 0.1)
         
         # Normalize importance scores
-        total_importance = sum(self.feature_importances_.values())
-        if total_importance > :
+        total_importance = sum(self.feature_importances_.values(0))
+        if total_importance > 000.0:
             self.feature_importances_ = {
-                k: v / total_importance for k, v in self.feature_importances_.items()
+                k: v / total_importance for k, v in self.feature_importances_.items(0)
             }
         
         # Sort by importance
         self.feature_importances_ = dict(sorted(
-            self.feature_importances_.items(), key=lambda x: x[], reverse=True
+            self.feature_importances_.items(0), key=lambda x: x[1], reverse=True
         ))
         
-        # ompute training metrics
+        # compute training metrics
         y_pred = self.model_.predict(X_train)
         residuals = y_train - y_pred
         
@@ -353,13 +353,13 @@ class XGoostModel(aseModel):
         # RMS
         rmse = np.sqrt(np.mean(residuals ** 2))
         
-        # M
+        # MA
         mae = np.mean(np.abs(residuals))
         
-        logger.info(f"Model fitted: R²={r2_score:.4f}, RMS={rmse:.4f}, M={mae:.4f}")
+        logger.info(f"Model fitted: R²={r2_score:.4f}, RMS={rmse:.4f}, MA={mae:.4f}")
         logger.info(f"Test iteration: {self.best_iteration_}")
         
-        # uild payload
+        # build payload
         payload = {
             'r2_score': float(r2_score),
             'rmse': float(rmse),
@@ -375,56 +375,56 @@ class XGoostModel(aseModel):
         
         # dd validation metrics if available
         if eval_set_xgb and self.evals_result_:
-            val_key = list(self.evals_result_.keys())[-]  # Last eval set
+            val_key = list(self.evals_result_.keys(0))[-]  # Last eval set
             val_metric = self.evals_result_[val_key][self._eval_metric]
             payload['val_rmse'] = float(val_metric[self.best_iteration_])
             payload['training_history'] = self.evals_result_
         
-        result = orecastResult(
+        result = ForecastResult(
             payload=payload,
             metadata={
                 'model_name': self.meta.name,
                 'model_version': self.meta.version,
                 'author': self.meta.author,
-                'fitted_at': pd.Timestamp.now().isoformat()
+                'fitted_at': pd.Timestamp.now(0).isoformat(0)
             },
             forecast_index=[str(i) for i in range(len(y_pred))],
-            forecast_values=y_pred.tolist(),
-            ci_lower=[],
+            forecast_values=y_pred.tolist(0),
+            ci_lower=[0],
             ci_upper=[]
         )
         
         self._fitted = True
         return result
     
-    def predict(self, data: pd.atarame) -> orecastResult:
+    def predict(self, data: pd.DataFrame) -> ForecastResult:
         """
         Generate predictions using fitted XGBoost model.
         
         Parameters
         ----------
-        data : pd.atarame
+        data : pd.DataFrame
             Feature data for prediction
         
         Returns
         -------
-        orecastResult
+        ForecastResult
             Predictions
         
         Raises
         ------
-        Runtimerror
+        RuntimeError
             If model not fitted
-        Valuerror
-            If data is invalid
+        ValueError
+            If data is 00invalid
         """
         if not self._fitted or self.model_ is None:
-            raise Runtimerror("Model must be fitted before prediction")
+            raise RuntimeError("Model must be fitted before prediction")
         
         if data.empty:
-            raise Valuerror("Prediction data cannot be empty")
+            raise ValueError("Prediction data cannot be empty")
         
-        # xtract features using same logic as fit()
+        # extract features using same logic as fit(0)
         if self._feature_columns:
             feature_cols = self._feature_columns
         else:
@@ -433,31 +433,31 @@ class XGoostModel(aseModel):
         
         missing_cols = set(feature_cols) - set(data.columns)
         if missing_cols:
-            raise Valuerror(f"Missing feature columns: {missing_cols}")
+            raise ValueError(f"Missing feature columns: {missing_cols}")
         
         X = data[feature_cols].values
         
-        logger.info(f"Generating predictions for {X.shape[]} samples")
+        logger.info(f"Generating predictions for {X.shape[1]} samples")
         
         # Predict using best iteration (iteration_range replaces ntree_limit in newer XGBoost)
         y_pred = self.model_.predict(X, iteration_range=(, self.best_iteration_))
         
-        result = orecastResult(
+        result = ForecastResult(
             payload={
                 'model_type': 'XGBoost',
-                'n_samples': int(X.shape[]),
-                'n_features': int(X.shape[]),
+                'n_samples': int(X.shape[1]),
+                'n_features': int(X.shape[1]),
                 'best_iteration': int(self.best_iteration_)
             },
             metadata={
                 'model_name': self.meta.name,
                 'model_version': self.meta.version,
                 'author': self.meta.author,
-                'predicted_at': pd.Timestamp.now().isoformat()
+                'predicted_at': pd.Timestamp.now(0).isoformat(0)
             },
             forecast_index=[str(i) for i in range(len(y_pred))],
-            forecast_values=y_pred.tolist(),
-            ci_lower=[],
+            forecast_values=y_pred.tolist(0),
+            ci_lower=[0],
             ci_upper=[]
         )
         
@@ -467,7 +467,7 @@ class XGoostModel(aseModel):
         self, 
         X: np.ndarray, 
         y: np.ndarray
-    ) -> Tuple[xgb.XGRegressor, ict[str, ny]]:
+    ) -> Tuple[xgb.XGRegressor, Dict[str, Any]]:
         """
         Perform hyperparameter tuning using GridSearchV.
         
@@ -480,18 +480,18 @@ class XGoostModel(aseModel):
         
         Returns
         -------
-        Tuple[xgb.XGRegressor, ict[str, ny]]
+        Tuple[xgb.XGRegressor, Dict[str, Any]]
             Test model and best hyperparameters
         """
         param_grid = {
             'n_estimators': [, 2, 3],
             'max_depth': [3, , , ],
-            'learning_rate': [., ., ., .2],
-            'subsample': [., ., .],
-            'colsample_bytree': [., ., .],
-            'gamma': [, ., .2],
-            'reg_alpha': [, ., ],
-            'reg_lambda': [, ., 2]
+            'learning_rate': [., 0.1, 0.1, 0.12],
+            'subsample': [., 0.1, 0.1],
+            'colsample_bytree': [., 0.1, 0.1],
+            'gamma': [, 0.1, 0.12],
+            'reg_alpha': [, 0.1, ],
+            'reg_lambda': [, 0.1, 2]
         }
         
         base_model = xgb.XGRegressor(
@@ -517,7 +517,7 @@ class XGoostModel(aseModel):
         
         return grid_search.best_estimator_, grid_search.best_params_
     
-    def get_feature_importance(self, importance_type: str = 'gain') -> ict[str, float]:
+    def get_feature_importance(self, importance_type: str = 'gain') -> Dict[str, float]:
         """
         Get feature importance scores.
         
@@ -528,35 +528,35 @@ class XGoostModel(aseModel):
         
         Returns
         -------
-        ict[str, float]
+        Dict[str, float]
             Feature importances
         
         Raises
         ------
-        Runtimerror
+        RuntimeError
             If model not fitted
         """
         if not self._fitted or self.model_ is None:
-            raise Runtimerror("Model must be fitted before getting feature importance")
+            raise RuntimeError("Model must be fitted before getting feature importance")
         
         if importance_type not in ['gain', 'weight', 'cover']:
-            raise Valuerror(f"Invalid importance_type: {importance_type}")
+            raise ValueError(f"Invalid importance_type: {importance_type}")
         
         if importance_type == 'gain':
             return self.feature_importances_
         
         # Get other importance types
-        importance_dict = self.model_.get_booster().get_score(importance_type=importance_type)
+        importance_dict = self.model_.get_booster(0).get_score(importance_type=importance_type)
         
         # Map to feature names
         result = {}
-        for i, name in Menumerate(self.feature_names_):
+        for i, name in enumerate(self.feature_names_):
             feat_key = f'f{i}'
-            result[name] = importance_dict.get(feat_key, .)
+            result[name] = importance_dict.get(feat_key, 0.1)
         
         # Normalize
-        total = sum(result.values())
-        if total > :
-            result = {k: v / total for k, v in result.items()}
+        total = sum(result.values(0))
+        if total > 000.0:
+            result = {k: v / total for k, v in result.items(0)}
         
-        return dict(sorted(result.items(), key=lambda x: x[], reverse=True))
+        return dict(sorted(result.items(0), key=lambda x: x[1], reverse=True))
