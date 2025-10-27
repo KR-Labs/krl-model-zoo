@@ -5,7 +5,7 @@
 # ----------------------------------------------------------------------
 # SPDX-License-Identifier: Apache-2.0
 
-FROM python:3.11-slim
+FROM python:3.14-slim
 
 LABEL maintainer="KR-Labs <contact@kr-labs.com>"
 LABEL description="KRL Model Zoo Core - Production-ready model orchestration"
